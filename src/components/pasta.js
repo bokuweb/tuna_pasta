@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Infinite from 'react-infinite';
 
 export default class Pasta extends Component {
   componentDidMount() {
@@ -8,7 +9,7 @@ export default class Pasta extends Component {
   render() {
     const items = this.props.items.map((item, index) => {
       return (
-          <div key={item.link}>{item.title}</div>
+          <div>{item.title}</div>
       );
     });
     return (
@@ -17,9 +18,16 @@ export default class Pasta extends Component {
           a
         </div>
         <div id="content">
-          <div className="commentList">
-            {items}
-          </div>
+        <Infinite elementHeight={40}
+             containerHeight={440}
+             infiniteLoadBeginBottomOffset={200}
+             //onInfiniteLoad={this.handleInfiniteLoad}
+             //loadingSpinnerDelegate={this.elementInfiniteLoad()}
+             //isInfiniteLoading={this.state.isInfiniteLoading}
+             className="item"
+            >
+        {items}
+      </Infinite>
         </div>
       </div>
     );
