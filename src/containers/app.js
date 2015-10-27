@@ -1,16 +1,16 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Pasta from '../components/pasta';
-import * as commentActions from '../actions/comment';
+import * as actions from '../actions/action';
 
 function mapStateToProps(state)  {
   return {
-    comments : state.comments
+    items : state.items
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(commentActions, dispatch);
+  return bindActionCreators(actions, dispatch);
 }
 
 export default connect(

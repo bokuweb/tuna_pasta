@@ -1,12 +1,10 @@
-import * as commentActions from '../actions/comment';
+import * as actions from '../actions/action';
 
-export default function comment(state={comments:[]}, action) {
+export default function pasta(state={items:[]}, action) {
   switch(action.type){
-    case commentActions.SUBMIT_COMMENT:
-      let comments = state.comments.concat([action.comment]);
-      return {comments : comments};
-    case commentActions.RECIEVE_COMMENTS:
-     return {comments : action.comments};
+    case actions.RECIEVE_ITEMS :
+      const items = state.items.concat(action.items);
+      return {items : items};
     default:
       return state;
   }
