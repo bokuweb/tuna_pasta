@@ -3,9 +3,14 @@ import React, { Component } from 'react';
 export default class Pasta extends Component {
   render() {
     return (
-      <h2 className="commentAuthor">
-        Hello World!!
-      </h2>
+      <div id="container">
+        <div id="side-menu">
+          a
+        </div>
+        <div id="content">
+          b
+        </div>
+      </div>
     );
   }
 }
