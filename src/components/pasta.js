@@ -7,6 +7,11 @@ export default class Pasta extends Component {
   constructor(props) {
     super(props);
     this.props.fetchFeed(HATENA_SEARCH_URI + 'Elixir');
+    this.innerHeight = document.documentElement.clientHeight;
+    window.onresize = () => {
+      this.innerHeight = document.documentElement.clientHeight;
+      this.forceUpdate();
+    }
   }
   onInfiniteLoad() {
     if (this.props.feed.isPageEnd) return;
@@ -23,10 +28,13 @@ export default class Pasta extends Component {
   }
 
   render() {
-    const innerHeight = document.documentElement.clientHeight;
+    console.log(this.innerHeight);
     const items = this.props.feed.items.map((item) => {
       return (
-          <div className="item" key={item.link}>{item.title}</div>
+          <div className="item" key={item.link}>
+            <a href={item.link}>{item.title}</a>
+            <p>{item.contentSnippet}</p>
+          </div>
       );
     });
     return (
@@ -36,8 +44,8 @@ export default class Pasta extends Component {
         </div>
         <div id="content">
             <Infinite
-              elementHeight={40}
-              containerHeight={innerHeight-40}
+              elementHeight={110}
+              containerHeight={this.innerHeight-40}
               infiniteLoadBeginBottomOffset={100}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}
               loadingSpinnerDelegate={this.elementInfiniteLoad()}
