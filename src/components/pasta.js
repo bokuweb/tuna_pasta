@@ -1,30 +1,18 @@
 import React, { Component } from 'react';
 import Infinite from 'react-infinite';
 
-
-var i = 0
+const HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&q='
 
 export default class Pasta extends Component {
   constructor(props) {
     super(props);
-    this.props.fetchFeed('http://b.hatena.ne.jp/hotentry.rss');
-    this.state = {
-      isInfiniteLoading : false
-    }
+    console.log(props);
+    this.props.fetchFeed(HATENA_SEARCH_URI + 'Elixir');
   }
-
-  handleInfiniteLoad() {
+  onInfiniteLoad() {
+    if (this.props.feed.isPageEnd) return;
     console.log("load");
-    this.setState({isInfiniteLoading: true});
-    setTimeout(() => {
-      for(let j = 0; j < 100; j++)
-        this.props.items.push({link:"a" + j, title:"hogasdasdasdasddase" + j});
-      i++;
-      this.setState({
-        isInfiniteLoading: false,
-      });
-    }, 2500);
-
+    this.props.fetchFeed(HATENA_SEARCH_URI + 'Elixir' + '&of=' + this.props.feed.page * 40);
   }
 
   elementInfiniteLoad() {
@@ -35,7 +23,7 @@ export default class Pasta extends Component {
 
   render() {
     const innerHeight = document.documentElement.clientHeight;
-    const items = this.props.items.map((item) => {
+    const items = this.props.feed.items.map((item) => {
       return (
           <div className="item" key={item.link}>{item.title}</div>
       );
@@ -47,12 +35,12 @@ export default class Pasta extends Component {
         </div>
         <div id="content">
         <Infinite
-          elementHeight={10}
+          elementHeight={40}
           containerHeight={innerHeight}
-          infiniteLoadBeginBottomOffset={500}
-          onInfiniteLoad={this.handleInfiniteLoad.bind(this)}
+          infiniteLoadBeginBottomOffset={100}
+          onInfiniteLoad={this.onInfiniteLoad.bind(this)}
           loadingSpinnerDelegate={this.elementInfiniteLoad()}
-          isInfiniteLoading={this.state.isInfiniteLoading} >
+          isInfiniteLoading={this.props.isInfiniteLoading} >
         {items}
       </Infinite>
         </div>

@@ -4,9 +4,9 @@ import Pasta from '../components/pasta';
 import * as actions from '../actions/feed-action';
 
 function mapStateToProps(state)  {
-  return {
-    items : state.feed.items
-  };
+  return state;
+  //  items : state.feed.items
+  //};
 }
 
 function mapDispatchToProps(dispatch) {

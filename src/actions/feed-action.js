@@ -1,24 +1,24 @@
 import {fetch} from '../api/feed'
-
-export const RECIEVE_ITEMS = 'RECIEVE_ITEMS'
+import * as types from '../constants/action-types';
 
 function getItems(feed) {
+  console.dir(feed);
   return feed.responseData.feed.entries;
 }
 
 export function recieveItems(items) {
   return {
-    type: RECIEVE_ITEMS,
+    type: types.RECIEVE_ITEMS,
     items: items
   };
 }
 
 export function fetchFeed(uri) {
+  console.log(uri);
   return dispatch => {
     fetch(uri).then((feed) => {
       dispatch(recieveItems(getItems(feed)));
     }, (error) => console.log(error));
   };
 }
-
 
