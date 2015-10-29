@@ -1,0 +1,68 @@
+html, body, #pasta
+  height 100%
+  padding 0
+  margin 0
+  -webkit-text-size-adjust 100%
+  -ms-text-size-adjust 100%
+  background #f5f5f5
+  font-family Roboto, "Droid Sans", YuGothic, "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif
+
+input,
+textarea,
+select
+  outline none
+
+html,
+a,
+input,
+textarea
+  -webkit-font-smoothing  antialiased
+  text-shadow  1px 1px 1px rgba(0, 0, 0, 0.004)
+  color #ccc
+
+#container
+  height 100%
+  width 100%
+  display flex
+  flex-direction row
+  box-orient horizontal
+
+#side-menu
+  background #ccc
+  /*background #2980B9 */
+  /* #3498DB*/
+  width 300px
+  height 100%
+  flex 0 300px
+  box-flex 0
+  padding 0
+
+#content
+  flex 1
+  box-flex 1
+  text-shadow -1px 1px 0 rgba(255, 255, 255, 1)
+  color #45828E
+  width 100%
+
+.item
+  height 110px
+  max-width 800px
+
+.items
+  padding 40px 0 0 40px
+
+@media screen and (max-width: 768px)
+  #container
+    flex-direction column
+    box-orient vertical
+
+  #side-menu
+    width 100%
+    flex 0 100%
+    height 100px
+
+@media screen and (min-width: 769px)
+  #content
+    overflow-y auto
+    max-height 100%
+    width 100%

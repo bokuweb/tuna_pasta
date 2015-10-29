@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch:js": "watchify --extension=js -o dist/main.js src/index.js",
+    "watch:js": "watchify --extension=js -o dist/bundle.js src/index.js",
+    "watch:stylus": "stylus stylus/ --watch  --out stylesheets/",
+    "build:stylus": "stylus stylus/ --out stylesheets/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,11 +26,13 @@
     "react-redux": "~4.0.0",
     "redux-thunk": "~1.0.0",
     "redux-logger": "~2.0.4",
-    "react-dom": "~0.14.0"
+    "react-dom": "~0.14.0",
+    "react-infinite": "~0.5.8"
   },
   "devDependencies": {
     "babelify": "~6.4.0",
-    "watchify": "~3.5.0"
+    "watchify": "~3.5.0",
+    "stylus": "~0.52.4"
   },
   "browserify": {
     "transform": [
