@@ -6,22 +6,24 @@ const HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&q='
 export default class Pasta extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.props.fetchFeed(HATENA_SEARCH_URI + 'Elixir');
   }
   onInfiniteLoad() {
     if (this.props.feed.isPageEnd) return;
-    console.log("load");
     this.props.fetchFeed(HATENA_SEARCH_URI + 'Elixir' + '&of=' + this.props.feed.page * 40);
   }
 
   elementInfiniteLoad() {
-    return <div className="infinite-list-item">
-      Loading...
-      </div>;
+    if (this.props.feed.isPageEnd) return;
+    return (
+      <div className="infinite-list-item">
+        Loading...
+       </div>
+    ); 
   }
 
   render() {
+    console.log(this.props.feed.isInfiniteLoading);
     const innerHeight = document.documentElement.clientHeight;
     const items = this.props.feed.items.map((item) => {
       return (
@@ -40,7 +42,7 @@ export default class Pasta extends Component {
           infiniteLoadBeginBottomOffset={100}
           onInfiniteLoad={this.onInfiniteLoad.bind(this)}
           loadingSpinnerDelegate={this.elementInfiniteLoad()}
-          isInfiniteLoading={this.props.isInfiniteLoading} >
+          isInfiniteLoading={this.props.feed.isInfiniteLoading} >
         {items}
       </Infinite>
         </div>
