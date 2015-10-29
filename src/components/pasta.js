@@ -16,14 +16,13 @@ export default class Pasta extends Component {
   elementInfiniteLoad() {
     if (this.props.feed.isPageEnd) return;
     return (
-      <div className="infinite-list-item">
+      <div className="item">
         Loading...
-       </div>
-    ); 
+      </div>
+    );
   }
 
   render() {
-    console.log(this.props.feed.isInfiniteLoading);
     const innerHeight = document.documentElement.clientHeight;
     const items = this.props.feed.items.map((item) => {
       return (
@@ -36,15 +35,16 @@ export default class Pasta extends Component {
           a
         </div>
         <div id="content">
-        <Infinite
-          elementHeight={40}
-          containerHeight={innerHeight}
-          infiniteLoadBeginBottomOffset={100}
-          onInfiniteLoad={this.onInfiniteLoad.bind(this)}
-          loadingSpinnerDelegate={this.elementInfiniteLoad()}
-          isInfiniteLoading={this.props.feed.isInfiniteLoading} >
-        {items}
-      </Infinite>
+            <Infinite
+              elementHeight={40}
+              containerHeight={innerHeight-40}
+              infiniteLoadBeginBottomOffset={100}
+              onInfiniteLoad={this.onInfiniteLoad.bind(this)}
+              loadingSpinnerDelegate={this.elementInfiniteLoad()}
+              isInfiniteLoading={this.props.feed.isInfiniteLoading}
+              className={'items'}>
+                {items}
+            </Infinite>
         </div>
       </div>
     );
