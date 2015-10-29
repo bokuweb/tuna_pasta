@@ -1,8 +1,8 @@
-import * as actions from '../actions/action';
+import * as types from '../constants/action-types';
 
-export default function pasta(state={items:[]}, action) {
+export default function feed(state={items:[]}, action) {
   switch(action.type){
-    case actions.RECIEVE_ITEMS :
+    case types.RECIEVE_ITEMS :
       const items = state.items.concat(action.items);
       return {items : items};
     default:

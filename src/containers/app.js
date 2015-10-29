@@ -1,11 +1,11 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Pasta from '../components/pasta';
-import * as actions from '../actions/action';
+import * as actions from '../actions/feed-action';
 
 function mapStateToProps(state)  {
   return {
-    items : state.items
+    items : state.feed.items
   };
 }
 

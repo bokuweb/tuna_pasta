@@ -1,5 +1,5 @@
 import {createStore,  applyMiddleware} from 'redux';
-import pasta from '../reducers/pasta'
+import reducers from '../reducers'
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 
@@ -9,5 +9,5 @@ export default function configureStore() {
     thunk,
     logger
   )(createStore);
-  return createStoreWithMiddleware(pasta);
+  return createStoreWithMiddleware(reducers);
 }
