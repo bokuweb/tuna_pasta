@@ -36,8 +36,9 @@ export default class Pasta extends Component {
           <div className="item" key={item.link}>
             <img className="favicon" src={favicon} alt="" />
             <a href={item.link} className="item-title">{item.title}</a>
-            <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a>
-            <p className="publish-date">{item.publishedDate}</p>
+            <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
+            <span className="publish-date">{item.publishedDate}</span>
+            <span className="category">{item.categories[0]}</span>
             <p className="content-snippet">{item.contentSnippet}</p>
           </div>
       );
@@ -58,7 +59,7 @@ export default class Pasta extends Component {
             <Infinite
               elementHeight={180}
               containerHeight={this.innerHeight-40}
-              infiniteLoadBeginBottomOffset={100}
+              infiniteLoadBeginBottomOffset={50}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}
               loadingSpinnerDelegate={this.elementInfiniteLoad()}
               isInfiniteLoading={this.props.feed.isInfiniteLoading}
