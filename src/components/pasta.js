@@ -45,7 +45,14 @@ export default class Pasta extends Component {
     return (
       <div id="container">
         <div id="side-menu">
-          a
+          <img id="logo" src="img/logo.png" alt="" />
+          <div id="menu">
+            <ul>
+              <li><i className="fa fa-home" />総合</li>
+              <li><i className="fa fa-heart" />お気に入り</li>
+              <li><i className="fa fa-database" />テクノロジー</li>
+            </ul>
+          </div>
         </div>
         <div id="content">
             <Infinite
