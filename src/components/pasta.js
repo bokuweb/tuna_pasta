@@ -27,6 +27,25 @@ export default class Pasta extends Component {
     );
   }
 
+  getCategoryStyle(category) {
+    switch (category) {
+      case 'テクノロジー' :
+        return {'backgroundColor':'#1ABC9C'};
+      default :
+        return {'backgroundColor':'#8E44AD'};
+    }
+  }
+  // FIXME:
+  unescapeHTML(str) {
+    let div = document.createElement("div");
+    div.innerHTML = str.replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/ /g, "&nbsp;")
+        .replace(/\r/g, "&#13;")
+        .replace(/\n/g, "&#10;");
+    return div.textContent || div.innerText;
+  }
+
   render() {
     const items = this.props.feed.items.map((item) => {
       const favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
@@ -38,8 +57,8 @@ export default class Pasta extends Component {
             <a href={item.link} className="item-title">{item.title}</a>
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
             <span className="publish-date">{item.publishedDate}</span>
-            <span className="category">{item.categories[0]}</span>
-            <p className="content-snippet">{item.contentSnippet}</p>
+            <span className="category" style={this.getCategoryStyle(item.categories[0])}>{item.categories[0]}</span>
+              <p className="content-snippet">{this.unescapeHTML(item.contentSnippet)}</p>
           </div>
       );
     });
