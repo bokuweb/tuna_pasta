@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Infinite from 'react-infinite';
-
-
+import {categories} from '../constants/categories';
 
 export default class Pasta extends Component {
   constructor(props) {
@@ -15,9 +14,8 @@ export default class Pasta extends Component {
     }
   }
   onInfiniteLoad() {
-    console.log("loading")
+    console.log("loading..")
     if (this.props.feed[this.props.feed.keyword].isPageEnd) return;
-    console.log(this.props.feed[this.props.feed.keyword].page);
     this.props.fetchFeed('Elixir', this.props.feed[this.props.feed.keyword].page);
   }
 
@@ -49,14 +47,30 @@ export default class Pasta extends Component {
     return div.textContent || div.innerText;
   }
 
+  onClickKeyword(name) {
+    console.log(name);
+  }
+
+  getKeywordList() {
+    return categories.map((category) => {
+      return (
+        <li>
+          <i className={"fa fa-" + category.icon} />
+          <a href="#" onClick={this.onClickKeyword.bind(this, category.name)}>{category.name_ja}</a>
+        </li>
+      );
+    });
+  }
+
   render() {
-    const items = this.props.feed[this.props.feed.keyword].items.map((item) => {
+    const feed = this.props.feed[this.props.feed.keyword];
+    const items = feed.items.map((item) => {
      const favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
       const hatebuHref = 'http://b.hatena.ne.jp/entry/' + encodeURIComponent(item.link);
       const hatebuImage = 'http://b.hatena.ne.jp/entry/image/' + item.link;
       return (
           <div className="item" key={item.link}>
-            <img className="favicon" src={favicon} alt="" />
+            <img className="favicon" src={favicon} alt="favicon" />
             <a href={item.link} className="item-title">{item.title}</a>
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
             <span className="publish-date">{item.publishedDate}</span>
@@ -73,13 +87,7 @@ export default class Pasta extends Component {
             <ul>
               <li><i className="fa fa-home" />総合</li>
               <li><i className="fa fa-heart" />お気に入り</li>
-              <li className="menu"><i className="fa fa-globe" /><a href="">世の中</a></li>
-              <li><i className="fa fa-bed" />暮らし</li>
-              <li><i className="fa fa-graduation-cap" />学び</li>
-              <li><i className="fa fa-database" />テクノロジー</li>
-              <li><i className="fa fa-tv" />エンタメ</li>
-              <li><i className="fa fa-smile-o" />おもしろ</li>
-              <li><i className="fa fa-gamepad" />アニメとゲーム</li>
+              {this.getKeywordList()}
               <li><i className="fa fa-plus-square"></i>キーワードの追加</li>
             </ul>
           </div>
@@ -91,7 +99,7 @@ export default class Pasta extends Component {
               infiniteLoadBeginBottomOffset={50}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}
               loadingSpinnerDelegate={this.elementInfiniteLoad()}
-              isInfiniteLoading={this.props.feed[this.props.feed.keyword].isInfiniteLoading}
+              isInfiniteLoading={feed.isInfiniteLoading}
               className={'items'}>
                 {items}
             </Infinite>

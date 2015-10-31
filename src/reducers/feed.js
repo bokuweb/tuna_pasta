@@ -1,6 +1,6 @@
 import * as types from '../constants/action-types';
 
-export default function feed(state={keyword:'テクノロジー'}, action) {
+export default function feed(state={keyword:'_technology'}, action) {
   switch(action.type){
     case types.INITIALIZE :
       for (let keyword of action.keywords) {
