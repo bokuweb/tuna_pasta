@@ -1,10 +1,21 @@
 import {fetch} from '../api/feed'
 import * as types from '../constants/action-types';
+// FIXME
+import {categories} from '../constants/categories';
 
 const HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&q='
 
 function getItems(feed) {
   return feed.responseData.feed.entries;
+}
+
+export function initialize() {
+    console.log("initialize..");
+    return {
+      type: types.INITIALIZE,
+      // FIXME:
+      keywords : categories
+    };
 }
 
 export function fetchingItems() {

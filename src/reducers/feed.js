@@ -1,19 +1,25 @@
 import * as types from '../constants/action-types';
 
-export default function feed(state={items : [], page : 0, keyword : 'テクノロジー'}, action) {
+export default function feed(state={keyword:'テクノロジー'}, action) {
   switch(action.type){
+    case types.INITIALIZE :
+      for (let keyword of action.keywords) {
+        state[keyword.name] = {
+          page : 0,
+          items : [],
+          isPageEnd : false,
+          isInfiniteLoading : false
+        };
+      }
+      return state;
     case types.RECIEVE_ITEMS :
-      const items = state.items.concat(action.items);
-      const isPageEnd = action.items.length === 0;
-      const page = state.page + 1;
-      return {
-        items,
-        page,
-        isPageEnd,
-        isInfiniteLoading : false
-      };
+      state[state.keyword].items = state[state.keyword].items.concat(action.items);
+      state[state.keyword].isPageEnd = action.items.length === 0;
+      state[state.keyword].page += 1;
+      state[state.keyword].isInfiniteLoading = false;
+      return state;
     case types.FETCHING_ITEMS :
-      state.isInfiniteLoading = true;
+      state[state.keyword].isInfiniteLoading = true;
       return state;
     default:
       return state;

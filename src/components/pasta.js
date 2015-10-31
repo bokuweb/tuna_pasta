@@ -6,7 +6,7 @@ import Infinite from 'react-infinite';
 export default class Pasta extends Component {
   constructor(props) {
     super(props);
-    console.dir(props)
+    this.props.initialize();
     this.props.fetchFeed('Elixir');
     this.innerHeight = document.documentElement.clientHeight;
     window.onresize = () => {
@@ -15,8 +15,10 @@ export default class Pasta extends Component {
     }
   }
   onInfiniteLoad() {
-    if (this.props.feed.isPageEnd) return;
-    this.props.fetchFeed('Elixir', this.props.feed.page);
+    console.log("loading")
+    if (this.props.feed[this.props.feed.keyword].isPageEnd) return;
+    console.log(this.props.feed[this.props.feed.keyword].page);
+    this.props.fetchFeed('Elixir', this.props.feed[this.props.feed.keyword].page);
   }
 
   elementInfiniteLoad() {
@@ -48,8 +50,8 @@ export default class Pasta extends Component {
   }
 
   render() {
-    const items = this.props.feed.items.map((item) => {
-      const favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
+    const items = this.props.feed[this.props.feed.keyword].items.map((item) => {
+     const favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
       const hatebuHref = 'http://b.hatena.ne.jp/entry/' + encodeURIComponent(item.link);
       const hatebuImage = 'http://b.hatena.ne.jp/entry/image/' + item.link;
       return (
@@ -89,7 +91,7 @@ export default class Pasta extends Component {
               infiniteLoadBeginBottomOffset={50}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}
               loadingSpinnerDelegate={this.elementInfiniteLoad()}
-              isInfiniteLoading={this.props.feed.isInfiniteLoading}
+              isInfiniteLoading={this.props.feed[this.props.feed.keyword].isInfiniteLoading}
               className={'items'}>
                 {items}
             </Infinite>
