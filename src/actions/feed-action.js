@@ -1,8 +1,9 @@
 import {fetch} from '../api/feed'
 import * as types from '../constants/action-types';
 
+const HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&q='
+
 function getItems(feed) {
-  console.dir(feed);
   return feed.responseData.feed.entries;
 }
 
@@ -20,9 +21,9 @@ export function recieveItems(items) {
   };
 }
 
-export function fetchFeed(uri) {
-  console.log(uri);
+export function fetchFeed(keyword, page = 0) {
   return dispatch => {
+    const uri = HATENA_SEARCH_URI + keyword + '&of=' + page * 40;
     fetch(uri).then((feed) => {
       dispatch(recieveItems(getItems(feed)));
     }, (error) => console.log(error));

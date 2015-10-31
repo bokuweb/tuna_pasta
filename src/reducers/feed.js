@@ -1,6 +1,6 @@
 import * as types from '../constants/action-types';
 
-export default function feed(state={items : [], page : 0}, action) {
+export default function feed(state={items : [], page : 0, keyword : 'テクノロジー'}, action) {
   switch(action.type){
     case types.RECIEVE_ITEMS :
       const items = state.items.concat(action.items);

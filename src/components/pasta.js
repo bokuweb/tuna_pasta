@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import Infinite from 'react-infinite';
 
-const HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&q='
+
 
 export default class Pasta extends Component {
   constructor(props) {
     super(props);
-    this.props.fetchFeed(HATENA_SEARCH_URI + '暮らし');
+    console.dir(props)
+    this.props.fetchFeed('Elixir');
     this.innerHeight = document.documentElement.clientHeight;
     window.onresize = () => {
       this.innerHeight = document.documentElement.clientHeight;
@@ -15,7 +16,7 @@ export default class Pasta extends Component {
   }
   onInfiniteLoad() {
     if (this.props.feed.isPageEnd) return;
-    this.props.fetchFeed(HATENA_SEARCH_URI + 'Elixir' + '&of=' + this.props.feed.page * 40);
+    this.props.fetchFeed('Elixir', this.props.feed.page);
   }
 
   elementInfiniteLoad() {
@@ -70,7 +71,14 @@ export default class Pasta extends Component {
             <ul>
               <li><i className="fa fa-home" />総合</li>
               <li><i className="fa fa-heart" />お気に入り</li>
+              <li className="menu"><i className="fa fa-globe" /><a href="">世の中</a></li>
+              <li><i className="fa fa-bed" />暮らし</li>
+              <li><i className="fa fa-graduation-cap" />学び</li>
               <li><i className="fa fa-database" />テクノロジー</li>
+              <li><i className="fa fa-tv" />エンタメ</li>
+              <li><i className="fa fa-smile-o" />おもしろ</li>
+              <li><i className="fa fa-gamepad" />アニメとゲーム</li>
+              <li><i className="fa fa-plus-square"></i>キーワードの追加</li>
             </ul>
           </div>
         </div>
