@@ -6,7 +6,11 @@ export default class Pasta extends Component {
   constructor(props) {
     super(props);
     this.props.initialize();
-    this.props.fetchFeed(this.props.feed.keyword.name);
+    // FIXME pass keyword list to this.props.feed.keywords
+    // and rename this.props.feed.keyword => feed.selectedKeyword orb activeKeyword
+    for (const keyword of categories) {
+      this.props.fetchFeed(keyword.name);
+    }
     this.innerHeight = document.documentElement.clientHeight;
     window.onresize = () => {
       this.innerHeight = document.documentElement.clientHeight;
@@ -15,8 +19,8 @@ export default class Pasta extends Component {
   }
   onInfiniteLoad() {
     console.log("loading..")
-    if (this.props.feed[this.props.feed.keyword.name].isPageEnd) return;
-    this.props.fetchFeed(this.props.feed.keyword.name, this.props.feed[this.props.feed.keyword.name].page);
+    if (this.props.feed[this.props.feed.keyword].isPageEnd) return;
+    this.props.fetchFeed(this.props.feed.keyword, this.props.feed[this.props.feed.keyword].page);
   }
 
   elementInfiniteLoad() {
@@ -47,12 +51,12 @@ export default class Pasta extends Component {
 
   onClickKeyword(name) {
     this.props.onSelectKeyword(name);
-    this.props.fetchFeed(this.props.feed.keyword.name);
+    this.props.fetchFeed(this.props.feed.keyword);
   }
 
   getKeywordList() {
     return categories.map((category) => {
-      const listClassName = category.name === this.props.feed.keyword.name ? 'selected' : '';
+      const listClassName = category.name === this.props.feed.keyword ? 'selected' : '';
       return (
           <li className={listClassName} key={category.name} onClick={this.onClickKeyword.bind(this, category.name)}>
           <i className={"fa fa-" + category.icon} />
@@ -63,9 +67,9 @@ export default class Pasta extends Component {
   }
 
   render() {
-    const feed = this.props.feed[this.props.feed.keyword.name];
+    const feed = this.props.feed[this.props.feed.keyword];
     const items = feed.items.map((item) => {
-     const favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
+      const favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
       const hatebuHref = 'http://b.hatena.ne.jp/entry/' + encodeURIComponent(item.link);
       const hatebuImage = 'http://b.hatena.ne.jp/entry/image/' + item.link;
       return (
