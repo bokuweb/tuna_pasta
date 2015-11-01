@@ -54,7 +54,7 @@ export default class Pasta extends Component {
 
   getKeywordList() {
     return categories.map((category) => {
-      const listClassName = category.name === this.props.feed.keyword ? 'selected' : '';
+      const listClassName = category.name === this.props.feed.keyword.name ? 'selected' : '';
       return (
           <li className={listClassName} key={category.name} onClick={this.onClickKeyword.bind(this, category.name)}>
           <i className={"fa fa-" + category.icon} />

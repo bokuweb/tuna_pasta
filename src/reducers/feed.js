@@ -1,8 +1,9 @@
 import * as types from '../constants/action-types';
+import {categories} from '../constants/categories';
 import _ from 'lodash';
 
 export default function feed(state={}, action) {
-  state.keyword = state.keyword || {name:'_technology', name_ja: 'テクノロジー'};
+  state.keyword = state.keyword || categories[3];
   switch(action.type){
     case types.INITIALIZE :
       for (let keyword of action.keywords) {
