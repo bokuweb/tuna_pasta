@@ -12,6 +12,10 @@ export default function feed(state={keyword:'_technology'}, action) {
         };
       }
       return state;
+    case types.SELECT_KEYWORD :
+      console.log(action.keyword);
+      state.keyword = action.keyword;
+      return state;
     case types.RECIEVE_ITEMS :
       state[state.keyword].items = state[state.keyword].items.concat(action.items);
       state[state.keyword].isPageEnd = action.items.length === 0;
