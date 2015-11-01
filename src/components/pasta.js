@@ -22,9 +22,7 @@ export default class Pasta extends Component {
   elementInfiniteLoad() {
     if (this.props.feed.isPageEnd) return;
     return (
-      <div className="item">
-        Loading...
-      </div>
+      <div className="rect-spinner"></div>
     );
   }
 
