@@ -22,6 +22,7 @@
   "dependencies": {
     "dexie": "^1.2.0",
     "jsonp": "~0.2.0",
+    "lodash": "^3.10.1",
     "react": "~0.14.0",
     "react-dom": "~0.14.0",
     "react-infinite": "~0.5.8",

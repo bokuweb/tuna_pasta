@@ -53,10 +53,13 @@ export default class Pasta extends Component {
 
   getKeywordList() {
     return categories.map((category) => {
+      const listClassName = category.name === this.props.feed.keyword ? 'selected' : '';
       return (
-        <li>
+        <li className={listClassName} key={category.name}>
           <i className={"fa fa-" + category.icon} />
-          <a href="#" onClick={this.onClickKeyword.bind(this, category.name)}>{category.name_ja}</a>
+            <a href="#" onClick={this.onClickKeyword.bind(this, category.name)}>
+            {category.name_ja}
+          </a>
         </li>
       );
     });
@@ -85,8 +88,7 @@ export default class Pasta extends Component {
           <img id="logo" src="img/logo.png" alt="" />
           <div id="menu">
             <ul>
-              <li><i className="fa fa-home" />総合</li>
-              <li><i className="fa fa-heart" />お気に入り</li>
+
               {this.getKeywordList()}
               <li><i className="fa fa-plus-square"></i>キーワードの追加</li>
             </ul>
