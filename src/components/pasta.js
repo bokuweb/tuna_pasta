@@ -6,7 +6,7 @@ export default class Pasta extends Component {
   constructor(props) {
     super(props);
     this.props.initialize();
-    this.props.fetchFeed('Elixir');
+    this.props.fetchFeed(this.props.feed.keyword);
     this.innerHeight = document.documentElement.clientHeight;
     window.onresize = () => {
       this.innerHeight = document.documentElement.clientHeight;
@@ -16,7 +16,7 @@ export default class Pasta extends Component {
   onInfiniteLoad() {
     console.log("loading..")
     if (this.props.feed[this.props.feed.keyword].isPageEnd) return;
-    this.props.fetchFeed('Elixir', this.props.feed[this.props.feed.keyword].page);
+    this.props.fetchFeed(this.props.feed.keyword, this.props.feed[this.props.feed.keyword].page);
   }
 
   elementInfiniteLoad() {
@@ -55,11 +55,9 @@ export default class Pasta extends Component {
     return categories.map((category) => {
       const listClassName = category.name === this.props.feed.keyword ? 'selected' : '';
       return (
-        <li className={listClassName} key={category.name}>
+        <li className={listClassName} key={category.name} onClick={this.onClickKeyword.bind(this, category.name)}>
           <i className={"fa fa-" + category.icon} />
-            <a href="#" onClick={this.onClickKeyword.bind(this, category.name)}>
-            {category.name_ja}
-          </a>
+          {category.name_ja}
         </li>
       );
     });
