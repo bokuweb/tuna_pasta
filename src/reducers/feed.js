@@ -1,6 +1,8 @@
 import * as types from '../constants/action-types';
+import _ from 'lodash';
 
-export default function feed(state={keyword:'_technology'}, action) {
+export default function feed(state={}, action) {
+  state.keyword = state.keyword || {name:'_technology', name_ja: 'テクノロジー'};
   switch(action.type){
     case types.INITIALIZE :
       for (let keyword of action.keywords) {
@@ -10,20 +12,26 @@ export default function feed(state={keyword:'_technology'}, action) {
           isPageEnd : false,
           isInfiniteLoading : false
         };
+        state.isDefaultCategory = true;
       }
       return state;
     case types.SELECT_KEYWORD :
-      console.log(action.keyword);
       state.keyword = action.keyword;
+      state.isDefaultCategory = action.isDefault;
       return state;
     case types.RECIEVE_ITEMS :
-      state[state.keyword].items = state[state.keyword].items.concat(action.items);
-      state[state.keyword].isPageEnd = action.items.length === 0;
-      state[state.keyword].page += 1;
-      state[state.keyword].isInfiniteLoading = false;
+      let items = action.items;
+      if (state.isDefaultCategory) {
+        items = _.filter(items, (item) => item.categories[0] === state.keyword.name_ja);
+      }
+      state[state.keyword.name].items = state[state.keyword.name].items.concat(items);
+      state[state.keyword.name].isPageEnd = action.items.length === 0;
+      state[state.keyword.name].page += 1;
+      state[state.keyword.name].isInfiniteLoading = false;
       return state;
     case types.FETCHING_ITEMS :
-      state[state.keyword].isInfiniteLoading = true;
+      console.log(state.keyword.name);
+      state[state.keyword.name].isInfiniteLoading = true;
       return state;
     default:
       return state;

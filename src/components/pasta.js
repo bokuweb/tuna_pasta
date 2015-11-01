@@ -6,7 +6,7 @@ export default class Pasta extends Component {
   constructor(props) {
     super(props);
     this.props.initialize();
-    this.props.fetchFeed(this.props.feed.keyword);
+    this.props.fetchFeed(this.props.feed.keyword.name);
     this.innerHeight = document.documentElement.clientHeight;
     window.onresize = () => {
       this.innerHeight = document.documentElement.clientHeight;
@@ -15,8 +15,8 @@ export default class Pasta extends Component {
   }
   onInfiniteLoad() {
     console.log("loading..")
-    if (this.props.feed[this.props.feed.keyword].isPageEnd) return;
-    this.props.fetchFeed(this.props.feed.keyword, this.props.feed[this.props.feed.keyword].page);
+    if (this.props.feed[this.props.feed.keyword.name].isPageEnd) return;
+    this.props.fetchFeed(this.props.feed.keyword.name, this.props.feed[this.props.feed.keyword.name].page);
   }
 
   elementInfiniteLoad() {
@@ -49,7 +49,7 @@ export default class Pasta extends Component {
 
   onClickKeyword(name) {
     this.props.onSelectKeyword(name);
-    this.props.fetchFeed(this.props.feed.keyword);
+    this.props.fetchFeed(this.props.feed.keyword.name);
   }
 
   getKeywordList() {
@@ -65,7 +65,7 @@ export default class Pasta extends Component {
   }
 
   render() {
-    const feed = this.props.feed[this.props.feed.keyword];
+    const feed = this.props.feed[this.props.feed.keyword.name];
     const items = feed.items.map((item) => {
      const favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
       const hatebuHref = 'http://b.hatena.ne.jp/entry/' + encodeURIComponent(item.link);
