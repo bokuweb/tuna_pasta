@@ -8,9 +8,9 @@ export default class Pasta extends Component {
     this.props.initialize();
     // FIXME pass keyword list to this.props.feed.keywords
     // and rename this.props.feed.keyword => feed.selectedKeyword orb activeKeyword
-    for (const keyword of categories) {
-      this.props.fetchFeed(keyword.name);
-    }
+    //for (const keyword of categories) {
+      //this.props.fetchFeed(keyword.name);
+    //}
     this.innerHeight = document.documentElement.clientHeight;
     window.onresize = () => {
       this.innerHeight = document.documentElement.clientHeight;
@@ -19,8 +19,8 @@ export default class Pasta extends Component {
   }
   onInfiniteLoad() {
     console.log("loading..")
-    if (this.props.feed[this.props.feed.keyword].isPageEnd) return;
-    this.props.fetchFeed(this.props.feed.keyword, this.props.feed[this.props.feed.keyword].page);
+    if (this.props.feed[this.props.feed.keyword.name].isPageEnd) return;
+    this.props.fetchFeed(this.props.feed.keyword.name, this.props.feed[this.props.feed.keyword.name].page);
   }
 
   elementInfiniteLoad() {
@@ -51,23 +51,33 @@ export default class Pasta extends Component {
 
   onClickKeyword(name) {
     this.props.onSelectKeyword(name);
-    this.props.fetchFeed(this.props.feed.keyword);
+    this.props.fetchFeed(this.props.feed.keyword.name);
   }
 
   getKeywordList() {
-    return categories.map((category) => {
-      const listClassName = category.name === this.props.feed.keyword ? 'selected' : '';
+    console.dir(this.props.feed.keywords)
+    return this.props.feed.keywords.map((keyword) => {
+      const listClassName = keyword.name === this.props.feed.keyword.name ? 'selected' : '';
       return (
-          <li className={listClassName} key={category.name} onClick={this.onClickKeyword.bind(this, category.name)}>
-          <i className={"fa fa-" + category.icon} />
-          {category.name_ja}
+          <li className={listClassName}
+              key={keyword.name}
+              onClick={this.onClickKeyword.bind(this, keyword.name)}>
+          <i className={"fa fa-" + keyword.icon} />
+          {keyword.name}
         </li>
       );
     });
   }
 
   render() {
-    const feed = this.props.feed[this.props.feed.keyword];
+    if (!this.props.feed.isInitialized) {
+      return (
+        <div className="rect-spinner"></div>
+      );
+    }
+    //console.log(this.props.feed.keyword);
+    //console.dir(this.props.feed.keywords)
+    const feed = this.props.feed[this.props.feed.keyword.name];
     const items = feed.items.map((item) => {
       const favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
       const hatebuHref = 'http://b.hatena.ne.jp/entry/' + encodeURIComponent(item.link);
@@ -89,7 +99,6 @@ export default class Pasta extends Component {
           <img id="logo" src="img/logo.png" alt="" />
           <div id="menu">
             <ul>
-
               {this.getKeywordList()}
               <li><i className="fa fa-plus-square"></i>キーワードの追加</li>
             </ul>

@@ -6,6 +6,6 @@ export function onSelectKeyword(keyword) {
     type: types.SELECT_KEYWORD,
     keyword,
     // FIXME
-    isDefault : true
+    //isDefault : true
   };
 }
