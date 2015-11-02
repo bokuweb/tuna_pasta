@@ -27,6 +27,8 @@ export function initialize() {
         console.log("Already populated");
       } else {
         db.keywords.add({name: 'Elixir', enable: 1, icon:'tag'});
+        db.keywords.add({name: 'JavaScript', enable: 1, icon:'tag'});
+        db.keywords.add({name: 'React', enable: 1, icon:'tag'});
         console.log("Database is empty. Populating from ajax call...");
         db.keywords.toArray((keywords) => {
           dispatch({

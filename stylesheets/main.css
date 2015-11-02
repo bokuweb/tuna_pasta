@@ -53,14 +53,14 @@ a {
 }
 #side-menu #menu {
   color: #ecf0f1;
-  border-top: 1px solid #1970a9;
 }
 #side-menu #menu ul {
   padding: 0;
 }
 #side-menu #menu li {
-  margin: 5px 0 0 0;
-  padding: 2px 0 2px 60px;
+  font-size: 16px;
+  margin: 5px 0 8px 0;
+  padding: 6px 0 6px 60px;
   border-radius: 0 4px 4px 0;
   width: 200px;
   transition: all 0.2s ease;
@@ -72,6 +72,7 @@ a {
 }
 #side-menu #menu li.selected {
   background: #34495e;
+  padding: 6px 0 6px 60px;
 }
 #side-menu #menu li:not(.selected):hover {
   background: #d35400;
@@ -79,6 +80,10 @@ a {
 #side-menu #menu i {
   font-size: 11px;
   margin: -1px 30px 0 0;
+}
+div.slider {
+  width: 80%;
+  margin: 0 auto;
 }
 #content {
   flex: 1;
@@ -101,7 +106,7 @@ a {
   font-size: 95%;
 }
 .item {
-  min-height: 180px;
+  min-height: 140px;
   max-width: 800px;
   padding: 20px 0 0 0;
 }
@@ -125,13 +130,13 @@ a {
 .item .content-snippet {
   color: #7f8c8d;
   font-size: 90%;
-  padding: 20px 0 40px 0;
+  padding: 10px 0 30px 0;
   border-bottom: solid 1px #ddd;
   line-height: 20px;
   word-break: break-all;
 }
 .items {
-  padding: 40px 30px 0 30px;
+  padding: 20px 30px 0 30px;
 }
 @media screen and (max-device-width: 768px) {
   #side-menu {

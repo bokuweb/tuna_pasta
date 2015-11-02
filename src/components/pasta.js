@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import Infinite from 'react-infinite';
-import {categories} from '../constants/categories';
+import Mui from 'material-ui';
+//import {categories} from '../constants/categories';
+
+const TextField = Mui.TextField;
+const Slider = Mui.Slider;
 
 export default class Pasta extends Component {
   constructor(props) {
@@ -19,8 +23,8 @@ export default class Pasta extends Component {
   }
   onInfiniteLoad() {
     console.log("loading..")
-    if (this.props.feed[this.props.feed.keyword.name].isPageEnd) return;
-    this.props.fetchFeed(this.props.feed.keyword.name, this.props.feed[this.props.feed.keyword.name].page);
+    if (this.props.feed[this.props.feed.keyword].isPageEnd) return;
+    this.props.fetchFeed(this.props.feed.keyword, this.props.feed[this.props.feed.keyword].page);
   }
 
   elementInfiniteLoad() {
@@ -50,14 +54,15 @@ export default class Pasta extends Component {
   }
 
   onClickKeyword(name) {
+    console.log(name);
     this.props.onSelectKeyword(name);
-    this.props.fetchFeed(this.props.feed.keyword.name);
+    this.props.fetchFeed(this.props.feed.keyword);
   }
 
   getKeywordList() {
     console.dir(this.props.feed.keywords)
     return this.props.feed.keywords.map((keyword) => {
-      const listClassName = keyword.name === this.props.feed.keyword.name ? 'selected' : '';
+      const listClassName = keyword.name === this.props.feed.keyword ? 'selected' : '';
       return (
           <li className={listClassName}
               key={keyword.name}
@@ -77,7 +82,7 @@ export default class Pasta extends Component {
     }
     //console.log(this.props.feed.keyword);
     //console.dir(this.props.feed.keywords)
-    const feed = this.props.feed[this.props.feed.keyword.name];
+    const feed = this.props.feed[this.props.feed.keyword];
     const items = feed.items.map((item) => {
       const favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
       const hatebuHref = 'http://b.hatena.ne.jp/entry/' + encodeURIComponent(item.link);
@@ -97,16 +102,20 @@ export default class Pasta extends Component {
       <div id="container">
         <div id="side-menu">
           <img id="logo" src="img/logo.png" alt="" />
+          <div className="slider">
+            <Slider name="slider"
+                    defaultValue={1}
+                    style={sliderStyle} />
+          </div>
           <div id="menu">
             <ul>
               {this.getKeywordList()}
-              <li><i className="fa fa-plus-square"></i>キーワードの追加</li>
             </ul>
           </div>
         </div>
         <div id="content">
             <Infinite
-              elementHeight={180}
+              elementHeight={140}
               containerHeight={this.innerHeight-40}
               infiniteLoadBeginBottomOffset={50}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}
@@ -120,3 +129,13 @@ export default class Pasta extends Component {
     );
   }
 }
+
+
+const sliderStyle = {
+  root : {
+    background : '#fff'
+  },
+    filled : {
+        background : '#fff'
+    }
+};

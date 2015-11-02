@@ -26,7 +26,7 @@ export default function feed(state={}, action) {
       }
       state.keywords = action.keywords;
       // TODO : rename ketword => selectedKeyword
-      state.keyword = action.keywords[0];
+      state.keyword = action.keywords[0].name;
       //console.log(state.keyword);
       //state.isDefaultCategory = true;
       state.isInitialized = true;
