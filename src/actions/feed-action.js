@@ -2,8 +2,6 @@ import _ from 'lodash';
 import Dexie from 'dexie';
 import {fetch} from '../api/feed'
 import * as types from '../constants/action-types';
-// FIXME
-import {categories} from '../constants/categories';
 
 const HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&safe=off&q='
 const ITEM_NUM_PER_PAGE = 40;

@@ -57845,10 +57845,6 @@ var _constantsActionTypes = require('../constants/action-types');
 
 var types = _interopRequireWildcard(_constantsActionTypes);
 
-// FIXME
-
-var _constantsCategories = require('../constants/categories');
-
 var HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&safe=off&q=';
 var ITEM_NUM_PER_PAGE = 40;
 
@@ -57952,38 +57948,37 @@ function _fetchFeed(dispatch, keyword) {
   dispatch(fetchingItems(keyword));
 }
 
-},{"../api/feed":350,"../constants/action-types":352,"../constants/categories":353,"dexie":1,"lodash":6}],349:[function(require,module,exports){
+},{"../api/feed":350,"../constants/action-types":352,"dexie":1,"lodash":6}],349:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
 exports.onSelectKeyword = onSelectKeyword;
+exports.onChangeBookmarkFilter = onChangeBookmarkFilter;
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-var _lodash = require('lodash');
-
-var _lodash2 = _interopRequireDefault(_lodash);
 
 var _constantsActionTypes = require('../constants/action-types');
 
 var types = _interopRequireWildcard(_constantsActionTypes);
 
 function onSelectKeyword(keyword) {
-  console.log(keyword);
   return {
     type: types.SELECT_KEYWORD,
     keyword: keyword
   };
 }
 
-// FIXME
-//isDefault : true
+function onChangeBookmarkFilter(value, x) {
+  return {
+    type: types.CHANGE_BOOKMARK_FILTER,
+    value: value,
+    x: x
+  };
+}
 
-},{"../constants/action-types":352,"lodash":6}],350:[function(require,module,exports){
+},{"../constants/action-types":352}],350:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58039,13 +58034,11 @@ var _materialUi2 = _interopRequireDefault(_materialUi);
 
 var _libUtils = require('../lib/utils');
 
+var FAVICON_URI = 'http://cdn-ak.favicon.st-hatena.com/?url=';
+var ENTRY_URI = 'http://b.hatena.ne.jp/entry/';
+var BOOKMARK_IMAGE_URI = ENTRY_URI + 'image/';
 var TextField = _materialUi2['default'].TextField;
 var Slider = _materialUi2['default'].Slider;
-var sliderStyle = {
-  handle: {
-    backgroundColor: '#fff'
-  }
-};
 
 var Pasta = (function (_Component) {
   _inherits(Pasta, _Component);
@@ -58066,8 +58059,8 @@ var Pasta = (function (_Component) {
 
   _createClass(Pasta, [{
     key: 'onSliderChange',
-    value: function onSliderChange(e) {
-      console.dir(e.clientX);
+    value: function onSliderChange(e, value) {
+      this.props.onChangeBookmarkFilter(~ ~value, e.clientX);
     }
   }, {
     key: 'onInfiniteLoad',
@@ -58126,9 +58119,9 @@ var Pasta = (function (_Component) {
 
       var feed = this.props.feed[this.props.menu.activeKeyword];
       var items = feed.items.map(function (item) {
-        var favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
-        var hatebuHref = 'http://b.hatena.ne.jp/entry/' + encodeURIComponent(item.link);
-        var hatebuImage = 'http://b.hatena.ne.jp/entry/image/' + item.link;
+        var favicon = FAVICON_URI + encodeURIComponent(item.link);
+        var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
+        var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
         return _react2['default'].createElement(
           'div',
           { className: 'item', key: item.link },
@@ -58161,6 +58154,10 @@ var Pasta = (function (_Component) {
           )
         );
       });
+      var x = this.props.menu.bookmarkFilterX - 24;
+      if (x > 220) x = 220;
+      if (x < 10) x = 10;
+      var style = { left: x };
       return _react2['default'].createElement(
         'div',
         { id: 'container' },
@@ -58171,12 +58168,16 @@ var Pasta = (function (_Component) {
           _react2['default'].createElement(
             'div',
             { className: 'slider' },
+            _react2['default'].createElement(
+              'div',
+              { className: 'bookmark-filter', style: style },
+              this.props.menu.bookmarkFilter
+            ),
             _react2['default'].createElement(Slider, { name: 'slider',
               defaultValue: 1,
               onChange: this.onSliderChange.bind(this),
               max: 250,
-              min: 1,
-              style: sliderStyle })
+              min: 1 })
           ),
           _react2['default'].createElement(
             'div',
@@ -58228,7 +58229,7 @@ var Pasta = (function (_Component) {
 exports['default'] = Pasta;
 module.exports = exports['default'];
 
-},{"../lib/utils":356,"material-ui":43,"react":335,"react-infinite":156}],352:[function(require,module,exports){
+},{"../lib/utils":355,"material-ui":43,"react":335,"react-infinite":156}],352:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58245,17 +58246,10 @@ var FETCHING_ITEMS = 'FETCHING_ITEMS';
 exports.FETCHING_ITEMS = FETCHING_ITEMS;
 var SELECT_KEYWORD = 'SELECT_KEYWORD';
 exports.SELECT_KEYWORD = SELECT_KEYWORD;
+var CHANGE_BOOKMARK_FILTER = 'CHANGE_BOOKMARK_FILTER';
+exports.CHANGE_BOOKMARK_FILTER = CHANGE_BOOKMARK_FILTER;
 
 },{}],353:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
-var categories = [{ name: '_synthesis', name_ja: '総合', icon: 'home', color: '#1ABC9C' }, { name: '_favorite', name_ja: 'お気に入り', icon: 'heart', color: '#1ABC9C' }, { name: '_society', name_ja: '世の中', icon: 'globe', color: '#1ABC9C' }, { name: '_living', name_ja: '暮らし', icon: 'bed', color: '#1ABC9C' }, { name: '_study', name_ja: '学び', icon: 'graduation-cap', color: '#1ABC9C' }, { name: '_technology', name_ja: 'テクノロジー', icon: 'database', color: '#1ABC9C' }, { name: '_entertainment', name_ja: 'エンタメ', icon: 'tv', color: '#1ABC9C' }, { name: '_fun', name_ja: 'おもしろ', icon: 'smile-o', color: '#1ABC9C' }, { name: '_game', name_ja: 'アニメとゲーム', icon: 'gamepad', color: '#1ABC9C' }];
-exports.categories = categories;
-
-},{}],354:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58299,7 +58293,7 @@ function mapDispatchToProps(dispatch) {
 exports['default'] = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_componentsPasta2['default']);
 module.exports = exports['default'];
 
-},{"../actions/feed-action":348,"../actions/menu":349,"../components/pasta":351,"lodash":6,"react-redux":167,"redux":339}],355:[function(require,module,exports){
+},{"../actions/feed-action":348,"../actions/menu":349,"../components/pasta":351,"lodash":6,"react-redux":167,"redux":339}],354:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -58332,7 +58326,7 @@ var store = (0, _storesConfigureStore2['default'])();
   _react2['default'].createElement(_containersApp2['default'], null)
 ), document.getElementById('pasta'));
 
-},{"./components/pasta":351,"./containers/app":354,"./stores/configure-store":360,"react":335,"react-dom":152,"react-redux":167}],356:[function(require,module,exports){
+},{"./components/pasta":351,"./containers/app":353,"./stores/configure-store":359,"react":335,"react-dom":152,"react-redux":167}],355:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -58346,7 +58340,7 @@ function unescapeHTML(str) {
     return div.textContent || div.innerText;
 }
 
-},{}],357:[function(require,module,exports){
+},{}],356:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58410,10 +58404,8 @@ function feed(state, action) {
 
       state.all = createProps();
       state.favorite = createProps();
-      //state.keywords = action.keywords;
-      //state.activeKeyword = action.keywords[0].name;
       state.isInitialized = true;
-      return Object.assign({}, {}, state);
+      return Object.assign({}, state);
 
     case types.RECIEVE_ITEMS:
       var items = action.items;
@@ -58423,11 +58415,11 @@ function feed(state, action) {
       state[keyword].isPageEnd = items.length === 0;
       state[keyword].page += 1;
       state[keyword].isInfiniteLoading = false;
-      return Object.assign({}, {}, state);
+      return Object.assign({}, state);
 
     case types.FETCHING_ITEMS:
       state[action.keyword].isInfiniteLoading = true;
-      return Object.assign({}, {}, state);
+      return Object.assign({}, state);
 
     default:
       return state;
@@ -58436,7 +58428,7 @@ function feed(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":352,"lodash":6}],358:[function(require,module,exports){
+},{"../constants/action-types":352,"lodash":6}],357:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58463,7 +58455,7 @@ var rootReducer = (0, _redux.combineReducers)({
 exports['default'] = rootReducer;
 module.exports = exports['default'];
 
-},{"./feed":357,"./menu":359,"redux":339}],359:[function(require,module,exports){
+},{"./feed":356,"./menu":358,"redux":339}],358:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58484,11 +58476,17 @@ function menu(state, action) {
     case types.INITIALIZE:
       state.keywords = action.keywords;
       state.activeKeyword = action.keywords[0].name;
-      return Object.assign({}, {}, state);
+      state.bookmarkFilter = 1;
+      return Object.assign({}, state);
 
     case types.SELECT_KEYWORD:
       state.activeKeyword = action.keyword;
-      return Object.assign({}, {}, state);
+      return Object.assign({}, state);
+
+    case types.CHANGE_BOOKMARK_FILTER:
+      state.bookmarkFilter = action.value;
+      state.bookmarkFilterX = action.x;
+      return Object.assign({}, state);
 
     default:
       return state;
@@ -58497,7 +58495,7 @@ function menu(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":352}],360:[function(require,module,exports){
+},{"../constants/action-types":352}],359:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58529,4 +58527,4 @@ function configureStore() {
 
 module.exports = exports['default'];
 
-},{"../reducers":358,"redux":339,"redux-logger":336,"redux-thunk":337}]},{},[355]);
+},{"../reducers":357,"redux":339,"redux-logger":336,"redux-thunk":337}]},{},[354]);

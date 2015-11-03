@@ -21,10 +21,8 @@ export default function feed(state={}, action) {
       }
       state.all = createProps();
       state.favorite = createProps();
-      //state.keywords = action.keywords;
-      //state.activeKeyword = action.keywords[0].name;
       state.isInitialized = true;
-      return Object.assign({}, {}, state);
+      return Object.assign({}, state);
 
     case types.RECIEVE_ITEMS :
       const items = action.items;
@@ -34,11 +32,11 @@ export default function feed(state={}, action) {
       state[keyword].isPageEnd = items.length === 0;
       state[keyword].page += 1;
       state[keyword].isInfiniteLoading = false;
-      return Object.assign({}, {}, state);
+      return Object.assign({}, state);
 
     case types.FETCHING_ITEMS :
       state[action.keyword].isInfiniteLoading = true;
-      return Object.assign({}, {}, state);
+      return Object.assign({}, state);
 
     default:
       return state;

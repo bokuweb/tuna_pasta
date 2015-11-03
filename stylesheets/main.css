@@ -47,7 +47,7 @@ a {
   font-size: 14px;
 }
 #side-menu #logo {
-  width: 200px;
+  width: 180px;
   height: auto;
   margin: 20px auto 0 30px;
 }
@@ -86,8 +86,33 @@ a {
   margin: -1px 30px 0 0;
 }
 div.slider {
-  width: 80%;
+  width: 100%;
   margin: 0 auto;
+  position: relative;
+  padding: 15px 0 0 0;
+}
+div.slider div[name="slider"] {
+  width: 70%;
+  margin: 0 0 0 15%;
+}
+div.slider .bookmark-filter {
+  background: #34495e;
+  padding: 5px;
+  width: 40px;
+  position: absolute;
+  top: 0;
+  left: 10%;
+  border-radius: 4px;
+  text-align: center;
+}
+div.slider .bookmark-filter:after {
+  content: '';
+  position: absolute;
+  border-top: 10px solid #34495e;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  bottom: -9px;
+  left: 20px;
 }
 #content {
   flex: 1;

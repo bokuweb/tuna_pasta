@@ -3,13 +3,11 @@ import Infinite from 'react-infinite';
 import Mui from 'material-ui';
 import {unescapeHTML} from '../lib/utils';
 
+const FAVICON_URI = 'http://cdn-ak.favicon.st-hatena.com/?url=';
+const ENTRY_URI = 'http://b.hatena.ne.jp/entry/';
+const BOOKMARK_IMAGE_URI = ENTRY_URI + 'image/';
 const TextField = Mui.TextField;
 const Slider = Mui.Slider;
-const sliderStyle = {
-  handle : {
-    backgroundColor: '#fff'
-  }
-};
 
 export default class Pasta extends Component {
   constructor(props) {
@@ -22,8 +20,8 @@ export default class Pasta extends Component {
     }
   }
 
-  onSliderChange(e) {
-    console.dir(e.clientX);
+  onSliderChange(e, value) {
+    this.props.onChangeBookmarkFilter(~~value, e.clientX);
   }
 
   onInfiniteLoad() {
@@ -72,9 +70,9 @@ export default class Pasta extends Component {
 
     const feed = this.props.feed[this.props.menu.activeKeyword];
     const items = feed.items.map((item) => {
-      const favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
-      const hatebuHref = 'http://b.hatena.ne.jp/entry/' + encodeURIComponent(item.link);
-      const hatebuImage = 'http://b.hatena.ne.jp/entry/image/' + item.link;
+      const favicon = FAVICON_URI + encodeURIComponent(item.link);
+      const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
+      const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
       return (
           <div className="item" key={item.link}>
             <img className="favicon" src={favicon} alt="favicon" />
@@ -86,17 +84,21 @@ export default class Pasta extends Component {
           </div>
       );
     });
+    let x = this.props.menu.bookmarkFilterX - 24;
+    if (x > 220) x = 220;
+    if (x < 10) x = 10;
+      const style = {left:x};
     return (
       <div id="container">
         <div id="side-menu">
           <img id="logo" src="img/logo.png" alt="" />
           <div className="slider">
+            <div className="bookmark-filter" style={style}>{this.props.menu.bookmarkFilter}</div>
             <Slider name="slider"
                     defaultValue={1}
                     onChange={this.onSliderChange.bind(this)}
                     max={250}
-                    min={1}
-                    style={sliderStyle} />
+                    min={1} />
           </div>
           <div id="menu">
             <ul>
