@@ -2,15 +2,17 @@ import _ from 'lodash';
 import Dexie from 'dexie';
 import {fetch} from '../api/feed'
 import * as types from '../constants/action-types';
-// FIXME
-import {categories} from '../constants/categories';
 
-const HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&q='
+const HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&safe=off&q='
 const ITEM_NUM_PER_PAGE = 40;
 
 const db = new Dexie('Pasta');
 
 function getItems(feed) {
+  if (feed.responseData.feed === undefined) {
+    console.log("feed none");
+    return [];
+  }
   return feed.responseData.feed.entries;
 }
 
@@ -27,13 +29,15 @@ export function initialize() {
         console.log("Already populated");
       } else {
         db.keywords.add({name: 'Elixir', enable: 1, icon:'tag'});
+        db.keywords.add({name: 'JavaScript', enable: 1, icon:'tag'});
+        db.keywords.add({name: 'React', enable: 1, icon:'tag'});
         console.log("Database is empty. Populating from ajax call...");
         db.keywords.toArray((keywords) => {
           dispatch({
             type: types.INITIALIZE,
             keywords
           });
-          _fetchFeed(dispatch, keywords[0].name, 0);
+          _fetchFeed(dispatch, keywords[0].name, 0, 1);
         });
       }
     });
@@ -50,11 +54,6 @@ export function fetchingItems(keyword) {
 }
 
 export function recieveItems(items, keyword) {
-    /*items = _.map(items, (item) => {
-      item.publishedDate = new Date(item.publishedDate).getTime();
-      return item;
-    });
-    console.dir(items);*/
   return {
     type: types.RECIEVE_ITEMS,
     items,
@@ -62,12 +61,33 @@ export function recieveItems(items, keyword) {
   };
 }
 
-export function fetchFeed(keyword, page = 0) {
-  return dispatch => _fetchFeed(dispatch, keyword, page);
+export function clearFeeds(menu) {
+  return {
+    type: types.CLEAR_ITEMS,
+    keywords : menu.keywords
+  };
 }
 
-function _fetchFeed(dispatch, keyword, page = 0) {
-  const uri = HATENA_SEARCH_URI + keyword + '&of=' + page * ITEM_NUM_PER_PAGE;
+export function fetchFeed(feed, menu) {
+  return dispatch => {
+    const keyword = menu.activeKeyword;
+    let page;
+    if (keyword === 'all') {
+      for (let keyword of menu.keywords) {
+        page = feed[keyword.name].page;
+        _fetchFeed(dispatch, keyword.name, page, menu.bookmarkFilter);
+      }
+    } else {
+      page = feed[keyword].page;
+        _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
+    }
+  }
+}
+
+function _fetchFeed(dispatch, keyword, page = 0, threshold) {
+  console.log("threshold" + threshold);
+  const uri = HATENA_SEARCH_URI + keyword + '&of=' + page * ITEM_NUM_PER_PAGE + '&users=' + threshold;
+    console.log(uri);
   fetch(uri).then((feed) => {
     dispatch(recieveItems(getItems(feed), keyword));
   }, (error) => console.log(error));

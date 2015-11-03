@@ -1,66 +1,51 @@
 import * as types from '../constants/action-types';
-import {categories} from '../constants/categories';
 import _ from 'lodash';
 
-//function getJpNameOfCategory(word) {
-//  return _.filter(categories, (category) => category.name === word)[0].name_ja;
-//}
+function createProps() {
+  return {
+    page : 0,
+    items : [],
+    isPageEnd : false,
+    isInfiniteLoading : false
+  };
+}
 
 export default function feed(state={}, action) {
-  //state.keyword = state.keyword || s[0].name;
   switch(action.type){
     case types.INITIALIZING :
-      state.isInitialized = false;
-      console.log("initializing..");
-      return state;
+      return {isInitialized : false};
 
     case types.INITIALIZE :
       console.log("initialized..");
       for (let keyword of action.keywords) {
-        state[keyword.name] = {
-          page : 0,
-          items : [],
-          isPageEnd : false,
-          isInfiniteLoading : false
-        };
+       state[keyword.name] = createProps();
       }
-      state.keywords = action.keywords;
-      // TODO : rename ketword => selectedKeyword
-      state.keyword = action.keywords[0];
-      //console.log(state.keyword);
-      //state.isDefaultCategory = true;
+      state.all = createProps();
+      state.favorite = createProps();
       state.isInitialized = true;
-      return state;
-
-    case types.SELECT_KEYWORD :
-      state.keyword = action.keyword;
-      //state.isDefaultCategory = action.isDefault;
-      return state;
+      return Object.assign({}, state);
 
     case types.RECIEVE_ITEMS :
-      let items = action.items;
-      //if (state.isDefaultCategory) {
-        // FIXME : getter japanese category name
-      //  items = _.filter(items, (item) => {
-      //    const name_ja = getJpNameOfCategory(action.keyword);
-      //    return item.categories[0] === name_ja;
-      //  });
-      //}
-      //state._synthesis.items = state._synthesis.items.concat(action.items);
-      //state._synthesis.items = _.sortBy(state._synthesis.items, (item) => {
-      //    return -(new Date(item.publishedDate).getTime());
-      //});
-      console.log(action.keyword);
-      //debugger;
-      state[action.keyword].items = state[action.keyword].items.concat(items);
-      state[action.keyword].isPageEnd = action.items.length === 0;
-      state[action.keyword].page += 1;
-      state[action.keyword].isInfiniteLoading = false;
-      return state;
+      const items = action.items;
+      const keyword = action.keyword;
+      state.all.items = state.all.items.concat(items);
+      state[keyword].items = state[keyword].items.concat(items);
+      state[keyword].isPageEnd = items.length === 0;
+      state[keyword].page += 1;
+      state[keyword].isInfiniteLoading = false;
+      console.log(state[keyword].isPageEnd);
+      return Object.assign({}, state);
+
+  case types.CLEAR_ITEMS :
+      state.all.items = [];
+      for (let keyword of action.keywords) {
+        state[keyword.name] = createProps();
+      }
+      return Object.assign({}, state);
 
     case types.FETCHING_ITEMS :
       state[action.keyword].isInfiniteLoading = true;
-      return state;
+      return Object.assign({}, state);
 
     default:
       return state;

@@ -47,38 +47,72 @@ a {
   font-size: 14px;
 }
 #side-menu #logo {
-  width: 200px;
+  width: 180px;
   height: auto;
   margin: 20px auto 0 30px;
 }
 #side-menu #menu {
   color: #ecf0f1;
-  border-top: 1px solid #1970a9;
 }
 #side-menu #menu ul {
   padding: 0;
 }
 #side-menu #menu li {
-  margin: 5px 0 0 0;
-  padding: 2px 0 2px 60px;
+  font-size: 16px;
+  margin: 5px 0 8px 0;
+  padding: 0px 0 0px 60px;
+  line-height: 32px;
   border-radius: 0 4px 4px 0;
   width: 200px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   cursor: pointer;
+  height: 32px;
 }
 #side-menu #menu li a {
   color: #fff;
   width: 100%;
 }
 #side-menu #menu li.selected {
+  font-size: 16px;
+  margin: 5px 0 8px 0;
   background: #34495e;
+  padding: 0 0 0 60px;
 }
 #side-menu #menu li:not(.selected):hover {
   background: #d35400;
 }
 #side-menu #menu i {
-  font-size: 11px;
+  font-size: 12px;
   margin: -1px 30px 0 0;
+}
+div.slider {
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  padding: 15px 0 0 0;
+}
+div.slider div[name="slider"] {
+  width: 70%;
+  margin: 0 0 0 15%;
+}
+div.slider .bookmark-filter {
+  background: #34495e;
+  padding: 5px;
+  width: 40px;
+  position: absolute;
+  top: 0;
+  left: 10px;
+  border-radius: 4px;
+  text-align: center;
+}
+div.slider .bookmark-filter:after {
+  content: '';
+  position: absolute;
+  border-top: 10px solid #34495e;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  bottom: -9px;
+  left: 20px;
 }
 #content {
   flex: 1;
@@ -97,11 +131,12 @@ a {
   margin: 0px 0 -2px 5px;
 }
 #content a.item-title {
-  line-height: 20px;
+  line-height: 28px;
   font-size: 95%;
+  padding: 0 0 3px;
 }
 .item {
-  min-height: 180px;
+  min-height: 140px;
   max-width: 800px;
   padding: 20px 0 0 0;
 }
@@ -125,13 +160,13 @@ a {
 .item .content-snippet {
   color: #7f8c8d;
   font-size: 90%;
-  padding: 20px 0 40px 0;
+  padding: 10px 0 30px 0;
   border-bottom: solid 1px #ddd;
   line-height: 20px;
   word-break: break-all;
 }
 .items {
-  padding: 40px 30px 0 30px;
+  padding: 20px 30px 0 30px;
 }
 @media screen and (max-device-width: 768px) {
   #side-menu {
