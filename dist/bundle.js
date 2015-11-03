@@ -57825,6 +57825,7 @@ Object.defineProperty(exports, '__esModule', {
 exports.initialize = initialize;
 exports.fetchingItems = fetchingItems;
 exports.recieveItems = recieveItems;
+exports.clearFeeds = clearFeeds;
 exports.fetchFeed = fetchFeed;
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
@@ -57875,7 +57876,7 @@ function initialize() {
             type: types.INITIALIZE,
             keywords: keywords
           });
-          _fetchFeed(dispatch, keywords[0].name, 0);
+          _fetchFeed(dispatch, keywords[0].name, 0, 1);
         });
       }
     });
@@ -57899,6 +57900,13 @@ function recieveItems(items, keyword) {
   };
 }
 
+function clearFeeds(menu) {
+  return {
+    type: types.CLEAR_ITEMS,
+    keywords: menu.keywords
+  };
+}
+
 function fetchFeed(feed, menu) {
   return function (dispatch) {
     var keyword = menu.activeKeyword;
@@ -57913,7 +57921,7 @@ function fetchFeed(feed, menu) {
           var _keyword = _step.value;
 
           page = feed[_keyword.name].page;
-          _fetchFeed(dispatch, _keyword.name, page);
+          _fetchFeed(dispatch, _keyword.name, page, menu.bookmarkFilter);
         }
       } catch (err) {
         _didIteratorError = true;
@@ -57931,15 +57939,17 @@ function fetchFeed(feed, menu) {
       }
     } else {
       page = feed[keyword].page;
-      _fetchFeed(dispatch, keyword, page);
+      _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
     }
   };
 }
 
-function _fetchFeed(dispatch, keyword) {
-  var page = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
+function _fetchFeed(dispatch, keyword, page, threshold) {
+  if (page === undefined) page = 0;
 
-  var uri = HATENA_SEARCH_URI + keyword + '&of=' + page * ITEM_NUM_PER_PAGE;
+  console.log("threshold" + threshold);
+  var uri = HATENA_SEARCH_URI + keyword + '&of=' + page * ITEM_NUM_PER_PAGE + '&users=' + threshold;
+  console.log(uri);
   (0, _apiFeed.fetch)(uri).then(function (feed) {
     dispatch(recieveItems(getItems(feed), keyword));
   }, function (error) {
@@ -58063,6 +58073,12 @@ var Pasta = (function (_Component) {
       this.props.onChangeBookmarkFilter(~ ~value, e.clientX);
     }
   }, {
+    key: 'onSlideStop',
+    value: function onSlideStop() {
+      this.props.clearFeeds(this.props.menu);
+      this.props.fetchFeed(this.props.feed, this.props.menu);
+    }
+  }, {
     key: 'onInfiniteLoad',
     value: function onInfiniteLoad() {
       console.log("loading..");
@@ -58176,6 +58192,7 @@ var Pasta = (function (_Component) {
             _react2['default'].createElement(Slider, { name: 'slider',
               defaultValue: 1,
               onChange: this.onSliderChange.bind(this),
+              onDragStop: this.onSlideStop.bind(this),
               max: 250,
               min: 1 })
           ),
@@ -58242,8 +58259,10 @@ exports.INITIALIZE = INITIALIZE;
 var RECIEVE_ITEMS = 'RECIEVE_ITEMS';
 exports.RECIEVE_ITEMS = RECIEVE_ITEMS;
 var FETCHING_ITEMS = 'FETCHING_ITEMS';
-
 exports.FETCHING_ITEMS = FETCHING_ITEMS;
+var CLEAR_ITEMS = 'CLEAR_ITEMS';
+
+exports.CLEAR_ITEMS = CLEAR_ITEMS;
 var SELECT_KEYWORD = 'SELECT_KEYWORD';
 exports.SELECT_KEYWORD = SELECT_KEYWORD;
 var CHANGE_BOOKMARK_FILTER = 'CHANGE_BOOKMARK_FILTER';
@@ -58360,6 +58379,15 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+function createProps() {
+  return {
+    page: 0,
+    items: [],
+    isPageEnd: false,
+    isInfiniteLoading: false
+  };
+}
+
 function feed(state, action) {
   if (state === undefined) state = {};
 
@@ -58369,14 +58397,6 @@ function feed(state, action) {
 
     case types.INITIALIZE:
       console.log("initialized..");
-      var createProps = function createProps() {
-        return {
-          page: 0,
-          items: [],
-          isPageEnd: false,
-          isInfiniteLoading: false
-        };
-      };
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -58415,6 +58435,35 @@ function feed(state, action) {
       state[keyword].isPageEnd = items.length === 0;
       state[keyword].page += 1;
       state[keyword].isInfiniteLoading = false;
+      return Object.assign({}, state);
+
+    case types.CLEAR_ITEMS:
+      state.all.items = [];
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = action.keywords[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var _keyword2 = _step2.value;
+
+          state[_keyword2.name] = createProps();
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+            _iterator2['return']();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
       return Object.assign({}, state);
 
     case types.FETCHING_ITEMS:
@@ -58477,6 +58526,7 @@ function menu(state, action) {
       state.keywords = action.keywords;
       state.activeKeyword = action.keywords[0].name;
       state.bookmarkFilter = 1;
+      state.bookmarkFilterX = 15;
       return Object.assign({}, state);
 
     case types.SELECT_KEYWORD:

@@ -33,7 +33,7 @@ export function initialize() {
             type: types.INITIALIZE,
             keywords
           });
-          _fetchFeed(dispatch, keywords[0].name, 0);
+          _fetchFeed(dispatch, keywords[0].name, 0, 1);
         });
       }
     });
@@ -57,6 +57,13 @@ export function recieveItems(items, keyword) {
   };
 }
 
+export function clearFeeds(menu) {
+  return {
+    type: types.CLEAR_ITEMS,
+    keywords : menu.keywords
+  };
+}
+
 export function fetchFeed(feed, menu) {
   return dispatch => {
     const keyword = menu.activeKeyword;
@@ -64,17 +71,19 @@ export function fetchFeed(feed, menu) {
     if (keyword === 'all') {
       for (let keyword of menu.keywords) {
         page = feed[keyword.name].page;
-        _fetchFeed(dispatch, keyword.name, page);
+        _fetchFeed(dispatch, keyword.name, page, menu.bookmarkFilter);
       }
     } else {
       page = feed[keyword].page;
-      _fetchFeed(dispatch, keyword, page);
+        _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
     }
   }
 }
 
-function _fetchFeed(dispatch, keyword, page = 0) {
-  const uri = HATENA_SEARCH_URI + keyword + '&of=' + page * ITEM_NUM_PER_PAGE;
+function _fetchFeed(dispatch, keyword, page = 0, threshold) {
+  console.log("threshold" + threshold);
+  const uri = HATENA_SEARCH_URI + keyword + '&of=' + page * ITEM_NUM_PER_PAGE + '&users=' + threshold;
+    console.log(uri);
   fetch(uri).then((feed) => {
     dispatch(recieveItems(getItems(feed), keyword));
   }, (error) => console.log(error));

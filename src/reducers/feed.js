@@ -1,6 +1,15 @@
 import * as types from '../constants/action-types';
 import _ from 'lodash';
 
+function createProps() {
+  return {
+    page : 0,
+    items : [],
+    isPageEnd : false,
+    isInfiniteLoading : false
+  };
+}
+
 export default function feed(state={}, action) {
   switch(action.type){
     case types.INITIALIZING :
@@ -8,14 +17,6 @@ export default function feed(state={}, action) {
 
     case types.INITIALIZE :
       console.log("initialized..");
-      const createProps = () => {
-        return {
-          page : 0,
-          items : [],
-          isPageEnd : false,
-          isInfiniteLoading : false
-        };
-      }
       for (let keyword of action.keywords) {
        state[keyword.name] = createProps();
       }
@@ -32,6 +33,13 @@ export default function feed(state={}, action) {
       state[keyword].isPageEnd = items.length === 0;
       state[keyword].page += 1;
       state[keyword].isInfiniteLoading = false;
+      return Object.assign({}, state);
+
+  case types.CLEAR_ITEMS :
+      state.all.items = [];
+      for (let keyword of action.keywords) {
+        state[keyword.name] = createProps();
+      }
       return Object.assign({}, state);
 
     case types.FETCHING_ITEMS :

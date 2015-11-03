@@ -24,6 +24,11 @@ export default class Pasta extends Component {
     this.props.onChangeBookmarkFilter(~~value, e.clientX);
   }
 
+  onSlideStop() {
+    this.props.clearFeeds(this.props.menu);
+    this.props.fetchFeed(this.props.feed, this.props.menu);
+  }
+
   onInfiniteLoad() {
     console.log("loading..")
     if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
@@ -97,6 +102,7 @@ export default class Pasta extends Component {
             <Slider name="slider"
                     defaultValue={1}
                     onChange={this.onSliderChange.bind(this)}
+                    onDragStop={this.onSlideStop.bind(this)}
                     max={250}
                     min={1} />
           </div>

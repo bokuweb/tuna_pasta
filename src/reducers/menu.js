@@ -6,6 +6,7 @@ export default function menu(state={}, action) {
       state.keywords = action.keywords;
       state.activeKeyword = action.keywords[0].name;
       state.bookmarkFilter = 1;
+      state.bookmarkFilterX = 15;
       return Object.assign({}, state);
 
     case types.SELECT_KEYWORD :
