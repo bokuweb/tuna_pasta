@@ -58352,7 +58352,7 @@ var store = (0, _storesConfigureStore2['default'])();
   _react2['default'].createElement(_containersApp2['default'], null)
 ), document.getElementById('pasta'));
 
-},{"./components/pasta":351,"./containers/app":354,"./stores/configure-store":359,"react":335,"react-dom":152,"react-redux":167}],356:[function(require,module,exports){
+},{"./components/pasta":351,"./containers/app":354,"./stores/configure-store":358,"react":335,"react-dom":152,"react-redux":167}],356:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58368,41 +58368,36 @@ var _constantsActionTypes = require('../constants/action-types');
 
 var types = _interopRequireWildcard(_constantsActionTypes);
 
-//import {categories} from '../constants/categories';
-
 var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
-
-//function getJpNameOfCategory(word) {
-//  return _.filter(categories, (category) => category.name === word)[0].name_ja;
-//}
 
 function feed(state, action) {
   if (state === undefined) state = {};
 
   switch (action.type) {
     case types.INITIALIZING:
-      state.isInitialized = false;
-      console.log("initializing..");
-      return state;
+      return { isInitialized: false };
 
     case types.INITIALIZE:
       console.log("initialized..");
+      var createProps = function createProps() {
+        return {
+          page: 0,
+          items: [],
+          isPageEnd: false,
+          isInfiniteLoading: false
+        };
+      };
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
 
       try {
         for (var _iterator = action.keywords[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var keyword = _step.value;
+          var _keyword = _step.value;
 
-          state[keyword.name] = {
-            page: 0,
-            items: [],
-            isPageEnd: false,
-            isInfiniteLoading: false
-          };
+          state[_keyword.name] = createProps();
         }
       } catch (err) {
         _didIteratorError = true;
@@ -58419,51 +58414,30 @@ function feed(state, action) {
         }
       }
 
-      state.all = {
-        page: 0,
-        items: [],
-        isPageEnd: false,
-        isInfiniteLoading: false
-      };
-      state.favorite = {
-        page: 0,
-        items: [],
-        isPageEnd: false,
-        isInfiniteLoading: false
-      };
+      state.all = createProps();
+      state.favorite = createProps();
       state.keywords = action.keywords;
       state.activeKeyword = action.keywords[0].name;
       state.isInitialized = true;
-      return state;
+      return Object.assign({}, {}, state);
 
     case types.SELECT_KEYWORD:
       state.activeKeyword = action.keyword;
-      return state;
+      return Object.assign({}, {}, state);
 
     case types.RECIEVE_ITEMS:
       var items = action.items;
-      //if (state.isDefaultCategory) {
-      // FIXME : getter japanese category name
-      //  items = _.filter(items, (item) => {
-      //    const name_ja = getJpNameOfCategory(action.keyword);
-      //    return item.categories[0] === name_ja;
-      //  });
-      //}
-      state.all.items = state.all.items.concat(action.items);
-      //state._synthesis.items = _.sortBy(state._synthesis.items, (item) => {
-      //    return -(new Date(item.publishedDate).getTime());
-      //});
-      console.log(action.keyword);
-      //debugger;
-      state[action.keyword].items = state[action.keyword].items.concat(items);
-      state[action.keyword].isPageEnd = action.items.length === 0;
-      state[action.keyword].page += 1;
-      state[action.keyword].isInfiniteLoading = false;
-      return state;
+      var keyword = action.keyword;
+      state.all.items = state.all.items.concat(items);
+      state[keyword].items = state[keyword].items.concat(items);
+      state[keyword].isPageEnd = items.length === 0;
+      state[keyword].page += 1;
+      state[keyword].isInfiniteLoading = false;
+      return Object.assign({}, {}, state);
 
     case types.FETCHING_ITEMS:
       state[action.keyword].isInfiniteLoading = true;
-      return state;
+      return Object.assign({}, {}, state);
 
     default:
       return state;
@@ -58473,29 +58447,6 @@ function feed(state, action) {
 module.exports = exports['default'];
 
 },{"../constants/action-types":352,"lodash":6}],357:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = hoge;
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj["default"] = obj; return newObj; } }
-
-var _constantsActionTypes = require('../constants/action-types');
-
-var types = _interopRequireWildcard(_constantsActionTypes);
-
-function hoge(state, action) {
-  if (state === undefined) state = { items: [] };
-
-  state.items.push("a");
-  return { items: state.items };
-}
-
-module.exports = exports["default"];
-
-},{"../constants/action-types":352}],358:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58510,19 +58461,17 @@ var _feed = require('./feed');
 
 var _feed2 = _interopRequireDefault(_feed);
 
-var _hoge = require('./hoge');
-
-var _hoge2 = _interopRequireDefault(_hoge);
+//import menu from './menu';
 
 var rootReducer = (0, _redux.combineReducers)({
-  feed: _feed2['default'],
-  hoge: _hoge2['default']
+  feed: _feed2['default']
 });
 
+//menu
 exports['default'] = rootReducer;
 module.exports = exports['default'];
 
-},{"./feed":356,"./hoge":357,"redux":339}],359:[function(require,module,exports){
+},{"./feed":356,"redux":339}],358:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58554,4 +58503,4 @@ function configureStore() {
 
 module.exports = exports['default'];
 
-},{"../reducers":358,"redux":339,"redux-logger":336,"redux-thunk":337}]},{},[355]);
+},{"../reducers":357,"redux":339,"redux-logger":336,"redux-thunk":337}]},{},[355]);

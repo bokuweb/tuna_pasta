@@ -1,11 +1,10 @@
 import { combineReducers } from 'redux';
 import feed from './feed';
-import hoge from './hoge';
-
+//import menu from './menu';
 
 const rootReducer = combineReducers({
   feed,
-  hoge
+  //menu
 });
 
 export default rootReducer;
