@@ -66,7 +66,7 @@ export function recieveItems(items, keyword) {
 
 export function fetchFeed(feedProps) {
   return dispatch => {
-    const keyword = feedProps.keyword;
+    const keyword = feedProps.activeKeyword;
     let page;
     if (keyword === 'all') {
       for (let keyword of feedProps.keywords) {

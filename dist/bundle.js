@@ -57910,7 +57910,7 @@ function recieveItems(items, keyword) {
 
 function fetchFeed(feedProps) {
   return function (dispatch) {
-    var keyword = feedProps.keyword;
+    var keyword = feedProps.activeKeyword;
     var page = undefined;
     if (keyword === 'all') {
       var _iteratorNormalCompletion = true;
@@ -58063,7 +58063,7 @@ var Pasta = (function (_Component) {
     _get(Object.getPrototypeOf(Pasta.prototype), 'constructor', this).call(this, props);
     this.props.initialize();
     // FIXME pass keyword list to this.props.feed.keywords
-    // and rename this.props.feed.keyword => feed.selectedKeyword orb activeKeyword
+    // and rename this.props.feed.activeKeyword => feed.activeKeyword orb activeKeyword
     //for (const keyword of categories) {
     //this.props.fetchFeed(keyword.name);
     //}
@@ -58083,13 +58083,12 @@ var Pasta = (function (_Component) {
     key: 'onInfiniteLoad',
     value: function onInfiniteLoad() {
       console.log("loading..");
-      if (this.props.feed[this.props.feed.keyword].isPageEnd) return;
+      if (this.props.feed[this.props.feed.activeKeyword].isPageEnd) return;
       this.props.fetchFeed(this.props.feed);
     }
   }, {
     key: 'elementInfiniteLoad',
     value: function elementInfiniteLoad() {
-      if (this.props.feed.isPageEnd) return;
       return _react2['default'].createElement('div', { className: 'rect-spinner' });
     }
   }, {
@@ -58116,7 +58115,7 @@ var Pasta = (function (_Component) {
     value: function onClickKeyword(name) {
       console.log(name);
       this.props.onSelectKeyword(name);
-      this.props.fetchFeed(this.props.feed.keyword);
+      this.props.fetchFeed(this.props.feed);
     }
   }, {
     key: 'getKeywordList',
@@ -58125,7 +58124,7 @@ var Pasta = (function (_Component) {
 
       console.dir(this.props.feed.keywords);
       return this.props.feed.keywords.map(function (keyword) {
-        var listClassName = keyword.name === _this2.props.feed.keyword ? 'selected' : null;
+        var listClassName = keyword.name === _this2.props.feed.activeKeyword ? 'selected' : null;
         return _react2['default'].createElement(
           'li',
           { className: listClassName,
@@ -58144,9 +58143,8 @@ var Pasta = (function (_Component) {
       if (!this.props.feed.isInitialized) {
         return _react2['default'].createElement('div', { className: 'rect-spinner' });
       }
-      //console.log(this.props.feed.keyword);
-      //console.dir(this.props.feed.keywords)
-      var feed = this.props.feed[this.props.feed.keyword];
+
+      var feed = this.props.feed[this.props.feed.activeKeyword];
       var items = feed.items.map(function (item) {
         var favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
         var hatebuHref = 'http://b.hatena.ne.jp/entry/' + encodeURIComponent(item.link);
@@ -58428,14 +58426,14 @@ function feed(state, action) {
       };
       state.keywords = action.keywords;
       // TODO : rename ketword => selectedKeyword
-      state.keyword = action.keywords[0].name;
+      state.activeKeyword = action.keywords[0].name;
       //console.log(state.keyword);
       //state.isDefaultCategory = true;
       state.isInitialized = true;
       return state;
 
     case types.SELECT_KEYWORD:
-      state.keyword = action.keyword;
+      state.activeKeyword = action.keyword;
       //state.isDefaultCategory = action.isDefault;
       return state;
 

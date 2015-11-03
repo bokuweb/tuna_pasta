@@ -32,14 +32,14 @@ export default function feed(state={}, action) {
       };
       state.keywords = action.keywords;
       // TODO : rename ketword => selectedKeyword
-      state.keyword = action.keywords[0].name;
+      state.activeKeyword = action.keywords[0].name;
       //console.log(state.keyword);
       //state.isDefaultCategory = true;
       state.isInitialized = true;
       return state;
 
     case types.SELECT_KEYWORD :
-      state.keyword = action.keyword;
+      state.activeKeyword = action.keyword;
       //state.isDefaultCategory = action.isDefault;
       return state;
 
