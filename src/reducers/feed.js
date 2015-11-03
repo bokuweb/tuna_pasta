@@ -1,5 +1,5 @@
 import * as types from '../constants/action-types';
-import {categories} from '../constants/categories';
+//import {categories} from '../constants/categories';
 import _ from 'lodash';
 
 //function getJpNameOfCategory(word) {
@@ -7,7 +7,6 @@ import _ from 'lodash';
 //}
 
 export default function feed(state={}, action) {
-  //state.keyword = state.keyword || s[0].name;
   switch(action.type){
     case types.INITIALIZING :
       state.isInitialized = false;
@@ -30,17 +29,19 @@ export default function feed(state={}, action) {
           isPageEnd : false,
           isInfiniteLoading : false
       };
+      state.favorite = {
+          page : 0,
+          items : [],
+          isPageEnd : false,
+          isInfiniteLoading : false
+      };
       state.keywords = action.keywords;
-      // TODO : rename ketword => selectedKeyword
       state.activeKeyword = action.keywords[0].name;
-      //console.log(state.keyword);
-      //state.isDefaultCategory = true;
       state.isInitialized = true;
       return state;
 
     case types.SELECT_KEYWORD :
       state.activeKeyword = action.keyword;
-      //state.isDefaultCategory = action.isDefault;
       return state;
 
     case types.RECIEVE_ITEMS :

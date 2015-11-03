@@ -119,8 +119,16 @@ export default class Pasta extends Component {
           </div>
           <div id="menu">
             <ul>
-              <li onClick={this.onClickKeyword.bind(this, 'all')}><i className={"fa fa-home"} />総合</li>
-              <li onClick={this.onClickKeyword.bind(this, 'favorite')}><i className={"fa fa-heart"} />お気に入り</li>
+              <li className={this.props.feed.activeKeyword === 'all' ? 'selected' : ''}
+                  onClick={this.onClickKeyword.bind(this, 'all')}>
+                <i className={"fa fa-home"} />
+                総合
+              </li>
+              <li className={this.props.feed.activeKeyword === 'favorite' ? 'selected' : ''}
+                onClick={this.onClickKeyword.bind(this, 'favorite')}>
+                <i className={"fa fa-heart"} />
+                お気に入り
+              </li>
               {this.getKeywordList()}
             </ul>
           </div>

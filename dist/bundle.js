@@ -58206,13 +58206,15 @@ var Pasta = (function (_Component) {
               null,
               _react2['default'].createElement(
                 'li',
-                { onClick: this.onClickKeyword.bind(this, 'all') },
+                { className: this.props.feed.activeKeyword === 'all' ? 'selected' : '',
+                  onClick: this.onClickKeyword.bind(this, 'all') },
                 _react2['default'].createElement('i', { className: "fa fa-home" }),
                 '総合'
               ),
               _react2['default'].createElement(
                 'li',
-                { onClick: this.onClickKeyword.bind(this, 'favorite') },
+                { className: this.props.feed.activeKeyword === 'favorite' ? 'selected' : '',
+                  onClick: this.onClickKeyword.bind(this, 'favorite') },
                 _react2['default'].createElement('i', { className: "fa fa-heart" }),
                 'お気に入り'
               ),
@@ -58366,7 +58368,7 @@ var _constantsActionTypes = require('../constants/action-types');
 
 var types = _interopRequireWildcard(_constantsActionTypes);
 
-var _constantsCategories = require('../constants/categories');
+//import {categories} from '../constants/categories';
 
 var _lodash = require('lodash');
 
@@ -58379,7 +58381,6 @@ var _lodash2 = _interopRequireDefault(_lodash);
 function feed(state, action) {
   if (state === undefined) state = {};
 
-  //state.keyword = state.keyword || s[0].name;
   switch (action.type) {
     case types.INITIALIZING:
       state.isInitialized = false;
@@ -58424,17 +58425,19 @@ function feed(state, action) {
         isPageEnd: false,
         isInfiniteLoading: false
       };
+      state.favorite = {
+        page: 0,
+        items: [],
+        isPageEnd: false,
+        isInfiniteLoading: false
+      };
       state.keywords = action.keywords;
-      // TODO : rename ketword => selectedKeyword
       state.activeKeyword = action.keywords[0].name;
-      //console.log(state.keyword);
-      //state.isDefaultCategory = true;
       state.isInitialized = true;
       return state;
 
     case types.SELECT_KEYWORD:
       state.activeKeyword = action.keyword;
-      //state.isDefaultCategory = action.isDefault;
       return state;
 
     case types.RECIEVE_ITEMS:
@@ -58469,7 +58472,7 @@ function feed(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":352,"../constants/categories":353,"lodash":6}],357:[function(require,module,exports){
+},{"../constants/action-types":352,"lodash":6}],357:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
