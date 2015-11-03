@@ -57852,6 +57852,10 @@ var ITEM_NUM_PER_PAGE = 40;
 var db = new _dexie2['default']('Pasta');
 
 function getItems(feed) {
+  if (feed.responseData.feed === undefined) {
+    console.log("feed none");
+    return [];
+  }
   return feed.responseData.feed.entries;
 }
 
@@ -58088,6 +58092,7 @@ var Pasta = (function (_Component) {
   }, {
     key: 'elementInfiniteLoad',
     value: function elementInfiniteLoad() {
+      if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
       return _react2['default'].createElement('div', { className: 'rect-spinner' });
     }
   }, {
@@ -58435,6 +58440,7 @@ function feed(state, action) {
       state[keyword].isPageEnd = items.length === 0;
       state[keyword].page += 1;
       state[keyword].isInfiniteLoading = false;
+      console.log(state[keyword].isPageEnd);
       return Object.assign({}, state);
 
     case types.CLEAR_ITEMS:

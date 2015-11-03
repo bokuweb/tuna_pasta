@@ -32,10 +32,11 @@ export default class Pasta extends Component {
   onInfiniteLoad() {
     console.log("loading..")
     if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
-      this.props.fetchFeed(this.props.feed, this.props.menu);
+    this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
   elementInfiniteLoad() {
+    if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
     return  <div className="rect-spinner"></div>;
   }
 

@@ -9,6 +9,10 @@ const ITEM_NUM_PER_PAGE = 40;
 const db = new Dexie('Pasta');
 
 function getItems(feed) {
+  if (feed.responseData.feed === undefined) {
+    console.log("feed none");
+    return [];
+  }
   return feed.responseData.feed.entries;
 }
 

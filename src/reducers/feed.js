@@ -33,6 +33,7 @@ export default function feed(state={}, action) {
       state[keyword].isPageEnd = items.length === 0;
       state[keyword].page += 1;
       state[keyword].isInfiniteLoading = false;
+      console.log(state[keyword].isPageEnd);
       return Object.assign({}, state);
 
   case types.CLEAR_ITEMS :
