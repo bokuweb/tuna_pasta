@@ -58037,7 +58037,7 @@ var _materialUi = require('material-ui');
 
 var _materialUi2 = _interopRequireDefault(_materialUi);
 
-//import {categories} from '../constants/categories';
+var _libUtils = require('../lib/utils');
 
 var TextField = _materialUi2['default'].TextField;
 var Slider = _materialUi2['default'].Slider;
@@ -58057,11 +58057,6 @@ var Pasta = (function (_Component) {
 
     _get(Object.getPrototypeOf(Pasta.prototype), 'constructor', this).call(this, props);
     this.props.initialize();
-    // FIXME pass keyword list to this.props.menu.keywords
-    // and rename this.props.feed.activeKeyword => feed.activeKeyword orb activeKeyword
-    //for (const keyword of categories) {
-    //this.props.fetchFeed(keyword.name);
-    //}
     this.innerHeight = document.documentElement.clientHeight;
     window.onresize = function () {
       _this.innerHeight = document.documentElement.clientHeight;
@@ -58079,7 +58074,7 @@ var Pasta = (function (_Component) {
     value: function onInfiniteLoad() {
       console.log("loading..");
       if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
-      this.props.fetchFeed(this.props.feed);
+      this.props.fetchFeed(this.props.feed, this.props.menu);
     }
   }, {
     key: 'elementInfiniteLoad',
@@ -58096,19 +58091,9 @@ var Pasta = (function (_Component) {
           return { 'backgroundColor': '#8E44AD' };
       }
     }
-
-    // FIXME:
-  }, {
-    key: 'unescapeHTML',
-    value: function unescapeHTML(str) {
-      var div = document.createElement("div");
-      div.innerHTML = str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/ /g, "&nbsp;").replace(/\r/g, "&#13;").replace(/\n/g, "&#10;");
-      return div.textContent || div.innerText;
-    }
   }, {
     key: 'onClickKeyword',
     value: function onClickKeyword(name) {
-      console.log(name);
       this.props.onSelectKeyword(name);
       this.props.fetchFeed(this.props.feed, this.props.menu);
     }
@@ -58172,7 +58157,7 @@ var Pasta = (function (_Component) {
           _react2['default'].createElement(
             'p',
             { className: 'content-snippet' },
-            _this3.unescapeHTML(item.contentSnippet)
+            (0, _libUtils.unescapeHTML)(item.contentSnippet)
           )
         );
       });
@@ -58243,7 +58228,7 @@ var Pasta = (function (_Component) {
 exports['default'] = Pasta;
 module.exports = exports['default'];
 
-},{"material-ui":43,"react":335,"react-infinite":156}],352:[function(require,module,exports){
+},{"../lib/utils":356,"material-ui":43,"react":335,"react-infinite":156}],352:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58347,7 +58332,21 @@ var store = (0, _storesConfigureStore2['default'])();
   _react2['default'].createElement(_containersApp2['default'], null)
 ), document.getElementById('pasta'));
 
-},{"./components/pasta":351,"./containers/app":354,"./stores/configure-store":359,"react":335,"react-dom":152,"react-redux":167}],356:[function(require,module,exports){
+},{"./components/pasta":351,"./containers/app":354,"./stores/configure-store":360,"react":335,"react-dom":152,"react-redux":167}],356:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.unescapeHTML = unescapeHTML;
+
+function unescapeHTML(str) {
+    var div = document.createElement("div");
+    div.innerHTML = str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/ /g, "&nbsp;").replace(/\r/g, "&#13;").replace(/\n/g, "&#10;");
+    return div.textContent || div.innerText;
+}
+
+},{}],357:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58437,7 +58436,7 @@ function feed(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":352,"lodash":6}],357:[function(require,module,exports){
+},{"../constants/action-types":352,"lodash":6}],358:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58464,7 +58463,7 @@ var rootReducer = (0, _redux.combineReducers)({
 exports['default'] = rootReducer;
 module.exports = exports['default'];
 
-},{"./feed":356,"./menu":358,"redux":339}],358:[function(require,module,exports){
+},{"./feed":357,"./menu":359,"redux":339}],359:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58498,7 +58497,7 @@ function menu(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":352}],359:[function(require,module,exports){
+},{"../constants/action-types":352}],360:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58530,4 +58529,4 @@ function configureStore() {
 
 module.exports = exports['default'];
 
-},{"../reducers":357,"redux":339,"redux-logger":336,"redux-thunk":337}]},{},[355]);
+},{"../reducers":358,"redux":339,"redux-logger":336,"redux-thunk":337}]},{},[355]);

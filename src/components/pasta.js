@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Infinite from 'react-infinite';
 import Mui from 'material-ui';
-//import {categories} from '../constants/categories';
+import {unescapeHTML} from '../lib/utils';
 
 const TextField = Mui.TextField;
 const Slider = Mui.Slider;
@@ -15,11 +15,6 @@ export default class Pasta extends Component {
   constructor(props) {
     super(props);
     this.props.initialize();
-    // FIXME pass keyword list to this.props.menu.keywords
-    // and rename this.props.feed.activeKeyword => feed.activeKeyword orb activeKeyword
-    //for (const keyword of categories) {
-      //this.props.fetchFeed(keyword.name);
-    //}
     this.innerHeight = document.documentElement.clientHeight;
     window.onresize = () => {
       this.innerHeight = document.documentElement.clientHeight;
@@ -34,36 +29,21 @@ export default class Pasta extends Component {
   onInfiniteLoad() {
     console.log("loading..")
     if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
-    this.props.fetchFeed(this.props.feed);
+      this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
   elementInfiniteLoad() {
-    return (
-      <div className="rect-spinner"></div>
-    );
+    return  <div className="rect-spinner"></div>;
   }
 
   getCategoryStyle(category) {
     switch (category) {
-      case 'テクノロジー' :
-        return {'backgroundColor':'#1ABC9C'};
-      default :
-        return {'backgroundColor':'#8E44AD'};
+      case 'テクノロジー' : return {'backgroundColor':'#1ABC9C'};
+      default             : return {'backgroundColor':'#8E44AD'};
     }
-  }
-  // FIXME:
-  unescapeHTML(str) {
-    let div = document.createElement("div");
-    div.innerHTML = str.replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/ /g, "&nbsp;")
-        .replace(/\r/g, "&#13;")
-        .replace(/\n/g, "&#10;");
-    return div.textContent || div.innerText;
   }
 
   onClickKeyword(name) {
-    console.log(name);
     this.props.onSelectKeyword(name);
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
@@ -102,7 +82,7 @@ export default class Pasta extends Component {
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
             <span className="publish-date">{item.publishedDate}</span>
             <span className="category" style={this.getCategoryStyle(item.categories[0])}>{item.categories[0]}</span>
-              <p className="content-snippet">{this.unescapeHTML(item.contentSnippet)}</p>
+              <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
           </div>
       );
     });
