@@ -21,13 +21,9 @@ export default function feed(state={}, action) {
       }
       state.all = createProps();
       state.favorite = createProps();
-      state.keywords = action.keywords;
-      state.activeKeyword = action.keywords[0].name;
+      //state.keywords = action.keywords;
+      //state.activeKeyword = action.keywords[0].name;
       state.isInitialized = true;
-      return Object.assign({}, {}, state);
-
-    case types.SELECT_KEYWORD :
-      state.activeKeyword = action.keyword;
       return Object.assign({}, {}, state);
 
     case types.RECIEVE_ITEMS :

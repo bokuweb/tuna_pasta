@@ -52,11 +52,6 @@ export function fetchingItems(keyword) {
 }
 
 export function recieveItems(items, keyword) {
-    /*items = _.map(items, (item) => {
-      item.publishedDate = new Date(item.publishedDate).getTime();
-      return item;
-    });
-    console.dir(items);*/
   return {
     type: types.RECIEVE_ITEMS,
     items,
@@ -64,17 +59,17 @@ export function recieveItems(items, keyword) {
   };
 }
 
-export function fetchFeed(feedProps) {
+export function fetchFeed(feed, menu) {
   return dispatch => {
-    const keyword = feedProps.activeKeyword;
+    const keyword = menu.activeKeyword;
     let page;
     if (keyword === 'all') {
-      for (let keyword of feedProps.keywords) {
-        page = feedProps[keyword.name].page;
+      for (let keyword of menu.keywords) {
+        page = feed[keyword.name].page;
         _fetchFeed(dispatch, keyword.name, page);
       }
     } else {
-      page = feedProps[keyword].page;
+      page = feed[keyword].page;
       _fetchFeed(dispatch, keyword, page);
     }
   }

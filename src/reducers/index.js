@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 import feed from './feed';
-//import menu from './menu';
+import menu from './menu';
 
 const rootReducer = combineReducers({
   feed,
-  //menu
+  menu
 });
 
 export default rootReducer;

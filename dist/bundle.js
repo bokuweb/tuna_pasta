@@ -57896,11 +57896,6 @@ function fetchingItems(keyword) {
 }
 
 function recieveItems(items, keyword) {
-  /*items = _.map(items, (item) => {
-    item.publishedDate = new Date(item.publishedDate).getTime();
-    return item;
-  });
-  console.dir(items);*/
   return {
     type: types.RECIEVE_ITEMS,
     items: items,
@@ -57908,9 +57903,9 @@ function recieveItems(items, keyword) {
   };
 }
 
-function fetchFeed(feedProps) {
+function fetchFeed(feed, menu) {
   return function (dispatch) {
-    var keyword = feedProps.activeKeyword;
+    var keyword = menu.activeKeyword;
     var page = undefined;
     if (keyword === 'all') {
       var _iteratorNormalCompletion = true;
@@ -57918,10 +57913,10 @@ function fetchFeed(feedProps) {
       var _iteratorError = undefined;
 
       try {
-        for (var _iterator = feedProps.keywords[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        for (var _iterator = menu.keywords[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var _keyword = _step.value;
 
-          page = feedProps[_keyword.name].page;
+          page = feed[_keyword.name].page;
           _fetchFeed(dispatch, _keyword.name, page);
         }
       } catch (err) {
@@ -57939,7 +57934,7 @@ function fetchFeed(feedProps) {
         }
       }
     } else {
-      page = feedProps[keyword].page;
+      page = feed[keyword].page;
       _fetchFeed(dispatch, keyword, page);
     }
   };
@@ -58062,7 +58057,7 @@ var Pasta = (function (_Component) {
 
     _get(Object.getPrototypeOf(Pasta.prototype), 'constructor', this).call(this, props);
     this.props.initialize();
-    // FIXME pass keyword list to this.props.feed.keywords
+    // FIXME pass keyword list to this.props.menu.keywords
     // and rename this.props.feed.activeKeyword => feed.activeKeyword orb activeKeyword
     //for (const keyword of categories) {
     //this.props.fetchFeed(keyword.name);
@@ -58083,7 +58078,7 @@ var Pasta = (function (_Component) {
     key: 'onInfiniteLoad',
     value: function onInfiniteLoad() {
       console.log("loading..");
-      if (this.props.feed[this.props.feed.activeKeyword].isPageEnd) return;
+      if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
       this.props.fetchFeed(this.props.feed);
     }
   }, {
@@ -58115,16 +58110,16 @@ var Pasta = (function (_Component) {
     value: function onClickKeyword(name) {
       console.log(name);
       this.props.onSelectKeyword(name);
-      this.props.fetchFeed(this.props.feed);
+      this.props.fetchFeed(this.props.feed, this.props.menu);
     }
   }, {
     key: 'getKeywordList',
     value: function getKeywordList() {
       var _this2 = this;
 
-      console.dir(this.props.feed.keywords);
-      return this.props.feed.keywords.map(function (keyword) {
-        var listClassName = keyword.name === _this2.props.feed.activeKeyword ? 'selected' : null;
+      console.dir(this.props.menu.keywords);
+      return this.props.menu.keywords.map(function (keyword) {
+        var listClassName = keyword.name === _this2.props.menu.activeKeyword ? 'selected' : null;
         return _react2['default'].createElement(
           'li',
           { className: listClassName,
@@ -58144,7 +58139,7 @@ var Pasta = (function (_Component) {
         return _react2['default'].createElement('div', { className: 'rect-spinner' });
       }
 
-      var feed = this.props.feed[this.props.feed.activeKeyword];
+      var feed = this.props.feed[this.props.menu.activeKeyword];
       var items = feed.items.map(function (item) {
         var favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
         var hatebuHref = 'http://b.hatena.ne.jp/entry/' + encodeURIComponent(item.link);
@@ -58206,14 +58201,14 @@ var Pasta = (function (_Component) {
               null,
               _react2['default'].createElement(
                 'li',
-                { className: this.props.feed.activeKeyword === 'all' ? 'selected' : '',
+                { className: this.props.menu.activeKeyword === 'all' ? 'selected' : '',
                   onClick: this.onClickKeyword.bind(this, 'all') },
                 _react2['default'].createElement('i', { className: "fa fa-home" }),
                 '総合'
               ),
               _react2['default'].createElement(
                 'li',
-                { className: this.props.feed.activeKeyword === 'favorite' ? 'selected' : '',
+                { className: this.props.menu.activeKeyword === 'favorite' ? 'selected' : '',
                   onClick: this.onClickKeyword.bind(this, 'favorite') },
                 _react2['default'].createElement('i', { className: "fa fa-heart" }),
                 'お気に入り'
@@ -58352,7 +58347,7 @@ var store = (0, _storesConfigureStore2['default'])();
   _react2['default'].createElement(_containersApp2['default'], null)
 ), document.getElementById('pasta'));
 
-},{"./components/pasta":351,"./containers/app":354,"./stores/configure-store":358,"react":335,"react-dom":152,"react-redux":167}],356:[function(require,module,exports){
+},{"./components/pasta":351,"./containers/app":354,"./stores/configure-store":359,"react":335,"react-dom":152,"react-redux":167}],356:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58416,13 +58411,9 @@ function feed(state, action) {
 
       state.all = createProps();
       state.favorite = createProps();
-      state.keywords = action.keywords;
-      state.activeKeyword = action.keywords[0].name;
+      //state.keywords = action.keywords;
+      //state.activeKeyword = action.keywords[0].name;
       state.isInitialized = true;
-      return Object.assign({}, {}, state);
-
-    case types.SELECT_KEYWORD:
-      state.activeKeyword = action.keyword;
       return Object.assign({}, {}, state);
 
     case types.RECIEVE_ITEMS:
@@ -58461,17 +58452,53 @@ var _feed = require('./feed');
 
 var _feed2 = _interopRequireDefault(_feed);
 
-//import menu from './menu';
+var _menu = require('./menu');
+
+var _menu2 = _interopRequireDefault(_menu);
 
 var rootReducer = (0, _redux.combineReducers)({
-  feed: _feed2['default']
+  feed: _feed2['default'],
+  menu: _menu2['default']
 });
 
-//menu
 exports['default'] = rootReducer;
 module.exports = exports['default'];
 
-},{"./feed":356,"redux":339}],358:[function(require,module,exports){
+},{"./feed":356,"./menu":358,"redux":339}],358:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports['default'] = menu;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _constantsActionTypes = require('../constants/action-types');
+
+var types = _interopRequireWildcard(_constantsActionTypes);
+
+function menu(state, action) {
+  if (state === undefined) state = {};
+
+  switch (action.type) {
+    case types.INITIALIZE:
+      state.keywords = action.keywords;
+      state.activeKeyword = action.keywords[0].name;
+      return Object.assign({}, {}, state);
+
+    case types.SELECT_KEYWORD:
+      state.activeKeyword = action.keyword;
+      return Object.assign({}, {}, state);
+
+    default:
+      return state;
+  }
+}
+
+module.exports = exports['default'];
+
+},{"../constants/action-types":352}],359:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {

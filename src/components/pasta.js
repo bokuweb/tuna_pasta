@@ -15,7 +15,7 @@ export default class Pasta extends Component {
   constructor(props) {
     super(props);
     this.props.initialize();
-    // FIXME pass keyword list to this.props.feed.keywords
+    // FIXME pass keyword list to this.props.menu.keywords
     // and rename this.props.feed.activeKeyword => feed.activeKeyword orb activeKeyword
     //for (const keyword of categories) {
       //this.props.fetchFeed(keyword.name);
@@ -30,9 +30,10 @@ export default class Pasta extends Component {
   onSliderChange(e) {
     console.dir(e.clientX);
   }
+
   onInfiniteLoad() {
     console.log("loading..")
-    if (this.props.feed[this.props.feed.activeKeyword].isPageEnd) return;
+    if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
     this.props.fetchFeed(this.props.feed);
   }
 
@@ -64,13 +65,13 @@ export default class Pasta extends Component {
   onClickKeyword(name) {
     console.log(name);
     this.props.onSelectKeyword(name);
-    this.props.fetchFeed(this.props.feed);
+    this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
   getKeywordList() {
-    console.dir(this.props.feed.keywords)
-    return this.props.feed.keywords.map((keyword) => {
-      const listClassName = keyword.name === this.props.feed.activeKeyword ? 'selected' : null;
+    console.dir(this.props.menu.keywords)
+    return this.props.menu.keywords.map((keyword) => {
+      const listClassName = keyword.name === this.props.menu.activeKeyword ? 'selected' : null;
       return (
           <li className={listClassName}
               key={keyword.name}
@@ -89,7 +90,7 @@ export default class Pasta extends Component {
       );
     }
 
-    const feed = this.props.feed[this.props.feed.activeKeyword];
+    const feed = this.props.feed[this.props.menu.activeKeyword];
     const items = feed.items.map((item) => {
       const favicon = 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent(item.link);
       const hatebuHref = 'http://b.hatena.ne.jp/entry/' + encodeURIComponent(item.link);
@@ -119,12 +120,12 @@ export default class Pasta extends Component {
           </div>
           <div id="menu">
             <ul>
-              <li className={this.props.feed.activeKeyword === 'all' ? 'selected' : ''}
+              <li className={this.props.menu.activeKeyword === 'all' ? 'selected' : ''}
                   onClick={this.onClickKeyword.bind(this, 'all')}>
                 <i className={"fa fa-home"} />
                 総合
               </li>
-              <li className={this.props.feed.activeKeyword === 'favorite' ? 'selected' : ''}
+              <li className={this.props.menu.activeKeyword === 'favorite' ? 'selected' : ''}
                 onClick={this.onClickKeyword.bind(this, 'favorite')}>
                 <i className={"fa fa-heart"} />
                 お気に入り
