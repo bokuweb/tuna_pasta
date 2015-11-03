@@ -5,7 +5,7 @@ import * as types from '../constants/action-types';
 // FIXME
 import {categories} from '../constants/categories';
 
-const HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&q='
+const HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&safe=off&q='
 const ITEM_NUM_PER_PAGE = 40;
 
 const db = new Dexie('Pasta');
@@ -64,8 +64,20 @@ export function recieveItems(items, keyword) {
   };
 }
 
-export function fetchFeed(keyword, page = 0) {
-  return dispatch => _fetchFeed(dispatch, keyword, page);
+export function fetchFeed(feedProps) {
+  return dispatch => {
+    const keyword = feedProps.keyword;
+    let page;
+    if (keyword === 'all') {
+      for (let keyword of feedProps.keywords) {
+        page = feedProps[keyword.name].page;
+        _fetchFeed(dispatch, keyword.name, page);
+      }
+    } else {
+      page = feedProps[keyword].page;
+      _fetchFeed(dispatch, keyword, page);
+    }
+  }
 }
 
 function _fetchFeed(dispatch, keyword, page = 0) {

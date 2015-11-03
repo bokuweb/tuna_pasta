@@ -24,6 +24,12 @@ export default function feed(state={}, action) {
           isInfiniteLoading : false
         };
       }
+      state.all = {
+          page : 0,
+          items : [],
+          isPageEnd : false,
+          isInfiniteLoading : false
+      };
       state.keywords = action.keywords;
       // TODO : rename ketword => selectedKeyword
       state.keyword = action.keywords[0].name;
@@ -46,7 +52,7 @@ export default function feed(state={}, action) {
       //    return item.categories[0] === name_ja;
       //  });
       //}
-      //state._synthesis.items = state._synthesis.items.concat(action.items);
+      state.all.items = state.all.items.concat(action.items);
       //state._synthesis.items = _.sortBy(state._synthesis.items, (item) => {
       //    return -(new Date(item.publishedDate).getTime());
       //});

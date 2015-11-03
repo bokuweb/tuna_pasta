@@ -57849,7 +57849,7 @@ var types = _interopRequireWildcard(_constantsActionTypes);
 
 var _constantsCategories = require('../constants/categories');
 
-var HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&q=';
+var HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&safe=off&q=';
 var ITEM_NUM_PER_PAGE = 40;
 
 var db = new _dexie2['default']('Pasta');
@@ -57908,11 +57908,40 @@ function recieveItems(items, keyword) {
   };
 }
 
-function fetchFeed(keyword) {
-  var page = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-
+function fetchFeed(feedProps) {
   return function (dispatch) {
-    return _fetchFeed(dispatch, keyword, page);
+    var keyword = feedProps.keyword;
+    var page = undefined;
+    if (keyword === 'all') {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = feedProps.keywords[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _keyword = _step.value;
+
+          page = feedProps[_keyword.name].page;
+          _fetchFeed(dispatch, _keyword.name, page);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator['return']) {
+            _iterator['return']();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    } else {
+      page = feedProps[keyword].page;
+      _fetchFeed(dispatch, keyword, page);
+    }
   };
 }
 
@@ -58017,6 +58046,11 @@ var _materialUi2 = _interopRequireDefault(_materialUi);
 
 var TextField = _materialUi2['default'].TextField;
 var Slider = _materialUi2['default'].Slider;
+var sliderStyle = {
+  handle: {
+    backgroundColor: '#fff'
+  }
+};
 
 var Pasta = (function (_Component) {
   _inherits(Pasta, _Component);
@@ -58041,11 +58075,16 @@ var Pasta = (function (_Component) {
   }
 
   _createClass(Pasta, [{
+    key: 'onSliderChange',
+    value: function onSliderChange(e) {
+      console.dir(e.clientX);
+    }
+  }, {
     key: 'onInfiniteLoad',
     value: function onInfiniteLoad() {
       console.log("loading..");
       if (this.props.feed[this.props.feed.keyword].isPageEnd) return;
-      this.props.fetchFeed(this.props.feed.keyword, this.props.feed[this.props.feed.keyword].page);
+      this.props.fetchFeed(this.props.feed);
     }
   }, {
     key: 'elementInfiniteLoad',
@@ -58086,7 +58125,7 @@ var Pasta = (function (_Component) {
 
       console.dir(this.props.feed.keywords);
       return this.props.feed.keywords.map(function (keyword) {
-        var listClassName = keyword.name === _this2.props.feed.keyword ? 'selected' : '';
+        var listClassName = keyword.name === _this2.props.feed.keyword ? 'selected' : null;
         return _react2['default'].createElement(
           'li',
           { className: listClassName,
@@ -58156,6 +58195,9 @@ var Pasta = (function (_Component) {
             { className: 'slider' },
             _react2['default'].createElement(Slider, { name: 'slider',
               defaultValue: 1,
+              onChange: this.onSliderChange.bind(this),
+              max: 250,
+              min: 1,
               style: sliderStyle })
           ),
           _react2['default'].createElement(
@@ -58164,6 +58206,18 @@ var Pasta = (function (_Component) {
             _react2['default'].createElement(
               'ul',
               null,
+              _react2['default'].createElement(
+                'li',
+                { onClick: this.onClickKeyword.bind(this, 'all') },
+                _react2['default'].createElement('i', { className: "fa fa-home" }),
+                '総合'
+              ),
+              _react2['default'].createElement(
+                'li',
+                { onClick: this.onClickKeyword.bind(this, 'favorite') },
+                _react2['default'].createElement('i', { className: "fa fa-heart" }),
+                'お気に入り'
+              ),
               this.getKeywordList()
             )
           )
@@ -58192,15 +58246,6 @@ var Pasta = (function (_Component) {
 })(_react.Component);
 
 exports['default'] = Pasta;
-
-var sliderStyle = {
-  root: {
-    background: '#fff'
-  },
-  filled: {
-    background: '#fff'
-  }
-};
 module.exports = exports['default'];
 
 },{"material-ui":43,"react":335,"react-infinite":156}],352:[function(require,module,exports){
@@ -58375,6 +58420,12 @@ function feed(state, action) {
         }
       }
 
+      state.all = {
+        page: 0,
+        items: [],
+        isPageEnd: false,
+        isInfiniteLoading: false
+      };
       state.keywords = action.keywords;
       // TODO : rename ketword => selectedKeyword
       state.keyword = action.keywords[0].name;
@@ -58397,7 +58448,7 @@ function feed(state, action) {
       //    return item.categories[0] === name_ja;
       //  });
       //}
-      //state._synthesis.items = state._synthesis.items.concat(action.items);
+      state.all.items = state.all.items.concat(action.items);
       //state._synthesis.items = _.sortBy(state._synthesis.items, (item) => {
       //    return -(new Date(item.publishedDate).getTime());
       //});

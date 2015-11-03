@@ -5,6 +5,11 @@ import Mui from 'material-ui';
 
 const TextField = Mui.TextField;
 const Slider = Mui.Slider;
+const sliderStyle = {
+  handle : {
+    backgroundColor: '#fff'
+  }
+};
 
 export default class Pasta extends Component {
   constructor(props) {
@@ -21,10 +26,14 @@ export default class Pasta extends Component {
       this.forceUpdate();
     }
   }
+
+  onSliderChange(e) {
+    console.dir(e.clientX);
+  }
   onInfiniteLoad() {
     console.log("loading..")
     if (this.props.feed[this.props.feed.keyword].isPageEnd) return;
-    this.props.fetchFeed(this.props.feed.keyword, this.props.feed[this.props.feed.keyword].page);
+    this.props.fetchFeed(this.props.feed);
   }
 
   elementInfiniteLoad() {
@@ -62,7 +71,7 @@ export default class Pasta extends Component {
   getKeywordList() {
     console.dir(this.props.feed.keywords)
     return this.props.feed.keywords.map((keyword) => {
-      const listClassName = keyword.name === this.props.feed.keyword ? 'selected' : '';
+      const listClassName = keyword.name === this.props.feed.keyword ? 'selected' : null;
       return (
           <li className={listClassName}
               key={keyword.name}
@@ -105,10 +114,15 @@ export default class Pasta extends Component {
           <div className="slider">
             <Slider name="slider"
                     defaultValue={1}
+                    onChange={this.onSliderChange.bind(this)}
+                    max={250}
+                    min={1}
                     style={sliderStyle} />
           </div>
           <div id="menu">
             <ul>
+              <li onClick={this.onClickKeyword.bind(this, 'all')}><i className={"fa fa-home"} />総合</li>
+              <li onClick={this.onClickKeyword.bind(this, 'favorite')}><i className={"fa fa-heart"} />お気に入り</li>
               {this.getKeywordList()}
             </ul>
           </div>
@@ -131,11 +145,4 @@ export default class Pasta extends Component {
 }
 
 
-const sliderStyle = {
-  root : {
-    background : '#fff'
-  },
-    filled : {
-        background : '#fff'
-    }
-};
+
