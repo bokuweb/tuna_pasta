@@ -58027,27 +58027,15 @@ var Pasta = (function (_Component) {
       }
     }
   }, {
+    key: 'onAdditionalKeywordSubmit',
+    value: function onAdditionalKeywordSubmit(e) {
+      console.dir(e.target[0].value);
+    }
+  }, {
     key: 'onClickKeyword',
     value: function onClickKeyword(name) {
       this.props.onSelectKeyword(name);
       this.props.fetchFeed(this.props.feed, this.props.menu);
-    }
-  }, {
-    key: 'onClickAddKeywordButton',
-    value: function onClickAddKeywordButton() {
-      this.refs.superSecretPasswordDialog.show();
-      console.log("hoge");
-    }
-  }, {
-    key: 'onDialogSubmit',
-    value: function onDialogSubmit() {
-      console.log("submit");
-      //this.refs.superSecretPasswordDialog.dismiss();
-    }
-  }, {
-    key: 'onDismissDialog',
-    value: function onDismissDialog() {
-      console.log("dismiss");
     }
   }, {
     key: 'getKeywordList',
@@ -58118,7 +58106,6 @@ var Pasta = (function (_Component) {
       var x = this.props.menu.bookmarkFilterX - 24;
       if (x > 220) x = 220;
       if (x < 10) x = 10;
-      var style = { left: x };
 
       return _react2['default'].createElement(
         'div',
@@ -58132,7 +58119,7 @@ var Pasta = (function (_Component) {
             { className: 'slider' },
             _react2['default'].createElement(
               'div',
-              { className: 'bookmark-filter', style: style },
+              { className: 'bookmark-filter', style: { left: x } },
               _react2['default'].createElement('i', { className: 'icon-hatena' }),
               this.props.menu.bookmarkFilter
             ),
@@ -58146,8 +58133,17 @@ var Pasta = (function (_Component) {
           _react2['default'].createElement(
             'div',
             { className: 'add-keyword' },
-            _react2['default'].createElement('input', { type: 'text', placeholder: 'キーワードを追加' }),
-            _react2['default'].createElement(RaisedButton, { label: '追加', secondary: true, style: { height: 24, minWidth: 40 }, labelStyle: { fontSize: '12px', lineHeight: '24px' } })
+            _react2['default'].createElement(
+              'form',
+              { className: 'commentForm', action: '#', onSubmit: this.onAdditionalKeywordSubmit.bind(this) },
+              _react2['default'].createElement('input', { type: 'text',
+                placeholder: 'キーワードを追加' }),
+              _react2['default'].createElement(RaisedButton, { label: '追加',
+                secondary: true,
+                style: { height: 28, minWidth: 40 },
+                type: 'submit',
+                labelStyle: { fontSize: '12px', lineHeight: '24px' } })
+            )
           ),
           _react2['default'].createElement(
             'div',

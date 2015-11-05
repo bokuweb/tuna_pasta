@@ -49,23 +49,13 @@ export default class Pasta extends Component {
     }
   }
 
+  onAdditionalKeywordSubmit(e) {
+    console.dir(e.target[0].value);
+  }
+
   onClickKeyword(name) {
     this.props.onSelectKeyword(name);
     this.props.fetchFeed(this.props.feed, this.props.menu);
-  }
-
-  onClickAddKeywordButton() {
-    this.refs.superSecretPasswordDialog.show();
-    console.log("hoge");
-  }
-
-  onDialogSubmit() {
-    console.log("submit");
-    //this.refs.superSecretPasswordDialog.dismiss();
-  }
-
-  onDismissDialog() {
-    console.log("dismiss");
   }
 
   getKeywordList() {
@@ -101,7 +91,9 @@ export default class Pasta extends Component {
           <a href={item.link} className="item-title">{item.title}</a>
           <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
           <span className="publish-date">{item.publishedDate}</span>
-          <span className="category" style={this.getCategoryStyle(item.categories[0])}>{item.categories[0]}</span>
+          <span className="category" style={this.getCategoryStyle(item.categories[0])}>
+            {item.categories[0]}
+          </span>
           <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
         </div>
       );
@@ -111,14 +103,13 @@ export default class Pasta extends Component {
     let x = this.props.menu.bookmarkFilterX - 24;
     if (x > 220) x = 220;
     if (x < 10) x = 10;
-    const style = {left:x};
 
     return (
       <div id="container">
         <div id="side-menu">
           <img id="logo" src="img/logo.png" alt="" />
           <div className="slider">
-          <div className="bookmark-filter" style={style}>
+          <div className="bookmark-filter" style={{left:x}}>
             <i className="icon-hatena" />
             {this.props.menu.bookmarkFilter}
           </div>
@@ -130,7 +121,15 @@ export default class Pasta extends Component {
             min={1} />
           </div>
           <div className="add-keyword">
-        <input type="text" placeholder="キーワードを追加"/><RaisedButton label="追加" secondary={true} style={{ height: 24, minWidth: 40 }} labelStyle={{fontSize: '12px', lineHeight: '24px'}}/>
+            <form className="commentForm" action="#" onSubmit={this.onAdditionalKeywordSubmit.bind(this)}>
+              <input type="text"
+              placeholder="キーワードを追加" />
+              <RaisedButton label="追加"
+                secondary={true}
+                style={{height: 28, minWidth: 40}}
+                type="submit"
+                labelStyle={{fontSize: '12px', lineHeight: '24px'}} />
+            </form>
           </div>
           <div id="menu">
             <ul>
