@@ -14,3 +14,10 @@ export function onChangeBookmarkFilter(value, x) {
     x
   };
 }
+
+export function onAdditionalKeywordSubmit(value) {
+  return {
+    type: types.ADD_KEYWORD,
+    value
+  };
+}

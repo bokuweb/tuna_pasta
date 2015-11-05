@@ -57889,6 +57889,7 @@ Object.defineProperty(exports, '__esModule', {
 });
 exports.onSelectKeyword = onSelectKeyword;
 exports.onChangeBookmarkFilter = onChangeBookmarkFilter;
+exports.onAdditionalKeywordSubmit = onAdditionalKeywordSubmit;
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
@@ -57908,6 +57909,13 @@ function onChangeBookmarkFilter(value, x) {
     type: types.CHANGE_BOOKMARK_FILTER,
     value: value,
     x: x
+  };
+}
+
+function onAdditionalKeywordSubmit(value) {
+  return {
+    type: types.ADD_KEYWORD,
+    value: value
   };
 }
 
@@ -58212,6 +58220,8 @@ exports.FETCHING_ITEMS = FETCHING_ITEMS;
 var CLEAR_ITEMS = 'CLEAR_ITEMS';
 
 exports.CLEAR_ITEMS = CLEAR_ITEMS;
+var ADD_KEYWORD = 'ADD_KEYWORD';
+exports.ADD_KEYWORD = ADD_KEYWORD;
 var SELECT_KEYWORD = 'SELECT_KEYWORD';
 exports.SELECT_KEYWORD = SELECT_KEYWORD;
 var CHANGE_BOOKMARK_FILTER = 'CHANGE_BOOKMARK_FILTER';
@@ -58240,9 +58250,9 @@ var _componentsPasta = require('../components/pasta');
 
 var _componentsPasta2 = _interopRequireDefault(_componentsPasta);
 
-var _actionsFeedAction = require('../actions/feed-action');
+var _actionsFeed = require('../actions/feed');
 
-var feedActions = _interopRequireWildcard(_actionsFeedAction);
+var feedActions = _interopRequireWildcard(_actionsFeed);
 
 var _actionsMenu = require('../actions/menu');
 
@@ -58261,7 +58271,7 @@ function mapDispatchToProps(dispatch) {
 exports['default'] = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_componentsPasta2['default']);
 module.exports = exports['default'];
 
-},{"../actions/feed-action":345,"../actions/menu":346,"../components/pasta":348,"lodash":6,"react-redux":165,"redux":336}],351:[function(require,module,exports){
+},{"../actions/feed":345,"../actions/menu":346,"../components/pasta":348,"lodash":6,"react-redux":165,"redux":336}],351:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
