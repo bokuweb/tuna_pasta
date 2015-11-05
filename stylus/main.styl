@@ -1,3 +1,5 @@
+@import 'font-style'
+
 html, body, #pasta
   height 100%
   padding 0
@@ -6,6 +8,9 @@ html, body, #pasta
   -ms-text-size-adjust 100%
   background #f5f5f5
   font-family helvetica, "メイリオ", arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif
+
+div
+  font-family helvetica, "メイリオ", arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif  
 
 input,
 textarea,
@@ -52,6 +57,7 @@ a
   #menu
     color #ECF0F1
     //border-top 1px solid #1970A9
+    margin 20px 0 0 0
 
     ul
       padding 0
@@ -71,6 +77,10 @@ a
         color #ffffff
         width 100%
 
+      i
+        font-size 12px
+        margin -1px 30px 0 0
+
     li.selected
       font-size 16px
       margin 5px 0 8px 0
@@ -80,9 +90,27 @@ a
     li:not(.selected):hover
       background #D35400
 
-    i
-      font-size 12px
-      margin -1px 30px 0 0
+
+div.add-keyword
+  margin 0 0 46px 10px
+  display -webkit-flex
+  display flex
+  -webkit-flex-direction row
+  flex-direction         row
+
+  input
+    border 0
+    border solid 1px #2C3E50
+    background #34495E
+    opacity 0.9
+    padding 0 10px
+    color #f5f5f5
+    border-radius 3px
+    margin 0 5px 0 0
+    -moz-box-shadow inset 0 0 4px rgba(0,0,0,0.1)
+    -webkit-box-shadow inset 0 0 4px rgba(0, 0, 0, 0.1)
+    box-shadow inner 0 0 4px rgba(0, 0, 0, 0.1)
+    height 28px
 
 div.slider
   width 100%
@@ -96,13 +124,20 @@ div.slider
 
   .bookmark-filter
     background #34495E
-    padding 5px
+    color #f5f5f5
+    padding 8px
     width 40px
     position absolute
     top 0
     left 10px
     border-radius 4px
     text-align center
+    vertical-align middle
+
+    i
+      color #f5f5f5
+      margin 0 2px -2px 0
+      display inline-block
 
   .bookmark-filter:after
     content ''
@@ -119,7 +154,7 @@ div.slider
   text-shadow -1px 1px 0 rgba(255, 255, 255, 1)
   color #7F8C8D
   width 100%
-       
+
   a
     color #34495E
 
@@ -165,7 +200,7 @@ div.slider
     word-break break-all
 
 .items
-  padding 20px 30px 0 30px
+  padding 20px 30px 0 50px
 
 @media screen and (max-device-width: 768px)
   #side-menu

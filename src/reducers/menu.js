@@ -18,6 +18,13 @@ export default function menu(state={}, action) {
       state.bookmarkFilterX = action.x;
       return Object.assign({}, state);
 
+    case types.ADD_KEYWORD :
+      state.keywords = action.keywords;
+      return Object.assign({}, state);
+
+    case types.ADDING_KEYWORD :
+      return state;
+
     default:
       return state;
   }

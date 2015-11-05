@@ -8,6 +8,8 @@ const ENTRY_URI = 'http://b.hatena.ne.jp/entry/';
 const BOOKMARK_IMAGE_URI = ENTRY_URI + 'image/';
 const TextField = Mui.TextField;
 const Slider = Mui.Slider;
+const RaisedButton = Mui.RaisedButton;
+//const Dialog = Mui.Dialog;
 
 export default class Pasta extends Component {
   constructor(props) {
@@ -47,6 +49,11 @@ export default class Pasta extends Component {
     }
   }
 
+  onAdditionalKeywordSubmit(e) {
+    console.dir(e.target[0].value);
+    this.props.onAdditionalKeywordSubmit(e.target[0].value);
+  }
+
   onClickKeyword(name) {
     this.props.onSelectKeyword(name);
     this.props.fetchFeed(this.props.feed, this.props.menu);
@@ -80,44 +87,60 @@ export default class Pasta extends Component {
       const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
       const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
       return (
-          <div className="item" key={item.link}>
-            <img className="favicon" src={favicon} alt="favicon" />
-            <a href={item.link} className="item-title">{item.title}</a>
-            <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
-            <span className="publish-date">{item.publishedDate}</span>
-            <span className="category" style={this.getCategoryStyle(item.categories[0])}>{item.categories[0]}</span>
-              <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
-          </div>
+        <div className="item" key={item.link}>
+          <img className="favicon" src={favicon} alt="favicon" />
+          <a href={item.link} className="item-title">{item.title}</a>
+          <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
+          <span className="publish-date">{item.publishedDate}</span>
+          <span className="category" style={this.getCategoryStyle(item.categories[0])}>
+            {item.categories[0]}
+          </span>
+          <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
+        </div>
       );
     });
+
+    // FIXME : 
     let x = this.props.menu.bookmarkFilterX - 24;
     if (x > 220) x = 220;
     if (x < 10) x = 10;
-      const style = {left:x};
+
     return (
       <div id="container">
         <div id="side-menu">
           <img id="logo" src="img/logo.png" alt="" />
           <div className="slider">
-            <div className="bookmark-filter" style={style}>{this.props.menu.bookmarkFilter}</div>
-            <Slider name="slider"
-                    defaultValue={1}
-                    onChange={this.onSliderChange.bind(this)}
-                    onDragStop={this.onSlideStop.bind(this)}
-                    max={250}
-                    min={1} />
+          <div className="bookmark-filter" style={{left:x}}>
+            <i className="icon-hatena" />
+            {this.props.menu.bookmarkFilter}
+          </div>
+          <Slider name="slider"
+            defaultValue={1}
+            onChange={this.onSliderChange.bind(this)}
+            onDragStop={this.onSlideStop.bind(this)}
+            max={250}
+            min={1} />
+          </div>
+          <div className="add-keyword">
+            <form className="commentForm" action="#" onSubmit={this.onAdditionalKeywordSubmit.bind(this)}>
+              <input type="text"
+              placeholder="キーワードを追加" />
+              <RaisedButton label="追加"
+                secondary={true}
+                style={{height: 28, minWidth: 40}}
+                type="submit"
+                labelStyle={{fontSize: '12px', lineHeight: '24px'}} />
+            </form>
           </div>
           <div id="menu">
             <ul>
               <li className={this.props.menu.activeKeyword === 'all' ? 'selected' : ''}
                   onClick={this.onClickKeyword.bind(this, 'all')}>
-                <i className={"fa fa-home"} />
-                総合
+                <i className={"fa fa-home"} />総合
               </li>
               <li className={this.props.menu.activeKeyword === 'favorite' ? 'selected' : ''}
                 onClick={this.onClickKeyword.bind(this, 'favorite')}>
-                <i className={"fa fa-heart"} />
-                お気に入り
+                <i className={"fa fa-heart"} />お気に入り
               </li>
               {this.getKeywordList()}
             </ul>
@@ -126,7 +149,7 @@ export default class Pasta extends Component {
         <div id="content">
             <Infinite
               elementHeight={140}
-              containerHeight={this.innerHeight-40}
+              containerHeight={this.innerHeight-20}
               infiniteLoadBeginBottomOffset={50}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}
               loadingSpinnerDelegate={this.elementInfiniteLoad()}

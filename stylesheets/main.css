@@ -1,3 +1,98 @@
+@font-face {
+  font-family: 'icomoon';
+  src: url("../fonts/icomoon.eot?-qz7pb2");
+  src: url("../fonts/icomoon.eot?#iefix-qz7pb2") format('embedded-opentype'), url("../fonts/icomoon.woff?-qz7pb2") format('woff'), url("../fonts/icomoon.ttf?-qz7pb2") format('truetype'), url("../fonts/icomoon.svg?-qz7pb2#icomoon") format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+[class^="icon-"],
+[class*=" icon-"] {
+  font-family: 'icomoon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+/* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.icon-evernote:before {
+  content: "\e004";
+}
+.icon-feedly:before {
+  content: "\e007";
+}
+.icon-pocket:before {
+  content: "\e008";
+}
+.icon-line:before {
+  content: "\e009";
+}
+.icon-hatena:before {
+  content: "\e00a";
+}
+.icon-feedly-square:before {
+  content: "\e601";
+}
+.icon-googleplus:before {
+  content: "\e608";
+}
+.icon-facebook:before {
+  content: "\e60d";
+}
+.icon-instagram:before {
+  content: "\e610";
+}
+.icon-twitter:before {
+  content: "\e611";
+}
+.icon-feed:before {
+  content: "\e614";
+}
+.icon-youtube:before {
+  content: "\e617";
+}
+.icon-flickr2:before {
+  content: "\e61e";
+}
+.icon-githubmark:before {
+  content: "\e626";
+}
+.icon-github:before {
+  content: "\e627";
+}
+.icon-wordpress:before {
+  content: "\e629";
+}
+.icon-tumblr:before {
+  content: "\e62d";
+}
+.icon-yahoo:before {
+  content: "\e62f";
+}
+.icon-apple:before {
+  content: "\e631";
+}
+.icon-android:before {
+  content: "\e633";
+}
+.icon-windows:before {
+  content: "\e634";
+}
+.icon-windows8:before {
+  content: "\e635";
+}
+.icon-skype:before {
+  content: "\e636";
+}
+.icon-delicious:before {
+  content: "\e638";
+}
+.icon-pinterest:before {
+  content: "\e63a";
+}
 html,
 body,
 #pasta {
@@ -7,6 +102,9 @@ body,
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   background: #f5f5f5;
+  font-family: helvetica, "メイリオ", arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif;
+}
+div {
   font-family: helvetica, "メイリオ", arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif;
 }
 input,
@@ -53,6 +151,7 @@ a {
 }
 #side-menu #menu {
   color: #ecf0f1;
+  margin: 20px 0 0 0;
 }
 #side-menu #menu ul {
   padding: 0;
@@ -72,6 +171,10 @@ a {
   color: #fff;
   width: 100%;
 }
+#side-menu #menu li i {
+  font-size: 12px;
+  margin: -1px 30px 0 0;
+}
 #side-menu #menu li.selected {
   font-size: 16px;
   margin: 5px 0 8px 0;
@@ -81,9 +184,26 @@ a {
 #side-menu #menu li:not(.selected):hover {
   background: #d35400;
 }
-#side-menu #menu i {
-  font-size: 12px;
-  margin: -1px 30px 0 0;
+div.add-keyword {
+  margin: 0 0 46px 10px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+}
+div.add-keyword input {
+  border: 0;
+  border: solid 1px #2c3e50;
+  background: #34495e;
+  opacity: 0.9;
+  padding: 0 10px;
+  color: #f5f5f5;
+  border-radius: 3px;
+  margin: 0 5px 0 0;
+  -moz-box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+  -webkit-box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+  box-shadow: inner 0 0 4px rgba(0,0,0,0.1);
+  height: 28px;
 }
 div.slider {
   width: 100%;
@@ -97,13 +217,20 @@ div.slider div[name="slider"] {
 }
 div.slider .bookmark-filter {
   background: #34495e;
-  padding: 5px;
+  color: #f5f5f5;
+  padding: 8px;
   width: 40px;
   position: absolute;
   top: 0;
   left: 10px;
   border-radius: 4px;
   text-align: center;
+  vertical-align: middle;
+}
+div.slider .bookmark-filter i {
+  color: #f5f5f5;
+  margin: 0 2px -2px 0;
+  display: inline-block;
 }
 div.slider .bookmark-filter:after {
   content: '';
@@ -166,7 +293,7 @@ div.slider .bookmark-filter:after {
   word-break: break-all;
 }
 .items {
-  padding: 20px 30px 0 30px;
+  padding: 20px 30px 0 50px;
 }
 @media screen and (max-device-width: 768px) {
   #side-menu {

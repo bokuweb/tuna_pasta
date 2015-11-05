@@ -36,7 +36,7 @@ export default function feed(state={}, action) {
       console.log(state[keyword].isPageEnd);
       return Object.assign({}, state);
 
-  case types.CLEAR_ITEMS :
+    case types.CLEAR_ITEMS :
       state.all.items = [];
       for (let keyword of action.keywords) {
         state[keyword.name] = createProps();
@@ -45,6 +45,10 @@ export default function feed(state={}, action) {
 
     case types.FETCHING_ITEMS :
       state[action.keyword].isInfiniteLoading = true;
+      return Object.assign({}, state);
+
+    case types.ADD_KEYWORD :
+      state[action.keyword] = createProps();
       return Object.assign({}, state);
 
     default:
