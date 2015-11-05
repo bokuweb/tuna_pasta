@@ -21,32 +21,30 @@ export function changeBookmarkThreshold(value, x) {
 export function addKeyword(keyword) {
   return dispatch => {
     if (keyword === '') return;
-    db.put('keywords', {name: keyword, enable: 1, icon:'tag'})
-      .then(() => {
-        db.getArray('keywords').then((keywords) => {
-          dispatch({
-            type: types.ADD_KEYWORD,
-            keywords,
-            keyword
-          });
+    db.put('keywords', {name: keyword, icon:'tag'}).then(() => {
+      db.getArray('keywords').then((keywords) => {
+        dispatch({
+          type: types.ADD_KEYWORD_COMPLETE,
+          keywords
         });
       });
+    });
+    dispatch({type: types.ADD_KEYWORD, keyword});
   }
 }
 
 export function removeKeyword(keyword) {
   return dispatch => {
     if (!keyword) return;
-    db.remove('keywords', keyword)
-      .then(() => {
-        db.getArray('keywords').then((keywords) => {
-          dispatch({
-            type: types.REMOVE_KEYWORD,
-            keywords,
-            keyword
-          });
+    db.remove('keywords', keyword).then(() => {
+      db.getArray('keywords').then((keywords) => {
+        dispatch({
+          type: types.REMOVE_KEYWORD,
+          keywords,
+          keyword
         });
       });
+    });
   }
 }
 

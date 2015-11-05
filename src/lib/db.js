@@ -12,7 +12,6 @@ export default class DbManager {
   }
 
   create(schemes) {
-    db.delete();
     db.version(1).stores(schemes);
     db.open();
   }

@@ -22,30 +22,16 @@ export function initialize() {
   return dispatch => {
     console.log("initialize..");
     db.create({keywords: "name, icon"});
-    //db.delete();
-    //db.version(1).stores();
-    //db.open();
-    //db.keywords.count((count) => {
-    //  if (count > 0) {
-    //    console.log("Already populated");
-    //  } else {
-    db.put('keywords', {name: 'Elixir', icon:'tag'});
-    db.put('keywords', {name: 'JavaScript', icon:'tag'});
-    db.put('keywords', {name: 'React', icon:'tag'});
-    //console.log("Database is empty. Populating from ajax call...");
     db.getArray('keywords').then((keywords) => {
-      dispatch({
-        type: types.INITIALIZE,
-        keywords
-      });
-      _fetchFeed(dispatch, keywords[0].name, 0, 1);
+      dispatch({type: types.INITIALIZE, keywords});
+      if (keywords.length !== 0)
+        _fetchFeed(dispatch, keywords[0].name, 0, 1);
     });
     dispatch({type: types.INITIALIZING});
   }
 }
 
 export function fetchingItems(keyword) {
-  console.log("fecthing..");
   return {
     type: types.FETCHING_ITEMS,
     keyword
@@ -76,6 +62,7 @@ export function fetchFeed(feed, menu) {
         _fetchFeed(dispatch, keyword.name, page, menu.bookmarkFilter);
       }
     } else {
+
       let page = feed[keyword].page;
         _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
     }

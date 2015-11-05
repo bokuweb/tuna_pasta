@@ -50,6 +50,11 @@ export default function feed(state={}, action) {
     case types.ADD_KEYWORD :
       state[action.keyword] = createProps();
       return Object.assign({}, state);
+
+    case types.REMOVE_KEYWORD :
+      state.all = createProps();
+      return Object.assign({}, state);
+
     default:
       return state;
   }

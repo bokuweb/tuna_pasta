@@ -57785,30 +57785,15 @@ function initialize() {
   return function (dispatch) {
     console.log("initialize..");
     db.create({ keywords: "name, icon" });
-    //db.delete();
-    //db.version(1).stores();
-    //db.open();
-    //db.keywords.count((count) => {
-    //  if (count > 0) {
-    //    console.log("Already populated");
-    //  } else {
-    db.put('keywords', { name: 'Elixir', icon: 'tag' });
-    db.put('keywords', { name: 'JavaScript', icon: 'tag' });
-    db.put('keywords', { name: 'React', icon: 'tag' });
-    //console.log("Database is empty. Populating from ajax call...");
     db.getArray('keywords').then(function (keywords) {
-      dispatch({
-        type: types.INITIALIZE,
-        keywords: keywords
-      });
-      _fetchFeed(dispatch, keywords[0].name, 0, 1);
+      dispatch({ type: types.INITIALIZE, keywords: keywords });
+      if (keywords.length !== 0) _fetchFeed(dispatch, keywords[0].name, 0, 1);
     });
     dispatch({ type: types.INITIALIZING });
   };
 }
 
 function fetchingItems(keyword) {
-  console.log("fecthing..");
   return {
     type: types.FETCHING_ITEMS,
     keyword: keyword
@@ -57860,6 +57845,7 @@ function fetchFeed(feed, menu) {
         }
       }
     } else {
+
       var page = feed[keyword].page;
       _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
     }
@@ -57922,15 +57908,15 @@ function changeBookmarkThreshold(value, x) {
 function addKeyword(keyword) {
   return function (dispatch) {
     if (keyword === '') return;
-    db.put('keywords', { name: keyword, enable: 1, icon: 'tag' }).then(function () {
+    db.put('keywords', { name: keyword, icon: 'tag' }).then(function () {
       db.getArray('keywords').then(function (keywords) {
         dispatch({
-          type: types.ADD_KEYWORD,
-          keywords: keywords,
-          keyword: keyword
+          type: types.ADD_KEYWORD_COMPLETE,
+          keywords: keywords
         });
       });
     });
+    dispatch({ type: types.ADD_KEYWORD, keyword: keyword });
   };
 }
 
@@ -58033,6 +58019,7 @@ var Pasta = (function (_Component) {
   _createClass(Pasta, [{
     key: 'onSliderChange',
     value: function onSliderChange(e, value) {
+      localStorage.setItem('threshold', ~ ~value);
       this.props.changeBookmarkThreshold(~ ~value, e.clientX);
     }
   }, {
@@ -58068,8 +58055,8 @@ var Pasta = (function (_Component) {
   }, {
     key: 'onAdditionalKeywordSubmit',
     value: function onAdditionalKeywordSubmit(e) {
-      console.dir(e.target[0].value);
       this.props.addKeyword(e.target[0].value);
+      this.props.fetchFeed(this.props.feed, this.props.menu);
     }
   }, {
     key: 'onClickKeyword',
@@ -58080,7 +58067,6 @@ var Pasta = (function (_Component) {
   }, {
     key: 'onKeywordRemoveButtonClick',
     value: function onKeywordRemoveButtonClick(name) {
-      console.log(name);
       this.props.removeKeyword(name);
     }
   }, {
@@ -58113,52 +58099,58 @@ var Pasta = (function (_Component) {
     value: function render() {
       var _this3 = this;
 
-      if (!this.props.feed.isInitialized) {
-        return _react2['default'].createElement('div', { className: 'rect-spinner' });
-      }
+      if (!this.props.feed.isInitialized) return _react2['default'].createElement('div', { className: 'rect-spinner' });
 
       var feed = this.props.feed[this.props.menu.activeKeyword];
-      var items = feed.items.map(function (item) {
-        var favicon = FAVICON_URI + encodeURIComponent(item.link);
-        var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
-        var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
-        return _react2['default'].createElement(
-          'div',
-          { className: 'item', key: item.link },
-          _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
-          _react2['default'].createElement(
-            'a',
-            { href: item.link, className: 'item-title' },
-            item.title
-          ),
-          _react2['default'].createElement(
-            'a',
-            { href: hatebuHref, className: 'hatebu' },
-            _react2['default'].createElement('img', { src: hatebuImage, alt: '' })
-          ),
-          _react2['default'].createElement('br', null),
-          _react2['default'].createElement(
-            'span',
-            { className: 'publish-date' },
-            item.publishedDate
-          ),
-          _react2['default'].createElement(
-            'span',
-            { className: 'category', style: _this3.getCategoryStyle(item.categories[0]) },
-            item.categories[0]
-          ),
-          _react2['default'].createElement(
-            'p',
-            { className: 'content-snippet' },
-            (0, _libUtils.unescapeHTML)(item.contentSnippet)
-          )
-        );
-      });
-
+      var items = undefined;
+      if (this.props.menu.keywords.length === 0) items = _react2['default'].createElement(
+        'div',
+        null,
+        'まだ記事はありません。キーワードを追加してください。'
+      );else {
+        items = feed.items.map(function (item) {
+          var favicon = FAVICON_URI + encodeURIComponent(item.link);
+          var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
+          var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
+          return _react2['default'].createElement(
+            'div',
+            { className: 'item', key: item.link },
+            _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
+            _react2['default'].createElement(
+              'a',
+              { href: item.link, className: 'item-title' },
+              item.title
+            ),
+            _react2['default'].createElement(
+              'a',
+              { href: hatebuHref, className: 'hatebu' },
+              _react2['default'].createElement('img', { src: hatebuImage, alt: '' })
+            ),
+            _react2['default'].createElement('br', null),
+            _react2['default'].createElement(
+              'span',
+              { className: 'publish-date' },
+              item.publishedDate
+            ),
+            _react2['default'].createElement(
+              'span',
+              { className: 'category', style: _this3.getCategoryStyle(item.categories[0]) },
+              item.categories[0]
+            ),
+            _react2['default'].createElement(
+              'p',
+              { className: 'content-snippet' },
+              (0, _libUtils.unescapeHTML)(item.contentSnippet)
+            )
+          );
+        });
+      }
       // FIXME :
       var x = this.props.menu.bookmarkFilterX - 24;
       if (x > 220) x = 220;
       if (x < 10) x = 10;
+      // FIXME
+      //let threshold = (localStorage.threshold) ? localStorage.threshold : 1;
 
       return _react2['default'].createElement(
         'div',
@@ -58193,7 +58185,7 @@ var Pasta = (function (_Component) {
                 placeholder: 'キーワードを追加' }),
               _react2['default'].createElement(RaisedButton, { label: '追加',
                 secondary: true,
-                style: { height: 28, minWidth: 40 },
+                style: { height: 26, minWidth: 40 },
                 type: 'submit',
                 labelStyle: { fontSize: '12px', lineHeight: '24px' } })
             )
@@ -58267,6 +58259,8 @@ var CLEAR_ITEMS = 'CLEAR_ITEMS';
 exports.CLEAR_ITEMS = CLEAR_ITEMS;
 var ADD_KEYWORD = 'ADD_KEYWORD';
 exports.ADD_KEYWORD = ADD_KEYWORD;
+var ADD_KEYWORD_COMPLETE = 'ADD_KEYWORD_COMPLETE';
+exports.ADD_KEYWORD_COMPLETE = ADD_KEYWORD_COMPLETE;
 var REMOVE_KEYWORD = 'REMOVE_KEYWORD';
 
 exports.REMOVE_KEYWORD = REMOVE_KEYWORD;
@@ -58385,7 +58379,6 @@ var DbManager = (function () {
   _createClass(DbManager, [{
     key: 'create',
     value: function create(schemes) {
-      db['delete']();
       db.version(1).stores(schemes);
       db.open();
     }
@@ -58545,6 +58538,11 @@ function feed(state, action) {
     case types.ADD_KEYWORD:
       state[action.keyword] = createProps();
       return Object.assign({}, state);
+
+    case types.REMOVE_KEYWORD:
+      state.all = createProps();
+      return Object.assign({}, state);
+
     default:
       return state;
   }
@@ -58599,7 +58597,7 @@ function menu(state, action) {
   switch (action.type) {
     case types.INITIALIZE:
       state.keywords = action.keywords;
-      state.activeKeyword = action.keywords[0].name;
+      state.activeKeyword = 'all';
       state.bookmarkFilter = 1;
       state.bookmarkFilterX = 15;
       return Object.assign({}, state);
@@ -58614,12 +58612,16 @@ function menu(state, action) {
       return Object.assign({}, state);
 
     case types.ADD_KEYWORD:
+      state.activeKeyword = action.keyword;
+      return Object.assign({}, state);
+
+    case types.ADD_KEYWORD_COMPLETE:
       state.keywords = action.keywords;
       return Object.assign({}, state);
 
     case types.REMOVE_KEYWORD:
       state.keywords = action.keywords;
-      if (state.keywords.length === 0) state.activeKeyword = 'all';else if (action.keyword === state.activeKeyword) state.activeKeyword = action.keywords[0].name;
+      if (state.keywords.length === 0 || action.keyword === state.activeKeyword) state.activeKeyword = 'all';
       return Object.assign({}, state);
 
     default:

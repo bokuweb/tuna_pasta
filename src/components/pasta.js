@@ -23,6 +23,7 @@ export default class Pasta extends Component {
   }
 
   onSliderChange(e, value) {
+    localStorage.setItem('threshold', ~~value);
     this.props.changeBookmarkThreshold(~~value, e.clientX);
   }
 
@@ -51,8 +52,8 @@ export default class Pasta extends Component {
   }
 
   onAdditionalKeywordSubmit(e) {
-    console.dir(e.target[0].value);
     this.props.addKeyword(e.target[0].value);
+    this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
   onClickKeyword(name) {
@@ -61,7 +62,6 @@ export default class Pasta extends Component {
   }
 
   onKeywordRemoveButtonClick(name) {
-    console.log(name);
     this.props.removeKeyword(name);
   }
 
@@ -84,35 +84,38 @@ export default class Pasta extends Component {
   }
 
   render() {
-    if (!this.props.feed.isInitialized) {
-      return (
-        <div className="rect-spinner"></div>
-      );
-    }
+    if (!this.props.feed.isInitialized)
+      return <div className="rect-spinner"></div>;
 
     const feed = this.props.feed[this.props.menu.activeKeyword];
-    const items = feed.items.map((item) => {
-      const favicon = FAVICON_URI + encodeURIComponent(item.link);
-      const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
-      const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
-      return (
-        <div className="item" key={item.link}>
-          <img className="favicon" src={favicon} alt="favicon" />
-          <a href={item.link} className="item-title">{item.title}</a>
-          <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
-          <span className="publish-date">{item.publishedDate}</span>
-          <span className="category" style={this.getCategoryStyle(item.categories[0])}>
-            {item.categories[0]}
-          </span>
-          <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
-        </div>
-      );
-    });
-
+    let items;
+    if (this.props.menu.keywords.length === 0)
+      items = <div>まだ記事はありません。キーワードを追加してください。</div>;
+    else {
+      items = feed.items.map((item) => {
+        const favicon = FAVICON_URI + encodeURIComponent(item.link);
+        const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
+        const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
+        return (
+          <div className="item" key={item.link}>
+            <img className="favicon" src={favicon} alt="favicon" />
+            <a href={item.link} className="item-title">{item.title}</a>
+            <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
+            <span className="publish-date">{item.publishedDate}</span>
+            <span className="category" style={this.getCategoryStyle(item.categories[0])}>
+              {item.categories[0]}
+            </span>
+            <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
+          </div>
+        );
+      });
+    }
     // FIXME : 
     let x = this.props.menu.bookmarkFilterX - 24;
     if (x > 220) x = 220;
     if (x < 10) x = 10;
+    // FIXME
+    //let threshold = (localStorage.threshold) ? localStorage.threshold : 1;
 
     return (
       <div id="container">
@@ -136,7 +139,7 @@ export default class Pasta extends Component {
               placeholder="キーワードを追加" />
               <RaisedButton label="追加"
                 secondary={true}
-                style={{height: 28, minWidth: 40}}
+                style={{height: 26, minWidth: 40}}
                 type="submit"
                 labelStyle={{fontSize: '12px', lineHeight: '24px'}} />
             </form>
