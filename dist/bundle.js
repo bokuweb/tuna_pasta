@@ -57755,9 +57755,7 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _dexie = require('dexie');
-
-var _dexie2 = _interopRequireDefault(_dexie);
+//import Dexie from 'dexie';
 
 var _apiFeed = require('../api/feed');
 
@@ -57765,10 +57763,15 @@ var _constantsActionTypes = require('../constants/action-types');
 
 var types = _interopRequireWildcard(_constantsActionTypes);
 
+var _libDb = require('../lib/db');
+
+var _libDb2 = _interopRequireDefault(_libDb);
+
 var HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&safe=off&q=';
 var ITEM_NUM_PER_PAGE = 40;
 
-var db = new _dexie2['default']('Pasta');
+var db = new _libDb2['default']();
+//const db = new Dexie('Pasta');
 
 function getItems(feed) {
   if (feed.responseData.feed === undefined) {
@@ -57781,27 +57784,24 @@ function getItems(feed) {
 function initialize() {
   return function (dispatch) {
     console.log("initialize..");
-    db['delete']();
-    db.version(1).stores({
-      keywords: "++id,name,enable,icon"
-    });
-    db.open();
-    db.keywords.count(function (count) {
-      if (count > 0) {
-        console.log("Already populated");
-      } else {
-        db.keywords.add({ name: 'Elixir', enable: 1, icon: 'tag' });
-        db.keywords.add({ name: 'JavaScript', enable: 1, icon: 'tag' });
-        db.keywords.add({ name: 'React', enable: 1, icon: 'tag' });
-        console.log("Database is empty. Populating from ajax call...");
-        db.keywords.toArray(function (keywords) {
-          dispatch({
-            type: types.INITIALIZE,
-            keywords: keywords
-          });
-          _fetchFeed(dispatch, keywords[0].name, 0, 1);
-        });
-      }
+    db.create({ keywords: "++id,name,enable,icon" });
+    //db.delete();
+    //db.version(1).stores();
+    //db.open();
+    //db.keywords.count((count) => {
+    //  if (count > 0) {
+    //    console.log("Already populated");
+    //  } else {
+    db.add('keywords', { name: 'Elixir', enable: 1, icon: 'tag' });
+    db.add('keywords', { name: 'JavaScript', enable: 1, icon: 'tag' });
+    db.add('keywords', { name: 'React', enable: 1, icon: 'tag' });
+    //console.log("Database is empty. Populating from ajax call...");
+    db.getArray('keywords').then(function (keywords) {
+      dispatch({
+        type: types.INITIALIZE,
+        keywords: keywords
+      });
+      _fetchFeed(dispatch, keywords[0].name, 0, 1);
     });
     dispatch({ type: types.INITIALIZING });
   };
@@ -57870,9 +57870,8 @@ function fetchFeed(feed, menu) {
 function _fetchFeed(dispatch, keyword, page, threshold) {
   if (page === undefined) page = 0;
 
-  console.log("threshold" + threshold);
   var uri = HATENA_SEARCH_URI + keyword + '&of=' + page * ITEM_NUM_PER_PAGE + '&users=' + threshold;
-  console.log(uri);
+  console.log('fetch url = ' + uri);
   (0, _apiFeed.fetch)(uri).then(function (feed) {
     dispatch(recieveItems(getItems(feed), keyword));
   }, function (error) {
@@ -57881,7 +57880,7 @@ function _fetchFeed(dispatch, keyword, page, threshold) {
   dispatch(fetchingItems(keyword));
 }
 
-},{"../api/feed":347,"../constants/action-types":349,"dexie":1,"lodash":6}],346:[function(require,module,exports){
+},{"../api/feed":347,"../constants/action-types":349,"../lib/db":352,"lodash":6}],346:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -57891,11 +57890,19 @@ exports.onSelectKeyword = onSelectKeyword;
 exports.onChangeBookmarkFilter = onChangeBookmarkFilter;
 exports.onAdditionalKeywordSubmit = onAdditionalKeywordSubmit;
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
 var _constantsActionTypes = require('../constants/action-types');
 
 var types = _interopRequireWildcard(_constantsActionTypes);
+
+var _libDb = require('../lib/db');
+
+var _libDb2 = _interopRequireDefault(_libDb);
+
+var db = new _libDb2['default']();
 
 function onSelectKeyword(keyword) {
   return {
@@ -57912,14 +57919,23 @@ function onChangeBookmarkFilter(value, x) {
   };
 }
 
-function onAdditionalKeywordSubmit(value) {
-  return {
-    type: types.ADD_KEYWORD,
-    value: value
+function onAdditionalKeywordSubmit(keyword) {
+  return function (dispatch) {
+    if (keyword !== '') {
+      db.add('keywords', { name: keyword, enable: 1, icon: 'tag' });
+      db.getArray('keywords').then(function (keywords) {
+        dispatch({
+          type: types.ADD_KEYWORD,
+          keywords: keywords,
+          keyword: keyword
+        });
+      });
+    }
+    dispatch({ type: types.ADDING_KEYWORD });
   };
 }
 
-},{"../constants/action-types":349}],347:[function(require,module,exports){
+},{"../constants/action-types":349,"../lib/db":352}],347:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58038,6 +58054,7 @@ var Pasta = (function (_Component) {
     key: 'onAdditionalKeywordSubmit',
     value: function onAdditionalKeywordSubmit(e) {
       console.dir(e.target[0].value);
+      this.props.onAdditionalKeywordSubmit(e.target[0].value);
     }
   }, {
     key: 'onClickKeyword',
@@ -58203,7 +58220,7 @@ var Pasta = (function (_Component) {
 exports['default'] = Pasta;
 module.exports = exports['default'];
 
-},{"../lib/utils":352,"material-ui":43,"react":332,"react-infinite":156}],349:[function(require,module,exports){
+},{"../lib/utils":353,"material-ui":43,"react":332,"react-infinite":156}],349:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58222,6 +58239,9 @@ var CLEAR_ITEMS = 'CLEAR_ITEMS';
 exports.CLEAR_ITEMS = CLEAR_ITEMS;
 var ADD_KEYWORD = 'ADD_KEYWORD';
 exports.ADD_KEYWORD = ADD_KEYWORD;
+var ADDING_KEYWORD = 'ADDING_KEYWORD';
+
+exports.ADDING_KEYWORD = ADDING_KEYWORD;
 var SELECT_KEYWORD = 'SELECT_KEYWORD';
 exports.SELECT_KEYWORD = SELECT_KEYWORD;
 var CHANGE_BOOKMARK_FILTER = 'CHANGE_BOOKMARK_FILTER';
@@ -58304,7 +58324,66 @@ var store = (0, _storesConfigureStore2['default'])();
   _react2['default'].createElement(_containersApp2['default'], null)
 ), document.getElementById('pasta'));
 
-},{"./components/pasta":348,"./containers/app":350,"./stores/configure-store":356,"react":332,"react-dom":152,"react-redux":165}],352:[function(require,module,exports){
+},{"./components/pasta":348,"./containers/app":350,"./stores/configure-store":357,"react":332,"react-dom":152,"react-redux":165}],352:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _dexie = require('dexie');
+
+var _dexie2 = _interopRequireDefault(_dexie);
+
+var db = new _dexie2['default']('Pasta');
+var instance = null;
+
+var DbManager = (function () {
+  function DbManager() {
+    _classCallCheck(this, DbManager);
+
+    if (!instance) {
+      instance = this;
+    }
+    return instance;
+  }
+
+  _createClass(DbManager, [{
+    key: 'create',
+    value: function create(schemes) {
+      //db.delete();
+      db.version(1).stores(schemes);
+      db.open();
+    }
+  }, {
+    key: 'add',
+    value: function add(table, docs) {
+      db[table].add(docs);
+    }
+  }, {
+    key: 'getArray',
+    value: function getArray(table) {
+      return new Promise(function (resolve, reject) {
+        db[table].toArray(function (docs) {
+          resolve(docs);
+        });
+      });
+    }
+  }]);
+
+  return DbManager;
+})();
+
+exports['default'] = DbManager;
+module.exports = exports['default'];
+
+},{"dexie":1}],353:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -58318,7 +58397,7 @@ function unescapeHTML(str) {
     return div.textContent || div.innerText;
 }
 
-},{}],353:[function(require,module,exports){
+},{}],354:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58430,6 +58509,10 @@ function feed(state, action) {
       state[action.keyword].isInfiniteLoading = true;
       return Object.assign({}, state);
 
+    case types.ADD_KEYWORD:
+      state[action.keyword] = createProps();
+      return Object.assign({}, state);
+
     default:
       return state;
   }
@@ -58437,7 +58520,7 @@ function feed(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":349,"lodash":6}],354:[function(require,module,exports){
+},{"../constants/action-types":349,"lodash":6}],355:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58464,7 +58547,7 @@ var rootReducer = (0, _redux.combineReducers)({
 exports['default'] = rootReducer;
 module.exports = exports['default'];
 
-},{"./feed":353,"./menu":355,"redux":336}],355:[function(require,module,exports){
+},{"./feed":354,"./menu":356,"redux":336}],356:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58498,6 +58581,13 @@ function menu(state, action) {
       state.bookmarkFilterX = action.x;
       return Object.assign({}, state);
 
+    case types.ADD_KEYWORD:
+      state.keywords = action.keywords;
+      return Object.assign({}, state);
+
+    case types.ADDING_KEYWORD:
+      return state;
+
     default:
       return state;
   }
@@ -58505,7 +58595,7 @@ function menu(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":349}],356:[function(require,module,exports){
+},{"../constants/action-types":349}],357:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -58537,4 +58627,4 @@ function configureStore() {
 
 module.exports = exports['default'];
 
-},{"../reducers":354,"redux":336,"redux-logger":333,"redux-thunk":334}]},{},[351]);
+},{"../reducers":355,"redux":336,"redux-logger":333,"redux-thunk":334}]},{},[351]);

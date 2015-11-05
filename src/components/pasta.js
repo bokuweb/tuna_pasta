@@ -51,6 +51,7 @@ export default class Pasta extends Component {
 
   onAdditionalKeywordSubmit(e) {
     console.dir(e.target[0].value);
+    this.props.onAdditionalKeywordSubmit(e.target[0].value);
   }
 
   onClickKeyword(name) {
