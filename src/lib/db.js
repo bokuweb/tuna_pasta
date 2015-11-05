@@ -1,6 +1,6 @@
 import Dexie from 'dexie';
 
-const db = new Dexie('Pasta');
+const db = new Dexie('PastaDB');
 let instance = null;
 
 export default class DbManager {
@@ -12,6 +12,7 @@ export default class DbManager {
   }
 
   create(schemes) {
+    //db.delete();
     db.version(1).stores(schemes);
     db.open();
   }
