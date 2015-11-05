@@ -69,8 +69,9 @@ a
       line-height 32px
       border-radius 0 4px 4px 0
       width 200px
-      transition  all .3s ease
-      cursor pointer
+      transition  all .4s ease
+      position relative
+
       height 32px
 
       a
@@ -81,6 +82,14 @@ a
         font-size 12px
         margin -1px 30px 0 0
 
+      span
+        cursor pointer
+
+      div.remove
+        display none
+        cursor pointer
+
+
     li.selected
       font-size 16px
       margin 5px 0 8px 0
@@ -90,6 +99,10 @@ a
     li:not(.selected):hover
       background #D35400
 
+    li:hover > div.remove
+      display inline-block
+      position absolute
+      left 230px
 
 div.add-keyword
   margin 0 0 46px 10px

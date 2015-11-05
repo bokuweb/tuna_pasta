@@ -22,8 +22,13 @@ export default function menu(state={}, action) {
       state.keywords = action.keywords;
       return Object.assign({}, state);
 
-    case types.ADDING_KEYWORD :
-      return state;
+  case types.REMOVE_KEYWORD :
+      state.keywords = action.keywords;
+      if (state.keywords.length === 0)
+        state.activeKeyword = 'all'
+      else if (action.keyword === state.activeKeyword)
+        state.activeKeyword = action.keywords[0].name;
+      return Object.assign({}, state);
 
     default:
       return state;

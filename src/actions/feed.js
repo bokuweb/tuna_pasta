@@ -21,7 +21,7 @@ function getItems(feed) {
 export function initialize() {
   return dispatch => {
     console.log("initialize..");
-    db.create({keywords: "++id,name,enable,icon"});
+    db.create({keywords: "name, icon"});
     //db.delete();
     //db.version(1).stores();
     //db.open();
@@ -29,9 +29,9 @@ export function initialize() {
     //  if (count > 0) {
     //    console.log("Already populated");
     //  } else {
-    db.add('keywords', {name: 'Elixir', enable: 1, icon:'tag'});
-    db.add('keywords', {name: 'JavaScript', enable: 1, icon:'tag'});
-    db.add('keywords', {name: 'React', enable: 1, icon:'tag'});
+    db.put('keywords', {name: 'Elixir', icon:'tag'});
+    db.put('keywords', {name: 'JavaScript', icon:'tag'});
+    db.put('keywords', {name: 'React', icon:'tag'});
     //console.log("Database is empty. Populating from ajax call...");
     db.getArray('keywords').then((keywords) => {
       dispatch({
@@ -70,14 +70,13 @@ export function clearFeeds(menu) {
 export function fetchFeed(feed, menu) {
   return dispatch => {
     const keyword = menu.activeKeyword;
-    let page;
     if (keyword === 'all') {
       for (let keyword of menu.keywords) {
-        page = feed[keyword.name].page;
+        let page = feed[keyword.name].page;
         _fetchFeed(dispatch, keyword.name, page, menu.bookmarkFilter);
       }
     } else {
-      page = feed[keyword].page;
+      let page = feed[keyword].page;
         _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
     }
   }

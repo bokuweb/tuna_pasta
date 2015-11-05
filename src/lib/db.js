@@ -12,13 +12,17 @@ export default class DbManager {
   }
 
   create(schemes) {
-    //db.delete();
+    db.delete();
     db.version(1).stores(schemes);
     db.open();
   }
 
-  add(table, docs) {
-    db[table].add(docs);
+  put(table, doc) {
+    return db[table].put(doc);
+  }
+
+  remove(table, key) {
+    return db[table].delete(key);
   }
 
   getArray(table) {

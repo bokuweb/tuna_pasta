@@ -3,14 +3,14 @@ import DbManager from '../lib/db'
 
 const db = new DbManager();
 
-export function onSelectKeyword(keyword) {
+export function selectKeyword(keyword) {
   return {
     type: types.SELECT_KEYWORD,
     keyword
   };
 }
 
-export function onChangeBookmarkFilter(value, x) {
+export function changeBookmarkThreshold(value, x) {
   return {
     type: types.CHANGE_BOOKMARK_FILTER,
     value,
@@ -18,18 +18,35 @@ export function onChangeBookmarkFilter(value, x) {
   };
 }
 
-export function onAdditionalKeywordSubmit(keyword) {
+export function addKeyword(keyword) {
   return dispatch => {
-    if (keyword !== '') {
-      db.add('keywords', {name: keyword, enable: 1, icon:'tag'});
-      db.getArray('keywords').then((keywords) => {
-        dispatch({
-          type: types.ADD_KEYWORD,
-          keywords,
-          keyword
+    if (keyword === '') return;
+    db.put('keywords', {name: keyword, enable: 1, icon:'tag'})
+      .then(() => {
+        db.getArray('keywords').then((keywords) => {
+          dispatch({
+            type: types.ADD_KEYWORD,
+            keywords,
+            keyword
+          });
         });
       });
-    }
-    dispatch({type: types.ADDING_KEYWORD});
   }
 }
+
+export function removeKeyword(keyword) {
+  return dispatch => {
+    if (!keyword) return;
+    db.remove('keywords', keyword)
+      .then(() => {
+        db.getArray('keywords').then((keywords) => {
+          dispatch({
+            type: types.REMOVE_KEYWORD,
+            keywords,
+            keyword
+          });
+        });
+      });
+  }
+}
+

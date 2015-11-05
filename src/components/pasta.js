@@ -23,7 +23,7 @@ export default class Pasta extends Component {
   }
 
   onSliderChange(e, value) {
-    this.props.onChangeBookmarkFilter(~~value, e.clientX);
+    this.props.changeBookmarkThreshold(~~value, e.clientX);
   }
 
   onSlideStop() {
@@ -33,6 +33,7 @@ export default class Pasta extends Component {
 
   onInfiniteLoad() {
     console.log("loading..")
+    if (this.props.menu.keywords.length === 0) return;
     if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
@@ -51,12 +52,17 @@ export default class Pasta extends Component {
 
   onAdditionalKeywordSubmit(e) {
     console.dir(e.target[0].value);
-    this.props.onAdditionalKeywordSubmit(e.target[0].value);
+    this.props.addKeyword(e.target[0].value);
   }
 
   onClickKeyword(name) {
-    this.props.onSelectKeyword(name);
+    this.props.selectKeyword(name);
     this.props.fetchFeed(this.props.feed, this.props.menu);
+  }
+
+  onKeywordRemoveButtonClick(name) {
+    console.log(name);
+    this.props.removeKeyword(name);
   }
 
   getKeywordList() {
@@ -64,11 +70,14 @@ export default class Pasta extends Component {
     return this.props.menu.keywords.map((keyword) => {
       const listClassName = keyword.name === this.props.menu.activeKeyword ? 'selected' : null;
       return (
-          <li className={listClassName}
-              key={keyword.name}
-              onClick={this.onClickKeyword.bind(this, keyword.name)}>
-          <i className={"fa fa-" + keyword.icon} />
-          {keyword.name}
+        <li className={listClassName} key={keyword.name}>
+          <span onClick={this.onClickKeyword.bind(this, keyword.name)}>
+            <i className={"fa fa-" + keyword.icon} />
+            {keyword.name}
+          </span>
+          <div className="remove" onClick={this.onKeywordRemoveButtonClick.bind(this, keyword.name)} >
+            <i className={"fa fa-close"} />
+          </div>
         </li>
       );
     });

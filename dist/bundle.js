@@ -57784,7 +57784,7 @@ function getItems(feed) {
 function initialize() {
   return function (dispatch) {
     console.log("initialize..");
-    db.create({ keywords: "++id,name,enable,icon" });
+    db.create({ keywords: "name, icon" });
     //db.delete();
     //db.version(1).stores();
     //db.open();
@@ -57792,9 +57792,9 @@ function initialize() {
     //  if (count > 0) {
     //    console.log("Already populated");
     //  } else {
-    db.add('keywords', { name: 'Elixir', enable: 1, icon: 'tag' });
-    db.add('keywords', { name: 'JavaScript', enable: 1, icon: 'tag' });
-    db.add('keywords', { name: 'React', enable: 1, icon: 'tag' });
+    db.put('keywords', { name: 'Elixir', icon: 'tag' });
+    db.put('keywords', { name: 'JavaScript', icon: 'tag' });
+    db.put('keywords', { name: 'React', icon: 'tag' });
     //console.log("Database is empty. Populating from ajax call...");
     db.getArray('keywords').then(function (keywords) {
       dispatch({
@@ -57833,7 +57833,6 @@ function clearFeeds(menu) {
 function fetchFeed(feed, menu) {
   return function (dispatch) {
     var keyword = menu.activeKeyword;
-    var page = undefined;
     if (keyword === 'all') {
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
@@ -57843,7 +57842,7 @@ function fetchFeed(feed, menu) {
         for (var _iterator = menu.keywords[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var _keyword = _step.value;
 
-          page = feed[_keyword.name].page;
+          var page = feed[_keyword.name].page;
           _fetchFeed(dispatch, _keyword.name, page, menu.bookmarkFilter);
         }
       } catch (err) {
@@ -57861,7 +57860,7 @@ function fetchFeed(feed, menu) {
         }
       }
     } else {
-      page = feed[keyword].page;
+      var page = feed[keyword].page;
       _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
     }
   };
@@ -57886,9 +57885,10 @@ function _fetchFeed(dispatch, keyword, page, threshold) {
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-exports.onSelectKeyword = onSelectKeyword;
-exports.onChangeBookmarkFilter = onChangeBookmarkFilter;
-exports.onAdditionalKeywordSubmit = onAdditionalKeywordSubmit;
+exports.selectKeyword = selectKeyword;
+exports.changeBookmarkThreshold = changeBookmarkThreshold;
+exports.addKeyword = addKeyword;
+exports.removeKeyword = removeKeyword;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -57904,14 +57904,14 @@ var _libDb2 = _interopRequireDefault(_libDb);
 
 var db = new _libDb2['default']();
 
-function onSelectKeyword(keyword) {
+function selectKeyword(keyword) {
   return {
     type: types.SELECT_KEYWORD,
     keyword: keyword
   };
 }
 
-function onChangeBookmarkFilter(value, x) {
+function changeBookmarkThreshold(value, x) {
   return {
     type: types.CHANGE_BOOKMARK_FILTER,
     value: value,
@@ -57919,10 +57919,10 @@ function onChangeBookmarkFilter(value, x) {
   };
 }
 
-function onAdditionalKeywordSubmit(keyword) {
+function addKeyword(keyword) {
   return function (dispatch) {
-    if (keyword !== '') {
-      db.add('keywords', { name: keyword, enable: 1, icon: 'tag' });
+    if (keyword === '') return;
+    db.put('keywords', { name: keyword, enable: 1, icon: 'tag' }).then(function () {
       db.getArray('keywords').then(function (keywords) {
         dispatch({
           type: types.ADD_KEYWORD,
@@ -57930,8 +57930,22 @@ function onAdditionalKeywordSubmit(keyword) {
           keyword: keyword
         });
       });
-    }
-    dispatch({ type: types.ADDING_KEYWORD });
+    });
+  };
+}
+
+function removeKeyword(keyword) {
+  return function (dispatch) {
+    if (!keyword) return;
+    db.remove('keywords', keyword).then(function () {
+      db.getArray('keywords').then(function (keywords) {
+        dispatch({
+          type: types.REMOVE_KEYWORD,
+          keywords: keywords,
+          keyword: keyword
+        });
+      });
+    });
   };
 }
 
@@ -58019,7 +58033,7 @@ var Pasta = (function (_Component) {
   _createClass(Pasta, [{
     key: 'onSliderChange',
     value: function onSliderChange(e, value) {
-      this.props.onChangeBookmarkFilter(~ ~value, e.clientX);
+      this.props.changeBookmarkThreshold(~ ~value, e.clientX);
     }
   }, {
     key: 'onSlideStop',
@@ -58031,6 +58045,7 @@ var Pasta = (function (_Component) {
     key: 'onInfiniteLoad',
     value: function onInfiniteLoad() {
       console.log("loading..");
+      if (this.props.menu.keywords.length === 0) return;
       if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
       this.props.fetchFeed(this.props.feed, this.props.menu);
     }
@@ -58054,13 +58069,19 @@ var Pasta = (function (_Component) {
     key: 'onAdditionalKeywordSubmit',
     value: function onAdditionalKeywordSubmit(e) {
       console.dir(e.target[0].value);
-      this.props.onAdditionalKeywordSubmit(e.target[0].value);
+      this.props.addKeyword(e.target[0].value);
     }
   }, {
     key: 'onClickKeyword',
     value: function onClickKeyword(name) {
-      this.props.onSelectKeyword(name);
+      this.props.selectKeyword(name);
       this.props.fetchFeed(this.props.feed, this.props.menu);
+    }
+  }, {
+    key: 'onKeywordRemoveButtonClick',
+    value: function onKeywordRemoveButtonClick(name) {
+      console.log(name);
+      this.props.removeKeyword(name);
     }
   }, {
     key: 'getKeywordList',
@@ -58072,11 +58093,18 @@ var Pasta = (function (_Component) {
         var listClassName = keyword.name === _this2.props.menu.activeKeyword ? 'selected' : null;
         return _react2['default'].createElement(
           'li',
-          { className: listClassName,
-            key: keyword.name,
-            onClick: _this2.onClickKeyword.bind(_this2, keyword.name) },
-          _react2['default'].createElement('i', { className: "fa fa-" + keyword.icon }),
-          keyword.name
+          { className: listClassName, key: keyword.name },
+          _react2['default'].createElement(
+            'span',
+            { onClick: _this2.onClickKeyword.bind(_this2, keyword.name) },
+            _react2['default'].createElement('i', { className: "fa fa-" + keyword.icon }),
+            keyword.name
+          ),
+          _react2['default'].createElement(
+            'div',
+            { className: 'remove', onClick: _this2.onKeywordRemoveButtonClick.bind(_this2, keyword.name) },
+            _react2['default'].createElement('i', { className: "fa fa-close" })
+          )
         );
       });
     }
@@ -58239,9 +58267,9 @@ var CLEAR_ITEMS = 'CLEAR_ITEMS';
 exports.CLEAR_ITEMS = CLEAR_ITEMS;
 var ADD_KEYWORD = 'ADD_KEYWORD';
 exports.ADD_KEYWORD = ADD_KEYWORD;
-var ADDING_KEYWORD = 'ADDING_KEYWORD';
+var REMOVE_KEYWORD = 'REMOVE_KEYWORD';
 
-exports.ADDING_KEYWORD = ADDING_KEYWORD;
+exports.REMOVE_KEYWORD = REMOVE_KEYWORD;
 var SELECT_KEYWORD = 'SELECT_KEYWORD';
 exports.SELECT_KEYWORD = SELECT_KEYWORD;
 var CHANGE_BOOKMARK_FILTER = 'CHANGE_BOOKMARK_FILTER';
@@ -58357,14 +58385,19 @@ var DbManager = (function () {
   _createClass(DbManager, [{
     key: 'create',
     value: function create(schemes) {
-      //db.delete();
+      db['delete']();
       db.version(1).stores(schemes);
       db.open();
     }
   }, {
-    key: 'add',
-    value: function add(table, docs) {
-      db[table].add(docs);
+    key: 'put',
+    value: function put(table, doc) {
+      return db[table].put(doc);
+    }
+  }, {
+    key: 'remove',
+    value: function remove(table, key) {
+      return db[table]['delete'](key);
     }
   }, {
     key: 'getArray',
@@ -58512,7 +58545,6 @@ function feed(state, action) {
     case types.ADD_KEYWORD:
       state[action.keyword] = createProps();
       return Object.assign({}, state);
-
     default:
       return state;
   }
@@ -58585,8 +58617,10 @@ function menu(state, action) {
       state.keywords = action.keywords;
       return Object.assign({}, state);
 
-    case types.ADDING_KEYWORD:
-      return state;
+    case types.REMOVE_KEYWORD:
+      state.keywords = action.keywords;
+      if (state.keywords.length === 0) state.activeKeyword = 'all';else if (action.keyword === state.activeKeyword) state.activeKeyword = action.keywords[0].name;
+      return Object.assign({}, state);
 
     default:
       return state;

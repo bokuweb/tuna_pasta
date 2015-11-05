@@ -163,8 +163,8 @@ a {
   line-height: 32px;
   border-radius: 0 4px 4px 0;
   width: 200px;
-  transition: all 0.3s ease;
-  cursor: pointer;
+  transition: all 0.4s ease;
+  position: relative;
   height: 32px;
 }
 #side-menu #menu li a {
@@ -175,6 +175,13 @@ a {
   font-size: 12px;
   margin: -1px 30px 0 0;
 }
+#side-menu #menu li span {
+  cursor: pointer;
+}
+#side-menu #menu li div.remove {
+  display: none;
+  cursor: pointer;
+}
 #side-menu #menu li.selected {
   font-size: 16px;
   margin: 5px 0 8px 0;
@@ -183,6 +190,11 @@ a {
 }
 #side-menu #menu li:not(.selected):hover {
   background: #d35400;
+}
+#side-menu #menu li:hover > div.remove {
+  display: inline-block;
+  position: absolute;
+  left: 230px;
 }
 div.add-keyword {
   margin: 0 0 46px 10px;
