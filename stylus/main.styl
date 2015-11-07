@@ -41,9 +41,7 @@ a
   box-orient horizontal
 
 #side-menu
-  background #2980B9 /*#1ABC9C *//*#34495E*/ /* #3498DB */
-  /*background #2980B9 */
-  /* #3498DB*/
+  background #2980B9
   width 280px
   height 100%
   flex 0 280px
@@ -51,6 +49,8 @@ a
   padding 0
   font-size 14px
   overflow-y auto
+  scrollbar-face-color accent-color
+  scrollbar-track-color rgba(0, 0, 0, .1)
 
   #logo
     width 180px
@@ -92,7 +92,6 @@ a
         display none
         cursor pointer
 
-
     li.selected
       font-size 16px
       margin 5px 0 8px 0
@@ -106,6 +105,14 @@ a
       display inline-block
       position absolute
       left 230px
+
+#side-menu::-webkit-scrollbar
+  width 6px
+  height 6px
+
+#side-menu::-webkit-scrollbar-thumb
+  background rgba(0, 0, 0, 0.4)
+  border-radius 2px
 
 div.add-keyword
   margin 0 0 46px 20px
@@ -188,6 +195,14 @@ div.slider
     font-size 95%
     padding 0 0 3px
 
+#content > div::-webkit-scrollbar
+  width 6px
+  height 6px
+
+#content > div::-webkit-scrollbar-thumb
+  background #34495E
+  border-radius 2px
+
 .item
   min-height 140px
   max-width 800px
@@ -257,3 +272,6 @@ div.slider
   100%
     transform perspective(120px) rotateX(-180deg) rotateY(-179.9deg)
     -webkit-transform perspective(120px) rotateX(-180deg) rotateY(-179.9deg)
+
+
+

@@ -57863,6 +57863,8 @@ var db = new _libDb2['default']();
 //const db = new Dexie('Pasta');
 
 function getItems(feed) {
+  console.log('---------- fetch feed -----------');
+  console.dir(feed);
   if (feed.responseData.feed === undefined) {
     console.log("feed none");
     return [];
@@ -57876,7 +57878,32 @@ function initialize() {
     db.create({ keywords: "name, icon" });
     db.getArray('keywords').then(function (keywords) {
       dispatch({ type: types.INITIALIZE, keywords: keywords });
-      if (keywords.length !== 0) _fetchFeed(dispatch, keywords[0].name, 0, 1);
+      if (keywords.length !== 0) {
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = keywords[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var keyword = _step.value;
+
+            _fetchFeed(dispatch, keyword.name, 0, 1);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator['return']) {
+              _iterator['return']();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
     });
     dispatch({ type: types.INITIALIZING });
   };
@@ -57908,28 +57935,28 @@ function fetchFeed(feed, menu) {
   return function (dispatch) {
     var keyword = menu.activeKeyword;
     if (keyword === 'all') {
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
 
       try {
-        for (var _iterator = menu.keywords[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _keyword = _step.value;
+        for (var _iterator2 = menu.keywords[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var _keyword = _step2.value;
 
           var page = feed[_keyword.name].page;
           _fetchFeed(dispatch, _keyword.name, page, menu.bookmarkFilter);
         }
       } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator['return']) {
-            _iterator['return']();
+          if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+            _iterator2['return']();
           }
         } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
+          if (_didIteratorError2) {
+            throw _iteratorError2;
           }
         }
       }
@@ -58205,6 +58232,7 @@ var Pasta = (function (_Component) {
       if (!this.props.feed.isInitialized) return _react2['default'].createElement('div', { className: 'rect-spinner' });
 
       var feed = this.props.feed[this.props.menu.activeKeyword];
+
       var items = undefined;
       if (this.props.menu.keywords.length === 0) items = _react2['default'].createElement(
         'div',
@@ -58322,7 +58350,7 @@ var Pasta = (function (_Component) {
             _reactInfinite2['default'],
             {
               elementHeight: 140,
-              containerHeight: this.innerHeight - 20,
+              containerHeight: this.innerHeight - 40,
               infiniteLoadBeginBottomOffset: 50,
               onInfiniteLoad: this.onInfiniteLoad.bind(this),
               loadingSpinnerDelegate: this.elementInfiniteLoad(),

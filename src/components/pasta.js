@@ -66,8 +66,8 @@ export default class Pasta extends Component {
   }
 
   onKeywordRemoveButtonClick(name) {
-      this.props.removeKeyword(name);
-      this.props.fetchFeed(this.props.feed, this.props.menu);
+    this.props.removeKeyword(name);
+    this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
   getKeywordList() {
@@ -93,6 +93,8 @@ export default class Pasta extends Component {
       return <div className="rect-spinner"></div>;
 
     const feed = this.props.feed[this.props.menu.activeKeyword];
+
+
     let items;
     if (this.props.menu.keywords.length === 0)
       items = <div>まだ記事はありません。キーワードを追加してください。</div>;
@@ -166,7 +168,7 @@ export default class Pasta extends Component {
         <div id="content">
             <Infinite
               elementHeight={140}
-              containerHeight={this.innerHeight-20}
+              containerHeight={this.innerHeight-40}
               infiniteLoadBeginBottomOffset={50}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}
               loadingSpinnerDelegate={this.elementInfiniteLoad()}
