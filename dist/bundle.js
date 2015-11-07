@@ -57961,6 +57961,7 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 exports.selectKeyword = selectKeyword;
+exports.changeKeywordInput = changeKeywordInput;
 exports.changeBookmarkThreshold = changeBookmarkThreshold;
 exports.addKeyword = addKeyword;
 exports.removeKeyword = removeKeyword;
@@ -57983,6 +57984,13 @@ function selectKeyword(keyword) {
   return {
     type: types.SELECT_KEYWORD,
     keyword: keyword
+  };
+}
+
+function changeKeywordInput(value) {
+  return {
+    type: types.CHANGE_KEYWORD_INPUT,
+    value: value
   };
 }
 
@@ -58112,6 +58120,11 @@ var Pasta = (function (_Component) {
       this.props.changeBookmarkThreshold(~ ~value, e.clientX);
     }
   }, {
+    key: 'onKeywordInputChange',
+    value: function onKeywordInputChange(e) {
+      this.props.changeKeywordInput(e.target.value);
+    }
+  }, {
     key: 'onSlideStop',
     value: function onSlideStop() {
       this.props.clearFeeds(this.props.menu);
@@ -58143,8 +58156,8 @@ var Pasta = (function (_Component) {
     }
   }, {
     key: 'onAdditionalKeywordSubmit',
-    value: function onAdditionalKeywordSubmit(e) {
-      this.props.addKeyword(e.target[0].value);
+    value: function onAdditionalKeywordSubmit(value) {
+      this.props.addKeyword(this.props.menu.keywordInput);
       this.props.fetchFeed(this.props.feed, this.props.menu);
     }
   }, {
@@ -58268,17 +58281,15 @@ var Pasta = (function (_Component) {
           _react2['default'].createElement(
             'div',
             { className: 'add-keyword' },
-            _react2['default'].createElement(
-              'form',
-              { className: 'commentForm', action: '#', onSubmit: this.onAdditionalKeywordSubmit.bind(this) },
-              _react2['default'].createElement('input', { type: 'text',
-                placeholder: 'キーワードを追加' }),
-              _react2['default'].createElement(RaisedButton, { label: '追加',
-                secondary: true,
-                style: { height: 26, minWidth: 40 },
-                type: 'submit',
-                labelStyle: { fontSize: '12px', lineHeight: '24px' } })
-            )
+            _react2['default'].createElement('input', { type: 'text',
+              placeholder: 'キーワードを追加',
+              onChange: this.onKeywordInputChange.bind(this),
+              value: this.props.menu.keywordInput }),
+            _react2['default'].createElement(RaisedButton, { label: '追加',
+              onClick: this.onAdditionalKeywordSubmit.bind(this),
+              secondary: true,
+              style: { height: 26, minWidth: 40 },
+              labelStyle: { fontSize: '12px', lineHeight: '24px' } })
           ),
           _react2['default'].createElement(
             'div',
@@ -58357,7 +58368,10 @@ exports.REMOVE_KEYWORD = REMOVE_KEYWORD;
 var SELECT_KEYWORD = 'SELECT_KEYWORD';
 exports.SELECT_KEYWORD = SELECT_KEYWORD;
 var CHANGE_BOOKMARK_FILTER = 'CHANGE_BOOKMARK_FILTER';
+
 exports.CHANGE_BOOKMARK_FILTER = CHANGE_BOOKMARK_FILTER;
+var CHANGE_KEYWORD_INPUT = 'CHANGE_KEYWORD_INPUT';
+exports.CHANGE_KEYWORD_INPUT = CHANGE_KEYWORD_INPUT;
 
 },{}],353:[function(require,module,exports){
 'use strict';
@@ -58691,6 +58705,7 @@ function menu(state, action) {
       state.activeKeyword = 'all';
       state.bookmarkFilter = 1;
       state.bookmarkFilterX = 15;
+      state.keywordInput = '';
       return Object.assign({}, state);
 
     case types.SELECT_KEYWORD:
@@ -58702,8 +58717,13 @@ function menu(state, action) {
       state.bookmarkFilterX = action.x;
       return Object.assign({}, state);
 
+    case types.CHANGE_KEYWORD_INPUT:
+      state.keywordInput = action.value;
+      return Object.assign({}, state);
+
     case types.ADD_KEYWORD:
       state.activeKeyword = action.keyword;
+      state.keywordInput = '';
       return Object.assign({}, state);
 
     case types.ADD_KEYWORD_COMPLETE:

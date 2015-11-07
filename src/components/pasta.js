@@ -27,6 +27,10 @@ export default class Pasta extends Component {
     this.props.changeBookmarkThreshold(~~value, e.clientX);
   }
 
+  onKeywordInputChange(e) {
+    this.props.changeKeywordInput(e.target.value);
+  }
+
   onSlideStop() {
     this.props.clearFeeds(this.props.menu);
     this.props.fetchFeed(this.props.feed, this.props.menu);
@@ -51,8 +55,8 @@ export default class Pasta extends Component {
     }
   }
 
-  onAdditionalKeywordSubmit(e) {
-    this.props.addKeyword(e.target[0].value);
+  onAdditionalKeywordSubmit(value) {
+    this.props.addKeyword(this.props.menu.keywordInput);
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
@@ -135,15 +139,15 @@ export default class Pasta extends Component {
             min={1} />
           </div>
           <div className="add-keyword">
-            <form className="commentForm" action="#" onSubmit={this.onAdditionalKeywordSubmit.bind(this)}>
-              <input type="text"
-              placeholder="キーワードを追加" />
-              <RaisedButton label="追加"
-                secondary={true}
-                style={{height: 26, minWidth: 40}}
-                type="submit"
-                labelStyle={{fontSize: '12px', lineHeight: '24px'}} />
-            </form>
+            <input type="text"
+              placeholder="キーワードを追加"
+              onChange={this.onKeywordInputChange.bind(this)}
+              value={this.props.menu.keywordInput}/>
+            <RaisedButton label="追加"
+              onClick={this.onAdditionalKeywordSubmit.bind(this)}
+              secondary={true}
+              style={{height: 26, minWidth: 40}}
+              labelStyle={{fontSize: '12px', lineHeight: '24px'}} />
           </div>
           <div id="menu">
             <ul>

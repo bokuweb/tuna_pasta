@@ -10,6 +10,13 @@ export function selectKeyword(keyword) {
   };
 }
 
+export function changeKeywordInput(value) {
+  return {
+    type: types.CHANGE_KEYWORD_INPUT,
+    value
+  };
+}
+
 export function changeBookmarkThreshold(value, x) {
   return {
     type: types.CHANGE_BOOKMARK_FILTER,
