@@ -58157,6 +58157,7 @@ var Pasta = (function (_Component) {
     key: 'onKeywordRemoveButtonClick',
     value: function onKeywordRemoveButtonClick(name) {
       this.props.removeKeyword(name);
+      this.props.fetchFeed(this.props.feed, this.props.menu);
     }
   }, {
     key: 'getKeywordList',

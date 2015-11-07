@@ -62,7 +62,8 @@ export default class Pasta extends Component {
   }
 
   onKeywordRemoveButtonClick(name) {
-    this.props.removeKeyword(name);
+      this.props.removeKeyword(name);
+      this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
   getKeywordList() {
