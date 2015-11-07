@@ -58245,7 +58245,7 @@ var Pasta = (function (_Component) {
           var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
           return _react2['default'].createElement(
             'div',
-            { className: 'item', key: item.link },
+            { className: 'item animated fadeIn', key: item.link },
             _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
             _react2['default'].createElement(
               'a',
@@ -58288,7 +58288,7 @@ var Pasta = (function (_Component) {
         { id: 'container' },
         _react2['default'].createElement(
           'div',
-          { id: 'side-menu' },
+          { id: 'side-menu', className: 'animated slideInLeft' },
           _react2['default'].createElement('img', { id: 'logo', src: 'img/logo.png', alt: '' }),
           _react2['default'].createElement(
             'div',

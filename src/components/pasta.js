@@ -104,7 +104,7 @@ export default class Pasta extends Component {
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
         return (
-          <div className="item" key={item.link}>
+          <div className="item animated fadeIn" key={item.link}>
             <img className="favicon" src={favicon} alt="favicon" />
             <a href={item.link} className="item-title">{item.title}</a>
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
@@ -126,7 +126,7 @@ export default class Pasta extends Component {
 
     return (
       <div id="container">
-        <div id="side-menu">
+        <div id="side-menu" className="animated slideInLeft">
           <img id="logo" src="img/logo.png" alt="" />
           <div className="slider">
           <div className="bookmark-filter" style={{left:x}}>
