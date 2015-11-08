@@ -27,6 +27,10 @@ export default class Pasta extends Component {
     this.props.changeBookmarkThreshold(~~value, e.clientX);
   }
 
+  onKeywordInputChange(e) {
+    this.props.changeKeywordInput(e.target.value);
+  }
+
   onSlideStop() {
     this.props.clearFeeds(this.props.menu);
     this.props.fetchFeed(this.props.feed, this.props.menu);
@@ -51,8 +55,8 @@ export default class Pasta extends Component {
     }
   }
 
-  onAdditionalKeywordSubmit(e) {
-    this.props.addKeyword(e.target[0].value);
+  onAdditionalKeywordSubmit(value) {
+    this.props.addKeyword(this.props.menu.keywordInput);
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
@@ -63,6 +67,7 @@ export default class Pasta extends Component {
 
   onKeywordRemoveButtonClick(name) {
     this.props.removeKeyword(name);
+    this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
   getKeywordList() {
@@ -88,6 +93,7 @@ export default class Pasta extends Component {
       return <div className="rect-spinner"></div>;
 
     const feed = this.props.feed[this.props.menu.activeKeyword];
+
     let items;
     if (this.props.menu.keywords.length === 0)
       items = <div>まだ記事はありません。キーワードを追加してください。</div>;
@@ -97,7 +103,7 @@ export default class Pasta extends Component {
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
         return (
-          <div className="item" key={item.link}>
+            <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />
             <a href={item.link} className="item-title">{item.title}</a>
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
@@ -119,7 +125,7 @@ export default class Pasta extends Component {
 
     return (
       <div id="container">
-        <div id="side-menu">
+        <div id="side-menu" className="animated slideInLeft">
           <img id="logo" src="img/logo.png" alt="" />
           <div className="slider">
           <div className="bookmark-filter" style={{left:x}}>
@@ -134,15 +140,15 @@ export default class Pasta extends Component {
             min={1} />
           </div>
           <div className="add-keyword">
-            <form className="commentForm" action="#" onSubmit={this.onAdditionalKeywordSubmit.bind(this)}>
-              <input type="text"
-              placeholder="キーワードを追加" />
-              <RaisedButton label="追加"
-                secondary={true}
-                style={{height: 26, minWidth: 40}}
-                type="submit"
-                labelStyle={{fontSize: '12px', lineHeight: '24px'}} />
-            </form>
+            <input type="text"
+              placeholder="キーワードを追加"
+              onChange={this.onKeywordInputChange.bind(this)}
+              value={this.props.menu.keywordInput}/>
+            <RaisedButton label="追加"
+              onClick={this.onAdditionalKeywordSubmit.bind(this)}
+              secondary={true}
+              style={{height: 26, minWidth: 40}}
+              labelStyle={{fontSize: '12px', lineHeight: '24px'}} />
           </div>
           <div id="menu">
             <ul>
@@ -161,7 +167,7 @@ export default class Pasta extends Component {
         <div id="content">
             <Infinite
               elementHeight={140}
-              containerHeight={this.innerHeight-20}
+              containerHeight={this.innerHeight-40}
               infiniteLoadBeginBottomOffset={50}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}
               loadingSpinnerDelegate={this.elementInfiniteLoad()}

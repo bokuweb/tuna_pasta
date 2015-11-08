@@ -11,6 +11,8 @@ const db = new DbManager();
 //const db = new Dexie('Pasta');
 
 function getItems(feed) {
+  console.log('---------- fetch feed -----------');
+  console.dir(feed);
   if (feed.responseData.feed === undefined) {
     console.log("feed none");
     return [];
@@ -24,8 +26,11 @@ export function initialize() {
     db.create({keywords: "name, icon"});
     db.getArray('keywords').then((keywords) => {
       dispatch({type: types.INITIALIZE, keywords});
-      if (keywords.length !== 0)
-        _fetchFeed(dispatch, keywords[0].name, 0, 1);
+      if (keywords.length !== 0) {
+        for (let keyword of keywords) {
+          _fetchFeed(dispatch, keyword.name, 0, 1);
+        }
+      }
     });
     dispatch({type: types.INITIALIZING});
   }

@@ -57863,6 +57863,8 @@ var db = new _libDb2['default']();
 //const db = new Dexie('Pasta');
 
 function getItems(feed) {
+  console.log('---------- fetch feed -----------');
+  console.dir(feed);
   if (feed.responseData.feed === undefined) {
     console.log("feed none");
     return [];
@@ -57876,7 +57878,32 @@ function initialize() {
     db.create({ keywords: "name, icon" });
     db.getArray('keywords').then(function (keywords) {
       dispatch({ type: types.INITIALIZE, keywords: keywords });
-      if (keywords.length !== 0) _fetchFeed(dispatch, keywords[0].name, 0, 1);
+      if (keywords.length !== 0) {
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = keywords[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var keyword = _step.value;
+
+            _fetchFeed(dispatch, keyword.name, 0, 1);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator['return']) {
+              _iterator['return']();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
     });
     dispatch({ type: types.INITIALIZING });
   };
@@ -57908,28 +57935,28 @@ function fetchFeed(feed, menu) {
   return function (dispatch) {
     var keyword = menu.activeKeyword;
     if (keyword === 'all') {
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
 
       try {
-        for (var _iterator = menu.keywords[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _keyword = _step.value;
+        for (var _iterator2 = menu.keywords[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var _keyword = _step2.value;
 
           var page = feed[_keyword.name].page;
           _fetchFeed(dispatch, _keyword.name, page, menu.bookmarkFilter);
         }
       } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator['return']) {
-            _iterator['return']();
+          if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+            _iterator2['return']();
           }
         } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
+          if (_didIteratorError2) {
+            throw _iteratorError2;
           }
         }
       }
@@ -57961,6 +57988,7 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 exports.selectKeyword = selectKeyword;
+exports.changeKeywordInput = changeKeywordInput;
 exports.changeBookmarkThreshold = changeBookmarkThreshold;
 exports.addKeyword = addKeyword;
 exports.removeKeyword = removeKeyword;
@@ -57983,6 +58011,13 @@ function selectKeyword(keyword) {
   return {
     type: types.SELECT_KEYWORD,
     keyword: keyword
+  };
+}
+
+function changeKeywordInput(value) {
+  return {
+    type: types.CHANGE_KEYWORD_INPUT,
+    value: value
   };
 }
 
@@ -58112,6 +58147,11 @@ var Pasta = (function (_Component) {
       this.props.changeBookmarkThreshold(~ ~value, e.clientX);
     }
   }, {
+    key: 'onKeywordInputChange',
+    value: function onKeywordInputChange(e) {
+      this.props.changeKeywordInput(e.target.value);
+    }
+  }, {
     key: 'onSlideStop',
     value: function onSlideStop() {
       this.props.clearFeeds(this.props.menu);
@@ -58143,8 +58183,8 @@ var Pasta = (function (_Component) {
     }
   }, {
     key: 'onAdditionalKeywordSubmit',
-    value: function onAdditionalKeywordSubmit(e) {
-      this.props.addKeyword(e.target[0].value);
+    value: function onAdditionalKeywordSubmit(value) {
+      this.props.addKeyword(this.props.menu.keywordInput);
       this.props.fetchFeed(this.props.feed, this.props.menu);
     }
   }, {
@@ -58157,6 +58197,7 @@ var Pasta = (function (_Component) {
     key: 'onKeywordRemoveButtonClick',
     value: function onKeywordRemoveButtonClick(name) {
       this.props.removeKeyword(name);
+      this.props.fetchFeed(this.props.feed, this.props.menu);
     }
   }, {
     key: 'getKeywordList',
@@ -58191,6 +58232,7 @@ var Pasta = (function (_Component) {
       if (!this.props.feed.isInitialized) return _react2['default'].createElement('div', { className: 'rect-spinner' });
 
       var feed = this.props.feed[this.props.menu.activeKeyword];
+
       var items = undefined;
       if (this.props.menu.keywords.length === 0) items = _react2['default'].createElement(
         'div',
@@ -58203,7 +58245,7 @@ var Pasta = (function (_Component) {
           var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
           return _react2['default'].createElement(
             'div',
-            { className: 'item', key: item.link },
+            { className: 'item animated fadeIn', key: item.link + _this3.props.menu.activeKeyword },
             _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
             _react2['default'].createElement(
               'a',
@@ -58246,7 +58288,7 @@ var Pasta = (function (_Component) {
         { id: 'container' },
         _react2['default'].createElement(
           'div',
-          { id: 'side-menu' },
+          { id: 'side-menu', className: 'animated slideInLeft' },
           _react2['default'].createElement('img', { id: 'logo', src: 'img/logo.png', alt: '' }),
           _react2['default'].createElement(
             'div',
@@ -58267,17 +58309,15 @@ var Pasta = (function (_Component) {
           _react2['default'].createElement(
             'div',
             { className: 'add-keyword' },
-            _react2['default'].createElement(
-              'form',
-              { className: 'commentForm', action: '#', onSubmit: this.onAdditionalKeywordSubmit.bind(this) },
-              _react2['default'].createElement('input', { type: 'text',
-                placeholder: 'キーワードを追加' }),
-              _react2['default'].createElement(RaisedButton, { label: '追加',
-                secondary: true,
-                style: { height: 26, minWidth: 40 },
-                type: 'submit',
-                labelStyle: { fontSize: '12px', lineHeight: '24px' } })
-            )
+            _react2['default'].createElement('input', { type: 'text',
+              placeholder: 'キーワードを追加',
+              onChange: this.onKeywordInputChange.bind(this),
+              value: this.props.menu.keywordInput }),
+            _react2['default'].createElement(RaisedButton, { label: '追加',
+              onClick: this.onAdditionalKeywordSubmit.bind(this),
+              secondary: true,
+              style: { height: 26, minWidth: 40 },
+              labelStyle: { fontSize: '12px', lineHeight: '24px' } })
           ),
           _react2['default'].createElement(
             'div',
@@ -58310,7 +58350,7 @@ var Pasta = (function (_Component) {
             _reactInfinite2['default'],
             {
               elementHeight: 140,
-              containerHeight: this.innerHeight - 20,
+              containerHeight: this.innerHeight - 40,
               infiniteLoadBeginBottomOffset: 50,
               onInfiniteLoad: this.onInfiniteLoad.bind(this),
               loadingSpinnerDelegate: this.elementInfiniteLoad(),
@@ -58356,7 +58396,10 @@ exports.REMOVE_KEYWORD = REMOVE_KEYWORD;
 var SELECT_KEYWORD = 'SELECT_KEYWORD';
 exports.SELECT_KEYWORD = SELECT_KEYWORD;
 var CHANGE_BOOKMARK_FILTER = 'CHANGE_BOOKMARK_FILTER';
+
 exports.CHANGE_BOOKMARK_FILTER = CHANGE_BOOKMARK_FILTER;
+var CHANGE_KEYWORD_INPUT = 'CHANGE_KEYWORD_INPUT';
+exports.CHANGE_KEYWORD_INPUT = CHANGE_KEYWORD_INPUT;
 
 },{}],353:[function(require,module,exports){
 'use strict';
@@ -58690,6 +58733,7 @@ function menu(state, action) {
       state.activeKeyword = 'all';
       state.bookmarkFilter = 1;
       state.bookmarkFilterX = 15;
+      state.keywordInput = '';
       return Object.assign({}, state);
 
     case types.SELECT_KEYWORD:
@@ -58701,8 +58745,13 @@ function menu(state, action) {
       state.bookmarkFilterX = action.x;
       return Object.assign({}, state);
 
+    case types.CHANGE_KEYWORD_INPUT:
+      state.keywordInput = action.value;
+      return Object.assign({}, state);
+
     case types.ADD_KEYWORD:
       state.activeKeyword = action.keyword;
+      state.keywordInput = '';
       return Object.assign({}, state);
 
     case types.ADD_KEYWORD_COMPLETE:
