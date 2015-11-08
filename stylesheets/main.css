@@ -6625,6 +6625,7 @@ div.slider .bookmark-filter:after {
   text-shadow: -1px 1px 0 #fff;
   color: #7f8c8d;
   width: 100%;
+  min-height: 100%;
 }
 #content a {
   color: #34495e;
@@ -6680,6 +6681,7 @@ div.slider .bookmark-filter:after {
 }
 .items {
   padding: 20px 30px 0 50px;
+  height: 100%;
 }
 @media screen and (max-device-width: 768px) {
   #side-menu {

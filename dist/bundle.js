@@ -57863,6 +57863,11 @@ var db = new _libDb2['default']('pastaDB');
 function getItems(feed) {
   console.log('---------- fetch feed -----------');
   console.dir(feed);
+  if (feed.responseData === null) {
+    console.log("feed null");
+    return;
+  }
+
   if (feed.responseData.feed === undefined) {
     console.log("feed none");
     return [];
@@ -57914,10 +57919,11 @@ function fetchingItems(keyword) {
   };
 }
 
-function recieveItems(items, keyword) {
+function recieveItems(items, keyword, length) {
   return {
     type: types.RECIEVE_ITEMS,
     items: items,
+    length: length,
     keyword: keyword
   };
 }
@@ -57982,7 +57988,8 @@ function _fetchSearchFeed(dispatch, keyword, page, threshold) {
   var url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
   console.log('fetch url = ' + url);
   (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
-    dispatch(recieveItems(getItems(feed), keyword));
+    var items = getItems(feed);
+    dispatch(recieveItems(items, keyword, items.length));
   }, function (error) {
     return console.log(error);
   });
@@ -58000,8 +58007,7 @@ function _fetchUserFeed(dispatch, keyword, user, page, threshold) {
       var filteredItems = _lodash2['default'].filter(items, function (item) {
         return bookmarks[item.link] >= threshold;
       });
-      console.log(keyword);
-      dispatch(recieveItems(filteredItems, keyword));
+      dispatch(recieveItems(filteredItems, keyword, items.length));
     });
   }, function (error) {
     return console.log(error);
@@ -58273,25 +58279,38 @@ var Pasta = (function (_Component) {
       this.props.fetchFeed(this.props.feed, this.props.menu);
     }
   }, {
+    key: 'getCategories',
+    value: function getCategories(categories) {
+      var _this2 = this;
+
+      return categories.map(function (category) {
+        return _react2['default'].createElement(
+          'span',
+          { className: 'category', key: category + _this2.props.menu.activeKeyword, style: { 'backgroundColor': '#34495E' } },
+          category
+        );
+      });
+    }
+  }, {
     key: 'getKeywordList',
     value: function getKeywordList() {
-      var _this2 = this;
+      var _this3 = this;
 
       console.dir(this.props.menu.keywords);
       return this.props.menu.keywords.map(function (keyword) {
-        var listClassName = keyword.name === _this2.props.menu.activeKeyword ? 'selected' : null;
+        var listClassName = keyword.name === _this3.props.menu.activeKeyword ? 'selected' : null;
         return _react2['default'].createElement(
           'li',
           { className: listClassName, key: keyword.name },
           _react2['default'].createElement(
             'span',
-            { onClick: _this2.onClickKeyword.bind(_this2, keyword.name) },
+            { onClick: _this3.onClickKeyword.bind(_this3, keyword.name) },
             _react2['default'].createElement('i', { className: "fa fa-" + keyword.icon }),
             keyword.name
           ),
           _react2['default'].createElement(
             'div',
-            { className: 'remove', onClick: _this2.onKeywordRemoveButtonClick.bind(_this2, keyword.name) },
+            { className: 'remove', onClick: _this3.onKeywordRemoveButtonClick.bind(_this3, keyword.name) },
             _react2['default'].createElement('i', { className: "fa fa-close" })
           )
         );
@@ -58300,13 +58319,13 @@ var Pasta = (function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       if (!this.props.feed.isInitialized) return _react2['default'].createElement('div', { className: 'rect-spinner' });
 
       var feed = this.props.feed[this.props.menu.activeKeyword];
 
-      var items = undefined;
+      var items = null;
       if (this.props.menu.keywords.length === 0) items = _react2['default'].createElement(
         'div',
         null,
@@ -58318,7 +58337,7 @@ var Pasta = (function (_Component) {
           var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
           return _react2['default'].createElement(
             'div',
-            { className: 'item animated fadeIn', key: item.link + _this3.props.menu.activeKeyword },
+            { className: 'item animated fadeIn', key: item.link + _this4.props.menu.activeKeyword },
             _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
             _react2['default'].createElement(
               'a',
@@ -58336,11 +58355,7 @@ var Pasta = (function (_Component) {
               { className: 'publish-date' },
               item.publishedDate
             ),
-            _react2['default'].createElement(
-              'span',
-              { className: 'category', style: _this3.getCategoryStyle(item.categories[0]) },
-              item.categories[0]
-            ),
+            _this4.getCategories(item.categories),
             _react2['default'].createElement(
               'p',
               { className: 'content-snippet' },
@@ -58349,13 +58364,10 @@ var Pasta = (function (_Component) {
           );
         });
       }
-      // FIXME :
-      var x = this.props.menu.bookmarkFilterX - 24;
-      if (x > 220) x = 220;
-      if (x < 10) x = 10;
-      // FIXME
-      //let threshold = (localStorage.threshold) ? localStorage.threshold : 1;
 
+      var x = this.props.menu.bookmarkFilterX - 24;
+      if (x > 210) x = 210;
+      if (x < 10) x = 10;
       return _react2['default'].createElement(
         'div',
         { id: 'container' },
@@ -58424,7 +58436,7 @@ var Pasta = (function (_Component) {
             {
               elementHeight: 140,
               containerHeight: this.innerHeight - 40,
-              infiniteLoadBeginBottomOffset: 50,
+              infiniteLoadBeginBottomOffset: 500,
               onInfiniteLoad: this.onInfiniteLoad.bind(this),
               loadingSpinnerDelegate: this.elementInfiniteLoad(),
               isInfiniteLoading: feed.isInfiniteLoading,
@@ -58704,10 +58716,9 @@ function feed(state, action) {
       var keyword = action.keyword;
       state.all.items = state.all.items.concat(items);
       state[keyword].items = state[keyword].items.concat(items);
-      state[keyword].isPageEnd = items.length === 0;
+      state[keyword].isPageEnd = action.length === 0;
       state[keyword].page += 1;
       state[keyword].isInfiniteLoading = false;
-      console.log(state[keyword].isPageEnd);
       return Object.assign({}, state);
 
     case types.CLEAR_ITEMS:
