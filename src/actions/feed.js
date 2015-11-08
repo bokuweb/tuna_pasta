@@ -1,9 +1,10 @@
 import _ from 'lodash';
-import {fetch} from '../api/feed'
+import {fetch, fetchWithGoogleFeedApi} from '../api/feed'
 import * as types from '../constants/action-types';
 import DbManager from '../lib/db'
 
 const HATENA_URL = 'http://b.hatena.ne.jp/'
+const HATENA_BOOKMARK_COUNT_URL = 'http://api.b.st-hatena.com/entry.counts?';
 const HATENA_SEARCH_URL = HATENA_URL + 'search/text?mode=rss&safe=off&q='
 
 const db = new DbManager('pastaDB');
@@ -83,7 +84,7 @@ function _fetchFeed(dispatch, keyword, page = 0, threshold) {
 function _fetchSearchFeed(dispatch, keyword, page = 0, threshold) {
   const url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
   console.log('fetch url = ' + url);
-  fetch(url).then((feed) => {
+  fetchWithGoogleFeedApi(url).then((feed) => {
     dispatch(recieveItems(getItems(feed), keyword));
   }, (error) => console.log(error));
   dispatch(fetchingItems(keyword));
@@ -92,8 +93,24 @@ function _fetchSearchFeed(dispatch, keyword, page = 0, threshold) {
 function _fetchUserFeed(dispatch, keyword, user, page = 0, threshold) {
   const url = HATENA_URL + user + '/rss?of=' + page * 20;
   console.log('fetch url = ' + url);
-  fetch(url).then((feed) => {
-    dispatch(recieveItems(getItems(feed), keyword));
+  fetchWithGoogleFeedApi(url).then((feed) => {
+    const items = getItems(feed);
+    _getBookmarkCount(items).then((bookmarks) => {
+      const filteredItems = _.filter(items, (item) => bookmarks[item.link] >= threshold);
+      console.log(keyword);
+      dispatch(recieveItems(filteredItems, keyword));
+    });
   }, (error) => console.log(error));
   dispatch(fetchingItems(keyword));
 }
+
+function _getBookmarkCount(items) {
+  return new Promise((resolve, reject) => {
+    let url = HATENA_BOOKMARK_COUNT_URL;
+    for (let item of items) url += 'url=' + encodeURIComponent(item.link) + '&';
+    fetch(url).then((res) => {
+      resolve(res);
+    }, (error) => console.log(error));
+  });
+}
+

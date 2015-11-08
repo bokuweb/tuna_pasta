@@ -57855,6 +57855,7 @@ var _libDb = require('../lib/db');
 var _libDb2 = _interopRequireDefault(_libDb);
 
 var HATENA_URL = 'http://b.hatena.ne.jp/';
+var HATENA_BOOKMARK_COUNT_URL = 'http://api.b.st-hatena.com/entry.counts?';
 var HATENA_SEARCH_URL = HATENA_URL + 'search/text?mode=rss&safe=off&q=';
 
 var db = new _libDb2['default']('pastaDB');
@@ -57980,7 +57981,7 @@ function _fetchSearchFeed(dispatch, keyword, page, threshold) {
 
   var url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
   console.log('fetch url = ' + url);
-  (0, _apiFeed.fetch)(url).then(function (feed) {
+  (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
     dispatch(recieveItems(getItems(feed), keyword));
   }, function (error) {
     return console.log(error);
@@ -57993,12 +57994,54 @@ function _fetchUserFeed(dispatch, keyword, user, page, threshold) {
 
   var url = HATENA_URL + user + '/rss?of=' + page * 20;
   console.log('fetch url = ' + url);
-  (0, _apiFeed.fetch)(url).then(function (feed) {
-    dispatch(recieveItems(getItems(feed), keyword));
+  (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
+    var items = getItems(feed);
+    _getBookmarkCount(items).then(function (bookmarks) {
+      var filteredItems = _lodash2['default'].filter(items, function (item) {
+        return bookmarks[item.link] >= threshold;
+      });
+      console.log(keyword);
+      dispatch(recieveItems(filteredItems, keyword));
+    });
   }, function (error) {
     return console.log(error);
   });
   dispatch(fetchingItems(keyword));
+}
+
+function _getBookmarkCount(items) {
+  return new Promise(function (resolve, reject) {
+    var url = HATENA_BOOKMARK_COUNT_URL;
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+      for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        var item = _step3.value;
+        url += 'url=' + encodeURIComponent(item.link) + '&';
+      }
+    } catch (err) {
+      _didIteratorError3 = true;
+      _iteratorError3 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion3 && _iterator3['return']) {
+          _iterator3['return']();
+        }
+      } finally {
+        if (_didIteratorError3) {
+          throw _iteratorError3;
+        }
+      }
+    }
+
+    (0, _apiFeed.fetch)(url).then(function (res) {
+      resolve(res);
+    }, function (error) {
+      return console.log(error);
+    });
+  });
 }
 
 },{"../api/feed":350,"../constants/action-types":352,"../lib/db":355,"lodash":6}],349:[function(require,module,exports){
@@ -58085,6 +58128,7 @@ function removeKeyword(keyword) {
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
+exports.fetchWithGoogleFeedApi = fetchWithGoogleFeedApi;
 exports.fetch = fetch;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -58095,9 +58139,18 @@ var _jsonp2 = _interopRequireDefault(_jsonp);
 
 var GOOGLEAPI_URI = 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=';
 
-function fetch(feed_uri) {
+function fetchWithGoogleFeedApi(url) {
   return new Promise(function (resolve, reject) {
-    (0, _jsonp2['default'])(GOOGLEAPI_URI + encodeURIComponent(feed_uri), {}, function (err, data) {
+    (0, _jsonp2['default'])(GOOGLEAPI_URI + encodeURIComponent(url), {}, function (err, data) {
+      if (err) reject(err);
+      resolve(data);
+    });
+  });
+}
+
+function fetch(url) {
+  return new Promise(function (resolve, reject) {
+    (0, _jsonp2['default'])(url, {}, function (err, data) {
       if (err) reject(err);
       resolve(data);
     });
