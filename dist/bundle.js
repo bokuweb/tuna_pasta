@@ -57844,8 +57844,6 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-//import Dexie from 'dexie';
-
 var _apiFeed = require('../api/feed');
 
 var _constantsActionTypes = require('../constants/action-types');
@@ -57856,11 +57854,10 @@ var _libDb = require('../lib/db');
 
 var _libDb2 = _interopRequireDefault(_libDb);
 
-var HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&safe=off&q=';
-var ITEM_NUM_PER_PAGE = 40;
+var HATENA_URL = 'http://b.hatena.ne.jp/';
+var HATENA_SEARCH_URL = HATENA_URL + 'search/text?mode=rss&safe=off&q=';
 
-var db = new _libDb2['default']();
-//const db = new Dexie('Pasta');
+var db = new _libDb2['default']('pastaDB');
 
 function getItems(feed) {
   console.log('---------- fetch feed -----------');
@@ -57961,7 +57958,6 @@ function fetchFeed(feed, menu) {
         }
       }
     } else {
-
       var page = feed[keyword].page;
       _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
     }
@@ -57971,9 +57967,33 @@ function fetchFeed(feed, menu) {
 function _fetchFeed(dispatch, keyword, page, threshold) {
   if (page === undefined) page = 0;
 
-  var uri = HATENA_SEARCH_URI + keyword + '&of=' + page * ITEM_NUM_PER_PAGE + '&users=' + threshold;
-  console.log('fetch url = ' + uri);
-  (0, _apiFeed.fetch)(uri).then(function (feed) {
+  var id = /^id:(.*)/.exec(keyword);
+  if (id === null) {
+    _fetchSearchFeed(dispatch, keyword, page, threshold);
+  } else {
+    _fetchUserFeed(dispatch, keyword, id[1], page, threshold);
+  }
+}
+
+function _fetchSearchFeed(dispatch, keyword, page, threshold) {
+  if (page === undefined) page = 0;
+
+  var url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
+  console.log('fetch url = ' + url);
+  (0, _apiFeed.fetch)(url).then(function (feed) {
+    dispatch(recieveItems(getItems(feed), keyword));
+  }, function (error) {
+    return console.log(error);
+  });
+  dispatch(fetchingItems(keyword));
+}
+
+function _fetchUserFeed(dispatch, keyword, user, page, threshold) {
+  if (page === undefined) page = 0;
+
+  var url = HATENA_URL + user + '/rss?of=' + page * 20;
+  console.log('fetch url = ' + url);
+  (0, _apiFeed.fetch)(url).then(function (feed) {
     dispatch(recieveItems(getItems(feed), keyword));
   }, function (error) {
     return console.log(error);
@@ -58005,7 +58025,7 @@ var _libDb = require('../lib/db');
 
 var _libDb2 = _interopRequireDefault(_libDb);
 
-var db = new _libDb2['default']();
+var db = new _libDb2['default']('pastaDB');
 
 function selectKeyword(keyword) {
   return {
@@ -58495,14 +58515,14 @@ var _dexie = require('dexie');
 
 var _dexie2 = _interopRequireDefault(_dexie);
 
-var db = new _dexie2['default']('PastaDB');
 var instance = null;
 
 var DbManager = (function () {
-  function DbManager() {
+  function DbManager(name) {
     _classCallCheck(this, DbManager);
 
     if (!instance) {
+      this.db = new _dexie2['default'](name);
       instance = this;
     }
     return instance;
@@ -58512,24 +58532,26 @@ var DbManager = (function () {
     key: 'create',
     value: function create(schemes) {
       //db.delete();
-      db.version(1).stores(schemes);
-      db.open();
+      this.db.version(1).stores(schemes);
+      this.db.open();
     }
   }, {
     key: 'put',
     value: function put(table, doc) {
-      return db[table].put(doc);
+      return this.db[table].put(doc);
     }
   }, {
     key: 'remove',
     value: function remove(table, key) {
-      return db[table]['delete'](key);
+      return this.db[table]['delete'](key);
     }
   }, {
     key: 'getArray',
     value: function getArray(table) {
+      var _this = this;
+
       return new Promise(function (resolve, reject) {
-        db[table].toArray(function (docs) {
+        _this.db[table].toArray(function (docs) {
           resolve(docs);
         });
       });

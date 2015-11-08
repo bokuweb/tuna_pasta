@@ -1,7 +1,7 @@
 import * as types from '../constants/action-types';
 import DbManager from '../lib/db'
 
-const db = new DbManager();
+const db = new DbManager('pastaDB');
 
 export function selectKeyword(keyword) {
   return {

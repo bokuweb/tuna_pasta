@@ -1,23 +1,21 @@
 import _ from 'lodash';
-//import Dexie from 'dexie';
 import {fetch} from '../api/feed'
 import * as types from '../constants/action-types';
 import DbManager from '../lib/db'
 
-const HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&safe=off&q='
-const ITEM_NUM_PER_PAGE = 40;
+const HATENA_URL = 'http://b.hatena.ne.jp/'
+const HATENA_SEARCH_URL = HATENA_URL + 'search/text?mode=rss&safe=off&q='
 
-const db = new DbManager();
-//const db = new Dexie('Pasta');
+const db = new DbManager('pastaDB');
 
 function getItems(feed) {
-  console.log('---------- fetch feed -----------');
-  console.dir(feed);
-  if (feed.responseData.feed === undefined) {
-    console.log("feed none");
-    return [];
-  }
-  return feed.responseData.feed.entries;
+    console.log('---------- fetch feed -----------');
+    console.dir(feed);
+    if (feed.responseData.feed === undefined) {
+        console.log("feed none");
+        return [];
+    }
+    return feed.responseData.feed.entries;
 }
 
 export function initialize() {
@@ -67,17 +65,34 @@ export function fetchFeed(feed, menu) {
         _fetchFeed(dispatch, keyword.name, page, menu.bookmarkFilter);
       }
     } else {
-
       let page = feed[keyword].page;
-        _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
+      _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
     }
   }
 }
 
 function _fetchFeed(dispatch, keyword, page = 0, threshold) {
-  const uri = HATENA_SEARCH_URI + keyword + '&of=' + page * ITEM_NUM_PER_PAGE + '&users=' + threshold;
-  console.log('fetch url = ' + uri);
-  fetch(uri).then((feed) => {
+  const id = /^id:(.*)/.exec(keyword);
+  if (id === null) {
+    _fetchSearchFeed(dispatch, keyword, page, threshold);
+  } else {
+    _fetchUserFeed(dispatch, keyword, id[1], page, threshold)
+  }
+}
+
+function _fetchSearchFeed(dispatch, keyword, page = 0, threshold) {
+  const url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
+  console.log('fetch url = ' + url);
+  fetch(url).then((feed) => {
+    dispatch(recieveItems(getItems(feed), keyword));
+  }, (error) => console.log(error));
+  dispatch(fetchingItems(keyword));
+}
+
+function _fetchUserFeed(dispatch, keyword, user, page = 0, threshold) {
+  const url = HATENA_URL + user + '/rss?of=' + page * 20;
+  console.log('fetch url = ' + url);
+  fetch(url).then((feed) => {
     dispatch(recieveItems(getItems(feed), keyword));
   }, (error) => console.log(error));
   dispatch(fetchingItems(keyword));
