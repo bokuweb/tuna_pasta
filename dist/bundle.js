@@ -58245,7 +58245,7 @@ var Pasta = (function (_Component) {
           var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
           return _react2['default'].createElement(
             'div',
-            { className: 'item animated fadeIn', key: item.link },
+            { className: 'item animated fadeIn', key: item.link + _this3.props.menu.activeKeyword },
             _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
             _react2['default'].createElement(
               'a',
