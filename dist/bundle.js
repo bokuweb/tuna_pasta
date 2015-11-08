@@ -58436,7 +58436,7 @@ var Pasta = (function (_Component) {
             {
               elementHeight: 140,
               containerHeight: this.innerHeight - 40,
-              infiniteLoadBeginBottomOffset: 500,
+              infiniteLoadBeginBottomOffset: this.innerHeight * 0.2,
               onInfiniteLoad: this.onInfiniteLoad.bind(this),
               loadingSpinnerDelegate: this.elementInfiniteLoad(),
               isInfiniteLoading: feed.isInfiniteLoading,
