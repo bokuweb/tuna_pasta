@@ -1,11 +1,11 @@
 import Dexie from 'dexie';
 
-const db = new Dexie('PastaDB');
 let instance = null;
 
 export default class DbManager {
-  constructor() {
+  constructor(name) {
     if(!instance) {
+      this.db = new Dexie(name);
       instance = this;
     }
     return instance;
@@ -13,21 +13,21 @@ export default class DbManager {
 
   create(schemes) {
     //db.delete();
-    db.version(1).stores(schemes);
-    db.open();
+    this.db.version(1).stores(schemes);
+    this.db.open();
   }
 
   put(table, doc) {
-    return db[table].put(doc);
+    return this.db[table].put(doc);
   }
 
   remove(table, key) {
-    return db[table].delete(key);
+    return this.db[table].delete(key);
   }
 
   getArray(table) {
     return new Promise((resolve, reject) => {
-      db[table].toArray((docs) => {
+      this.db[table].toArray((docs) => {
         resolve(docs);
       });
     });

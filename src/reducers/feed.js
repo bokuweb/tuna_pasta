@@ -30,10 +30,9 @@ export default function feed(state={}, action) {
       const keyword = action.keyword;
       state.all.items = state.all.items.concat(items);
       state[keyword].items = state[keyword].items.concat(items);
-      state[keyword].isPageEnd = items.length === 0;
+      state[keyword].isPageEnd = action.length === 0;
       state[keyword].page += 1;
       state[keyword].isInfiniteLoading = false;
-      console.log(state[keyword].isPageEnd);
       return Object.assign({}, state);
 
     case types.CLEAR_ITEMS :

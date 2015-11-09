@@ -57844,8 +57844,6 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-//import Dexie from 'dexie';
-
 var _apiFeed = require('../api/feed');
 
 var _constantsActionTypes = require('../constants/action-types');
@@ -57856,15 +57854,20 @@ var _libDb = require('../lib/db');
 
 var _libDb2 = _interopRequireDefault(_libDb);
 
-var HATENA_SEARCH_URI = 'http://b.hatena.ne.jp/search/text?mode=rss&safe=off&q=';
-var ITEM_NUM_PER_PAGE = 40;
+var HATENA_URL = 'http://b.hatena.ne.jp/';
+var HATENA_BOOKMARK_COUNT_URL = 'http://api.b.st-hatena.com/entry.counts?';
+var HATENA_SEARCH_URL = HATENA_URL + 'search/text?mode=rss&safe=off&q=';
 
-var db = new _libDb2['default']();
-//const db = new Dexie('Pasta');
+var db = new _libDb2['default']('pastaDB');
 
 function getItems(feed) {
   console.log('---------- fetch feed -----------');
   console.dir(feed);
+  if (feed.responseData === null) {
+    console.log("feed null");
+    return;
+  }
+
   if (feed.responseData.feed === undefined) {
     console.log("feed none");
     return [];
@@ -57916,10 +57919,11 @@ function fetchingItems(keyword) {
   };
 }
 
-function recieveItems(items, keyword) {
+function recieveItems(items, keyword, length) {
   return {
     type: types.RECIEVE_ITEMS,
     items: items,
+    length: length,
     keyword: keyword
   };
 }
@@ -57961,7 +57965,6 @@ function fetchFeed(feed, menu) {
         }
       }
     } else {
-
       var page = feed[keyword].page;
       _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
     }
@@ -57971,14 +57974,80 @@ function fetchFeed(feed, menu) {
 function _fetchFeed(dispatch, keyword, page, threshold) {
   if (page === undefined) page = 0;
 
-  var uri = HATENA_SEARCH_URI + keyword + '&of=' + page * ITEM_NUM_PER_PAGE + '&users=' + threshold;
-  console.log('fetch url = ' + uri);
-  (0, _apiFeed.fetch)(uri).then(function (feed) {
-    dispatch(recieveItems(getItems(feed), keyword));
+  var id = /^id:(.*)/.exec(keyword);
+  if (id === null) {
+    _fetchSearchFeed(dispatch, keyword, page, threshold);
+  } else {
+    _fetchUserFeed(dispatch, keyword, id[1], page, threshold);
+  }
+}
+
+function _fetchSearchFeed(dispatch, keyword, page, threshold) {
+  if (page === undefined) page = 0;
+
+  var url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
+  console.log('fetch url = ' + url);
+  (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
+    var items = getItems(feed);
+    dispatch(recieveItems(items, keyword, items.length));
   }, function (error) {
     return console.log(error);
   });
   dispatch(fetchingItems(keyword));
+}
+
+function _fetchUserFeed(dispatch, keyword, user, page, threshold) {
+  if (page === undefined) page = 0;
+
+  var url = HATENA_URL + user + '/rss?of=' + page * 20;
+  console.log('fetch url = ' + url);
+  (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
+    var items = getItems(feed);
+    _getBookmarkCount(items).then(function (bookmarks) {
+      var filteredItems = _lodash2['default'].filter(items, function (item) {
+        return bookmarks[item.link] >= threshold;
+      });
+      dispatch(recieveItems(filteredItems, keyword, items.length));
+    });
+  }, function (error) {
+    return console.log(error);
+  });
+  dispatch(fetchingItems(keyword));
+}
+
+function _getBookmarkCount(items) {
+  return new Promise(function (resolve, reject) {
+    var url = HATENA_BOOKMARK_COUNT_URL;
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+      for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        var item = _step3.value;
+        url += 'url=' + encodeURIComponent(item.link) + '&';
+      }
+    } catch (err) {
+      _didIteratorError3 = true;
+      _iteratorError3 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion3 && _iterator3['return']) {
+          _iterator3['return']();
+        }
+      } finally {
+        if (_didIteratorError3) {
+          throw _iteratorError3;
+        }
+      }
+    }
+
+    (0, _apiFeed.fetch)(url).then(function (res) {
+      resolve(res);
+    }, function (error) {
+      return console.log(error);
+    });
+  });
 }
 
 },{"../api/feed":350,"../constants/action-types":352,"../lib/db":355,"lodash":6}],349:[function(require,module,exports){
@@ -58005,7 +58074,7 @@ var _libDb = require('../lib/db');
 
 var _libDb2 = _interopRequireDefault(_libDb);
 
-var db = new _libDb2['default']();
+var db = new _libDb2['default']('pastaDB');
 
 function selectKeyword(keyword) {
   return {
@@ -58065,6 +58134,7 @@ function removeKeyword(keyword) {
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
+exports.fetchWithGoogleFeedApi = fetchWithGoogleFeedApi;
 exports.fetch = fetch;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -58075,9 +58145,18 @@ var _jsonp2 = _interopRequireDefault(_jsonp);
 
 var GOOGLEAPI_URI = 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=';
 
-function fetch(feed_uri) {
+function fetchWithGoogleFeedApi(url) {
   return new Promise(function (resolve, reject) {
-    (0, _jsonp2['default'])(GOOGLEAPI_URI + encodeURIComponent(feed_uri), {}, function (err, data) {
+    (0, _jsonp2['default'])(GOOGLEAPI_URI + encodeURIComponent(url), {}, function (err, data) {
+      if (err) reject(err);
+      resolve(data);
+    });
+  });
+}
+
+function fetch(url) {
+  return new Promise(function (resolve, reject) {
+    (0, _jsonp2['default'])(url, {}, function (err, data) {
       if (err) reject(err);
       resolve(data);
     });
@@ -58200,25 +58279,38 @@ var Pasta = (function (_Component) {
       this.props.fetchFeed(this.props.feed, this.props.menu);
     }
   }, {
+    key: 'getCategories',
+    value: function getCategories(categories) {
+      var _this2 = this;
+
+      return categories.map(function (category) {
+        return _react2['default'].createElement(
+          'span',
+          { className: 'category', key: category + _this2.props.menu.activeKeyword, style: { 'backgroundColor': '#34495E' } },
+          category
+        );
+      });
+    }
+  }, {
     key: 'getKeywordList',
     value: function getKeywordList() {
-      var _this2 = this;
+      var _this3 = this;
 
       console.dir(this.props.menu.keywords);
       return this.props.menu.keywords.map(function (keyword) {
-        var listClassName = keyword.name === _this2.props.menu.activeKeyword ? 'selected' : null;
+        var listClassName = keyword.name === _this3.props.menu.activeKeyword ? 'selected' : null;
         return _react2['default'].createElement(
           'li',
           { className: listClassName, key: keyword.name },
           _react2['default'].createElement(
             'span',
-            { onClick: _this2.onClickKeyword.bind(_this2, keyword.name) },
+            { onClick: _this3.onClickKeyword.bind(_this3, keyword.name) },
             _react2['default'].createElement('i', { className: "fa fa-" + keyword.icon }),
             keyword.name
           ),
           _react2['default'].createElement(
             'div',
-            { className: 'remove', onClick: _this2.onKeywordRemoveButtonClick.bind(_this2, keyword.name) },
+            { className: 'remove', onClick: _this3.onKeywordRemoveButtonClick.bind(_this3, keyword.name) },
             _react2['default'].createElement('i', { className: "fa fa-close" })
           )
         );
@@ -58227,13 +58319,13 @@ var Pasta = (function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       if (!this.props.feed.isInitialized) return _react2['default'].createElement('div', { className: 'rect-spinner' });
 
       var feed = this.props.feed[this.props.menu.activeKeyword];
 
-      var items = undefined;
+      var items = null;
       if (this.props.menu.keywords.length === 0) items = _react2['default'].createElement(
         'div',
         null,
@@ -58245,7 +58337,7 @@ var Pasta = (function (_Component) {
           var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
           return _react2['default'].createElement(
             'div',
-            { className: 'item animated fadeIn', key: item.link + _this3.props.menu.activeKeyword },
+            { className: 'item animated fadeIn', key: item.link + _this4.props.menu.activeKeyword },
             _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
             _react2['default'].createElement(
               'a',
@@ -58263,11 +58355,7 @@ var Pasta = (function (_Component) {
               { className: 'publish-date' },
               item.publishedDate
             ),
-            _react2['default'].createElement(
-              'span',
-              { className: 'category', style: _this3.getCategoryStyle(item.categories[0]) },
-              item.categories[0]
-            ),
+            _this4.getCategories(item.categories),
             _react2['default'].createElement(
               'p',
               { className: 'content-snippet' },
@@ -58276,13 +58364,10 @@ var Pasta = (function (_Component) {
           );
         });
       }
-      // FIXME :
-      var x = this.props.menu.bookmarkFilterX - 24;
-      if (x > 220) x = 220;
-      if (x < 10) x = 10;
-      // FIXME
-      //let threshold = (localStorage.threshold) ? localStorage.threshold : 1;
 
+      var x = this.props.menu.bookmarkFilterX - 24;
+      if (x > 210) x = 210;
+      if (x < 10) x = 10;
       return _react2['default'].createElement(
         'div',
         { id: 'container' },
@@ -58351,7 +58436,7 @@ var Pasta = (function (_Component) {
             {
               elementHeight: 140,
               containerHeight: this.innerHeight - 40,
-              infiniteLoadBeginBottomOffset: 50,
+              infiniteLoadBeginBottomOffset: this.innerHeight * 0.2,
               onInfiniteLoad: this.onInfiniteLoad.bind(this),
               loadingSpinnerDelegate: this.elementInfiniteLoad(),
               isInfiniteLoading: feed.isInfiniteLoading,
@@ -58495,14 +58580,14 @@ var _dexie = require('dexie');
 
 var _dexie2 = _interopRequireDefault(_dexie);
 
-var db = new _dexie2['default']('PastaDB');
 var instance = null;
 
 var DbManager = (function () {
-  function DbManager() {
+  function DbManager(name) {
     _classCallCheck(this, DbManager);
 
     if (!instance) {
+      this.db = new _dexie2['default'](name);
       instance = this;
     }
     return instance;
@@ -58512,24 +58597,26 @@ var DbManager = (function () {
     key: 'create',
     value: function create(schemes) {
       //db.delete();
-      db.version(1).stores(schemes);
-      db.open();
+      this.db.version(1).stores(schemes);
+      this.db.open();
     }
   }, {
     key: 'put',
     value: function put(table, doc) {
-      return db[table].put(doc);
+      return this.db[table].put(doc);
     }
   }, {
     key: 'remove',
     value: function remove(table, key) {
-      return db[table]['delete'](key);
+      return this.db[table]['delete'](key);
     }
   }, {
     key: 'getArray',
     value: function getArray(table) {
+      var _this = this;
+
       return new Promise(function (resolve, reject) {
-        db[table].toArray(function (docs) {
+        _this.db[table].toArray(function (docs) {
           resolve(docs);
         });
       });
@@ -58629,10 +58716,9 @@ function feed(state, action) {
       var keyword = action.keyword;
       state.all.items = state.all.items.concat(items);
       state[keyword].items = state[keyword].items.concat(items);
-      state[keyword].isPageEnd = items.length === 0;
+      state[keyword].isPageEnd = action.length === 0;
       state[keyword].page += 1;
       state[keyword].isInfiniteLoading = false;
-      console.log(state[keyword].isPageEnd);
       return Object.assign({}, state);
 
     case types.CLEAR_ITEMS:

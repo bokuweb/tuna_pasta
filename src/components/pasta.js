@@ -70,6 +70,15 @@ export default class Pasta extends Component {
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
+  getCategories(categories) {
+    return categories.map((category) => {
+      return (
+        <span className="category" key={category + this.props.menu.activeKeyword } style={{'backgroundColor':'#34495E'}}>
+          {category}
+        </span>);
+    });
+  }
+
   getKeywordList() {
     console.dir(this.props.menu.keywords)
     return this.props.menu.keywords.map((keyword) => {
@@ -94,7 +103,7 @@ export default class Pasta extends Component {
 
     const feed = this.props.feed[this.props.menu.activeKeyword];
 
-    let items;
+    let items = null;
     if (this.props.menu.keywords.length === 0)
       items = <div>まだ記事はありません。キーワードを追加してください。</div>;
     else {
@@ -108,21 +117,16 @@ export default class Pasta extends Component {
             <a href={item.link} className="item-title">{item.title}</a>
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
             <span className="publish-date">{item.publishedDate}</span>
-            <span className="category" style={this.getCategoryStyle(item.categories[0])}>
-              {item.categories[0]}
-            </span>
+            {this.getCategories(item.categories)}
             <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
           </div>
         );
       });
     }
-    // FIXME : 
-    let x = this.props.menu.bookmarkFilterX - 24;
-    if (x > 220) x = 220;
-    if (x < 10) x = 10;
-    // FIXME
-    //let threshold = (localStorage.threshold) ? localStorage.threshold : 1;
 
+    let x = this.props.menu.bookmarkFilterX - 24;
+    if (x > 210) x = 210;
+    if (x < 10) x = 10;
     return (
       <div id="container">
         <div id="side-menu" className="animated slideInLeft">
@@ -168,7 +172,7 @@ export default class Pasta extends Component {
             <Infinite
               elementHeight={140}
               containerHeight={this.innerHeight-40}
-              infiniteLoadBeginBottomOffset={50}
+              infiniteLoadBeginBottomOffset={this.innerHeight * 0.2}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}
               loadingSpinnerDelegate={this.elementInfiniteLoad()}
               isInfiniteLoading={feed.isInfiniteLoading}
