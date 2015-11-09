@@ -6522,6 +6522,13 @@ a {
   position: relative;
   height: 32px;
 }
+#side-menu #menu li > span {
+  display: inline-block;
+  width: 160px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 #side-menu #menu li a {
   color: #fff;
   width: 100%;

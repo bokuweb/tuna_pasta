@@ -103,6 +103,10 @@ export default class Pasta extends Component {
 
     const feed = this.props.feed[this.props.menu.activeKeyword];
 
+    if (feed.items.length === 0 && !feed.isPageEnd && !feed.isInfiniteLoading && this.props.menu.activeKeyword !== 'all') {
+      console.log("aaas!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    }
+
     let items = null;
     if (this.props.menu.keywords.length === 0)
       items = <div>まだ記事はありません。キーワードを追加してください。</div>;
@@ -112,7 +116,7 @@ export default class Pasta extends Component {
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
         return (
-            <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
+          <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />
             <a href={item.link} className="item-title">{item.title}</a>
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
@@ -158,11 +162,11 @@ export default class Pasta extends Component {
             <ul>
               <li className={this.props.menu.activeKeyword === 'all' ? 'selected' : ''}
                   onClick={this.onClickKeyword.bind(this, 'all')}>
-                <i className={"fa fa-home"} />総合
+                <span><i className={"fa fa-home"} />総合</span>
               </li>
               <li className={this.props.menu.activeKeyword === 'favorite' ? 'selected' : ''}
                 onClick={this.onClickKeyword.bind(this, 'favorite')}>
-                <i className={"fa fa-heart"} />お気に入り
+                <span><i className={"fa fa-heart"} />お気に入り</span>
               </li>
               {this.getKeywordList()}
             </ul>
