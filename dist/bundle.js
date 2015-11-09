@@ -58259,8 +58259,9 @@ var Pasta = (function (_Component) {
     setInterval(function () {
       if (!_this.props.feed.isInitialized) return;
       var feed = _this.props.feed[_this.props.menu.activeKeyword];
-      if (feed.items.length < 50 && !feed.isPageEnd && !feed.isInfiniteLoading && _this.props.menu.activeKeyword !== 'all') {
-        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      var isLoadingNeeded = feed.items.length < 40 && !feed.isPageEnd && !feed.isInfiniteLoading;
+      if (isLoadingNeeded && _this.props.menu.activeKeyword !== 'all') {
+        _this.props.fetchFeed(_this.props.feed, _this.props.menu);
       }
     }, 1000);
   }

@@ -24,8 +24,9 @@ export default class Pasta extends Component {
     setInterval(() => {
       if (!this.props.feed.isInitialized) return;
       const feed = this.props.feed[this.props.menu.activeKeyword];
-      if (feed.items.length < 50 && !feed.isPageEnd && !feed.isInfiniteLoading && this.props.menu.activeKeyword !== 'all') {
-        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      const isLoadingNeeded = feed.items.length < 40 && !feed.isPageEnd && !feed.isInfiniteLoading;
+      if (isLoadingNeeded && this.props.menu.activeKeyword !== 'all') {
+        this.props.fetchFeed(this.props.feed, this.props.menu);
       }
     }, 1000);
   }
