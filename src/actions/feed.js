@@ -28,13 +28,20 @@ export function initialize() {
   return dispatch => {
     console.log("initialize..");
     db.create({keywords: "name, icon"});
+    db.create({favorites: "link, title, content, contentSnippet, publishedDate, categories"});
     db.getArray('keywords').then((keywords) => {
-      dispatch({type: types.INITIALIZE, keywords});
+      dispatch({type: types.INITIALIZE_KEYWORD, keywords});
       if (keywords.length !== 0) {
         for (let keyword of keywords) {
           _fetchFeed(dispatch, keyword.name, 0, 1);
         }
       }
+    });
+    db.getArray('favorites').then((favorites) => {
+      dispatch({
+        type: types.INITIALIZE_FAVORITE,
+        favorites
+      });
     });
     dispatch({type: types.INITIALIZING});
   }
@@ -71,10 +78,28 @@ export function fetchFeed(feed, menu) {
         let page = feed[keyword.name].page;
         _fetchFeed(dispatch, keyword.name, page, menu.bookmarkFilter);
       }
+    } else if (keyword === 'favorite') {
+
+
     } else {
       let page = feed[keyword].page;
       _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
     }
+  }
+}
+
+export function addFavorite(item) {
+  return dispatch => {
+    console.dir(item);
+    db.put('favorites', item).then(() => {
+      db.getArray('favorites').then((favorites) => {
+        console.dir(favorites);
+        dispatch({
+          type: types.ADD_FAVORITE,
+          favorites
+        });
+      });
+    });
   }
 }
 
@@ -89,7 +114,6 @@ function _fetchFeed(dispatch, keyword, page = 0, threshold) {
 
 function _fetchSearchFeed(dispatch, keyword, page = 0, threshold) {
   const url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
-  console.log('fetch url = ' + url);
   fetchWithGoogleFeedApi(url).then((feed) => {
     const items = getItems(feed);
     dispatch(recieveItems(items, keyword, items.length));
@@ -99,7 +123,6 @@ function _fetchSearchFeed(dispatch, keyword, page = 0, threshold) {
 
 function _fetchUserFeed(dispatch, keyword, user, page = 0, threshold) {
   const url = HATENA_URL + user + '/rss?of=' + page * 20;
-  console.log('fetch url = ' + url);
   fetchWithGoogleFeedApi(url).then((feed) => {
     const items = getItems(feed);
     _getBookmarkCount(items).then((bookmarks) => {

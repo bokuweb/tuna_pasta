@@ -2,7 +2,7 @@ import * as types from '../constants/action-types';
 
 export default function menu(state={}, action) {
   switch(action.type){
-    case types.INITIALIZE :
+    case types.INITIALIZE_KEYWORD :
       state.keywords = action.keywords;
       state.activeKeyword = 'all';
       state.bookmarkFilter = 1;

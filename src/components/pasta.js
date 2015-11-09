@@ -20,6 +20,14 @@ export default class Pasta extends Component {
       this.innerHeight = document.documentElement.clientHeight;
       this.forceUpdate();
     }
+
+    setInterval(() => {
+      if (!this.props.feed.isInitialized) return;
+      const feed = this.props.feed[this.props.menu.activeKeyword];
+      if (feed.items.length < 50 && !feed.isPageEnd && !feed.isInfiniteLoading && this.props.menu.activeKeyword !== 'all') {
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      }
+    }, 1000);
   }
 
   onSliderChange(e, value) {
@@ -37,9 +45,9 @@ export default class Pasta extends Component {
   }
 
   onInfiniteLoad() {
-    console.log("loading..")
     if (this.props.menu.keywords.length === 0) return;
     if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
+    console.log("loading..");
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
@@ -47,12 +55,17 @@ export default class Pasta extends Component {
     if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
     return  <div className="rect-spinner"></div>;
   }
-
+  /*
   getCategoryStyle(category) {
     switch (category) {
       case 'テクノロジー' : return {'backgroundColor':'#1ABC9C'};
       default             : return {'backgroundColor':'#8E44AD'};
     }
+  }*/
+
+  onFavoriteClick(item) {
+    console.log("fav!!");
+    this.props.addFavorite(item);
   }
 
   onAdditionalKeywordSubmit(value) {
@@ -60,7 +73,7 @@ export default class Pasta extends Component {
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
-  onClickKeyword(name) {
+  onSelectKeyword(name) {
     this.props.selectKeyword(name);
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
@@ -73,19 +86,18 @@ export default class Pasta extends Component {
   getCategories(categories) {
     return categories.map((category) => {
       return (
-        <span className="category" key={category + this.props.menu.activeKeyword } style={{'backgroundColor':'#34495E'}}>
+        <span className="category" key={category + this.props.menu.activeKeyword } style={{'backgroundColor':'#1ABC9C'}}>
           {category}
         </span>);
     });
   }
 
   getKeywordList() {
-    console.dir(this.props.menu.keywords)
     return this.props.menu.keywords.map((keyword) => {
       const listClassName = keyword.name === this.props.menu.activeKeyword ? 'selected' : null;
       return (
         <li className={listClassName} key={keyword.name}>
-          <span onClick={this.onClickKeyword.bind(this, keyword.name)}>
+          <span onClick={this.onSelectKeyword.bind(this, keyword.name)}>
             <i className={"fa fa-" + keyword.icon} />
             {keyword.name}
           </span>
@@ -98,11 +110,8 @@ export default class Pasta extends Component {
   }
 
   render() {
-    if (!this.props.feed.isInitialized)
-      return <div className="rect-spinner"></div>;
-
+    if (!this.props.feed.isInitialized) return <div className="rect-spinner"></div>;
     const feed = this.props.feed[this.props.menu.activeKeyword];
-
     let items = null;
     if (this.props.menu.keywords.length === 0)
       items = <div>まだ記事はありません。キーワードを追加してください。</div>;
@@ -112,13 +121,14 @@ export default class Pasta extends Component {
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
         return (
-            <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
+          <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />
             <a href={item.link} className="item-title">{item.title}</a>
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
             <span className="publish-date">{item.publishedDate}</span>
             {this.getCategories(item.categories)}
             <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
+            <i className={"favorite-button fa fa-heart"} onClick={this.onFavoriteClick.bind(this, item)}/>
           </div>
         );
       });
@@ -157,12 +167,12 @@ export default class Pasta extends Component {
           <div id="menu">
             <ul>
               <li className={this.props.menu.activeKeyword === 'all' ? 'selected' : ''}
-                  onClick={this.onClickKeyword.bind(this, 'all')}>
-                <i className={"fa fa-home"} />総合
+                  onClick={this.onSelectKeyword.bind(this, 'all')}>
+                <span><i className={"fa fa-home"} />総合</span>
               </li>
               <li className={this.props.menu.activeKeyword === 'favorite' ? 'selected' : ''}
-                onClick={this.onClickKeyword.bind(this, 'favorite')}>
-                <i className={"fa fa-heart"} />お気に入り
+                onClick={this.onSelectKeyword.bind(this, 'favorite')}>
+                <span><i className={"fa fa-heart"} />お気に入り</span>
               </li>
               {this.getKeywordList()}
             </ul>
