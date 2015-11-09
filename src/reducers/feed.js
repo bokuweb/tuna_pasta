@@ -15,7 +15,7 @@ export default function feed(state={}, action) {
     case types.INITIALIZING :
       return {isInitialized : false};
 
-    case types.INITIALIZE :
+    case types.INITIALIZE_KEYWORD :
       console.log("initialized..");
       for (let keyword of action.keywords) {
         state[keyword.name] = createProps();
@@ -25,9 +25,25 @@ export default function feed(state={}, action) {
       state.isInitialized = true;
       return Object.assign({}, state);
 
+  case types.INITIALIZE_FAVORITE :
+      state.favorite.items = action.favorites;
+      return Object.assign({}, state);
+
+    case types.ADD_FAVORITE :
+      state.favorite.items = state.favorite.items.concat(action.favorites);
+      state.favorite.isPageEnd = true;
+      state.favorite.isInfiniteLoading = false;
+      return Object.assign({}, state);
+
     case types.RECIEVE_ITEMS :
       const items = action.items;
       const keyword = action.keyword;
+      if (items === null){
+        // TODO: add retry times monitoring
+        state[keyword].isPageEnd = false;
+        state[keyword].isInfiniteLoading = false;
+        return Object.assign({}, state);
+      }
       state.all.items = state.all.items.concat(items);
       state[keyword].items = state[keyword].items.concat(items);
       state[keyword].isPageEnd = action.length === 0;

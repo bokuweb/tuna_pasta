@@ -20,6 +20,14 @@ export default class Pasta extends Component {
       this.innerHeight = document.documentElement.clientHeight;
       this.forceUpdate();
     }
+
+    setInterval(() => {
+      if (!this.props.feed.isInitialized) return;
+      const feed = this.props.feed[this.props.menu.activeKeyword];
+      if (feed.items.length < 50 && !feed.isPageEnd && !feed.isInfiniteLoading && this.props.menu.activeKeyword !== 'all') {
+        console.log("aaas!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      }
+    }, 1000);
   }
 
   onSliderChange(e, value) {
@@ -47,12 +55,17 @@ export default class Pasta extends Component {
     if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
     return  <div className="rect-spinner"></div>;
   }
-
+  /*
   getCategoryStyle(category) {
     switch (category) {
       case 'テクノロジー' : return {'backgroundColor':'#1ABC9C'};
       default             : return {'backgroundColor':'#8E44AD'};
     }
+  }*/
+
+  onFavoriteClick(item) {
+    console.log("fav!!");
+    this.props.addFavorite(item);
   }
 
   onAdditionalKeywordSubmit(value) {
@@ -73,14 +86,13 @@ export default class Pasta extends Component {
   getCategories(categories) {
     return categories.map((category) => {
       return (
-        <span className="category" key={category + this.props.menu.activeKeyword } style={{'backgroundColor':'#34495E'}}>
+        <span className="category" key={category + this.props.menu.activeKeyword } style={{'backgroundColor':'#1ABC9C'}}>
           {category}
         </span>);
     });
   }
 
   getKeywordList() {
-    console.dir(this.props.menu.keywords)
     return this.props.menu.keywords.map((keyword) => {
       const listClassName = keyword.name === this.props.menu.activeKeyword ? 'selected' : null;
       return (
@@ -98,15 +110,8 @@ export default class Pasta extends Component {
   }
 
   render() {
-    if (!this.props.feed.isInitialized)
-      return <div className="rect-spinner"></div>;
-
+    if (!this.props.feed.isInitialized) return <div className="rect-spinner"></div>;
     const feed = this.props.feed[this.props.menu.activeKeyword];
-
-    if (feed.items.length === 0 && !feed.isPageEnd && !feed.isInfiniteLoading && this.props.menu.activeKeyword !== 'all') {
-      console.log("aaas!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    }
-
     let items = null;
     if (this.props.menu.keywords.length === 0)
       items = <div>まだ記事はありません。キーワードを追加してください。</div>;
@@ -123,6 +128,7 @@ export default class Pasta extends Component {
             <span className="publish-date">{item.publishedDate}</span>
             {this.getCategories(item.categories)}
             <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
+            <i className={"favorite-button fa fa-heart"} onClick={this.onFavoriteClick.bind(this, item)}/>
           </div>
         );
       });

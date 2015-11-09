@@ -57746,6 +57746,7 @@ exports.fetchingItems = fetchingItems;
 exports.recieveItems = recieveItems;
 exports.clearFeeds = clearFeeds;
 exports.fetchFeed = fetchFeed;
+exports.addFavorite = addFavorite;
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
@@ -57790,8 +57791,9 @@ function initialize() {
   return function (dispatch) {
     console.log("initialize..");
     db.create({ keywords: "name, icon" });
+    db.create({ favorites: "link, title, content, contentSnippet, publishedDate, categories" });
     db.getArray('keywords').then(function (keywords) {
-      dispatch({ type: types.INITIALIZE, keywords: keywords });
+      dispatch({ type: types.INITIALIZE_KEYWORD, keywords: keywords });
       if (keywords.length !== 0) {
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
@@ -57818,6 +57820,13 @@ function initialize() {
           }
         }
       }
+    });
+    db.getArray('favorites').then(function (favorites) {
+      console.dir(favorites);
+      dispatch({
+        type: types.INITIALIZE_FAVORITE,
+        favorites: favorites
+      });
     });
     dispatch({ type: types.INITIALIZING });
   };
@@ -57875,10 +57884,25 @@ function fetchFeed(feed, menu) {
           }
         }
       }
-    } else {
+    } else if (keyword === 'favorite') {} else {
       var page = feed[keyword].page;
       _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
     }
+  };
+}
+
+function addFavorite(item) {
+  return function (dispatch) {
+    console.dir(item);
+    db.put('favorites', item).then(function () {
+      db.getArray('favorites').then(function (favorites) {
+        console.dir(favorites);
+        dispatch({
+          type: types.ADD_FAVORITE,
+          favorites: favorites
+        });
+      });
+    });
   };
 }
 
@@ -57897,7 +57921,6 @@ function _fetchSearchFeed(dispatch, keyword, page, threshold) {
   if (page === undefined) page = 0;
 
   var url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
-  console.log('fetch url = ' + url);
   (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
     var items = getItems(feed);
     dispatch(recieveItems(items, keyword, items.length));
@@ -57911,7 +57934,6 @@ function _fetchUserFeed(dispatch, keyword, user, page, threshold) {
   if (page === undefined) page = 0;
 
   var url = HATENA_URL + user + '/rss?of=' + page * 20;
-  console.log('fetch url = ' + url);
   (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
     var items = getItems(feed);
     _getBookmarkCount(items).then(function (bookmarks) {
@@ -58128,6 +58150,14 @@ var Pasta = (function (_Component) {
       _this.innerHeight = document.documentElement.clientHeight;
       _this.forceUpdate();
     };
+
+    setInterval(function () {
+      if (!_this.props.feed.isInitialized) return;
+      var feed = _this.props.feed[_this.props.menu.activeKeyword];
+      if (feed.items.length < 50 && !feed.isPageEnd && !feed.isInfiniteLoading && _this.props.menu.activeKeyword !== 'all') {
+        console.log("aaas!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      }
+    }, 1000);
   }
 
   _createClass(Pasta, [{
@@ -58161,15 +58191,20 @@ var Pasta = (function (_Component) {
       if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
       return _react2['default'].createElement('div', { className: 'rect-spinner' });
     }
-  }, {
-    key: 'getCategoryStyle',
-    value: function getCategoryStyle(category) {
+
+    /*
+    getCategoryStyle(category) {
       switch (category) {
-        case 'テクノロジー':
-          return { 'backgroundColor': '#1ABC9C' };
-        default:
-          return { 'backgroundColor': '#8E44AD' };
+        case 'テクノロジー' : return {'backgroundColor':'#1ABC9C'};
+        default             : return {'backgroundColor':'#8E44AD'};
       }
+    }*/
+
+  }, {
+    key: 'onFavoriteClick',
+    value: function onFavoriteClick(item) {
+      console.log("fav!!");
+      this.props.addFavorite(item);
     }
   }, {
     key: 'onAdditionalKeywordSubmit',
@@ -58197,7 +58232,7 @@ var Pasta = (function (_Component) {
       return categories.map(function (category) {
         return _react2['default'].createElement(
           'span',
-          { className: 'category', key: category + _this2.props.menu.activeKeyword, style: { 'backgroundColor': '#34495E' } },
+          { className: 'category', key: category + _this2.props.menu.activeKeyword, style: { 'backgroundColor': '#1ABC9C' } },
           category
         );
       });
@@ -58207,7 +58242,6 @@ var Pasta = (function (_Component) {
     value: function getKeywordList() {
       var _this3 = this;
 
-      console.dir(this.props.menu.keywords);
       return this.props.menu.keywords.map(function (keyword) {
         var listClassName = keyword.name === _this3.props.menu.activeKeyword ? 'selected' : null;
         return _react2['default'].createElement(
@@ -58233,13 +58267,7 @@ var Pasta = (function (_Component) {
       var _this4 = this;
 
       if (!this.props.feed.isInitialized) return _react2['default'].createElement('div', { className: 'rect-spinner' });
-
       var feed = this.props.feed[this.props.menu.activeKeyword];
-
-      if (feed.items.length === 0 && !feed.isPageEnd && !feed.isInfiniteLoading && this.props.menu.activeKeyword !== 'all') {
-        console.log("aaas!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      }
-
       var items = null;
       if (this.props.menu.keywords.length === 0) items = _react2['default'].createElement(
         'div',
@@ -58275,7 +58303,8 @@ var Pasta = (function (_Component) {
               'p',
               { className: 'content-snippet' },
               (0, _libUtils.unescapeHTML)(item.contentSnippet)
-            )
+            ),
+            _react2['default'].createElement('i', { className: "favorite-button fa fa-heart", onClick: _this4.onFavoriteClick.bind(_this4, item) })
           );
         });
       }
@@ -58383,31 +58412,34 @@ module.exports = exports['default'];
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-var INITIALIZING = ' INITIALIZING';
+var INITIALIZING = 'INITIALIZING';
 exports.INITIALIZING = INITIALIZING;
-var INITIALIZE = ' INITIALIZE';
-exports.INITIALIZE = INITIALIZE;
+var INITIALIZE_KEYWORD = 'INITIALIZE_KEYWORD';
+exports.INITIALIZE_KEYWORD = INITIALIZE_KEYWORD;
+var INITIALIZE_FAVORITE = 'INITIALIZE_FAVORITE';
+exports.INITIALIZE_FAVORITE = INITIALIZE_FAVORITE;
 var RECIEVE_ITEMS = 'RECIEVE_ITEMS';
 exports.RECIEVE_ITEMS = RECIEVE_ITEMS;
 var FETCHING_ITEMS = 'FETCHING_ITEMS';
 exports.FETCHING_ITEMS = FETCHING_ITEMS;
 var CLEAR_ITEMS = 'CLEAR_ITEMS';
-
 exports.CLEAR_ITEMS = CLEAR_ITEMS;
 var ADD_KEYWORD = 'ADD_KEYWORD';
 exports.ADD_KEYWORD = ADD_KEYWORD;
 var ADD_KEYWORD_COMPLETE = 'ADD_KEYWORD_COMPLETE';
 exports.ADD_KEYWORD_COMPLETE = ADD_KEYWORD_COMPLETE;
 var REMOVE_KEYWORD = 'REMOVE_KEYWORD';
-
 exports.REMOVE_KEYWORD = REMOVE_KEYWORD;
 var SELECT_KEYWORD = 'SELECT_KEYWORD';
 exports.SELECT_KEYWORD = SELECT_KEYWORD;
 var CHANGE_BOOKMARK_FILTER = 'CHANGE_BOOKMARK_FILTER';
-
 exports.CHANGE_BOOKMARK_FILTER = CHANGE_BOOKMARK_FILTER;
 var CHANGE_KEYWORD_INPUT = 'CHANGE_KEYWORD_INPUT';
 exports.CHANGE_KEYWORD_INPUT = CHANGE_KEYWORD_INPUT;
+var ADD_FAVORITE = 'ADD_FAVORITE';
+exports.ADD_FAVORITE = ADD_FAVORITE;
+var REMOVE_FAVORITE = 'REMOVE_FAVORITE';
+exports.REMOVE_FAVORITE = REMOVE_FAVORITE;
 
 },{}],350:[function(require,module,exports){
 'use strict';
@@ -58519,7 +58551,7 @@ var DbManager = (function () {
   _createClass(DbManager, [{
     key: 'create',
     value: function create(schemes) {
-      //db.delete();
+      //this.db.delete();
       this.db.version(1).stores(schemes);
       this.db.open();
     }
@@ -58602,7 +58634,7 @@ function feed(state, action) {
     case types.INITIALIZING:
       return { isInitialized: false };
 
-    case types.INITIALIZE:
+    case types.INITIALIZE_KEYWORD:
       console.log("initialized..");
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
@@ -58634,9 +58666,25 @@ function feed(state, action) {
       state.isInitialized = true;
       return Object.assign({}, state);
 
+    case types.INITIALIZE_FAVORITE:
+      state.favorite.items = action.favorites;
+      return Object.assign({}, state);
+
+    case types.ADD_FAVORITE:
+      state.favorite.items = state.favorite.items.concat(action.favorites);
+      state.favorite.isPageEnd = true;
+      state.favorite.isInfiniteLoading = false;
+      return Object.assign({}, state);
+
     case types.RECIEVE_ITEMS:
       var items = action.items;
       var keyword = action.keyword;
+      if (items === null) {
+        // TODO: add retry times monitoring
+        state[keyword].isPageEnd = false;
+        state[keyword].isInfiniteLoading = false;
+        return Object.assign({}, state);
+      }
       state.all.items = state.all.items.concat(items);
       state[keyword].items = state[keyword].items.concat(items);
       state[keyword].isPageEnd = action.length === 0;
@@ -58737,7 +58785,7 @@ function menu(state, action) {
   if (state === undefined) state = {};
 
   switch (action.type) {
-    case types.INITIALIZE:
+    case types.INITIALIZE_KEYWORD:
       state.keywords = action.keywords;
       state.activeKeyword = 'all';
       state.bookmarkFilter = 1;

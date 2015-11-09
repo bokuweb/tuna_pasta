@@ -12,7 +12,7 @@ export default class DbManager {
   }
 
   create(schemes) {
-    //db.delete();
+    //this.db.delete();
     this.db.version(1).stores(schemes);
     this.db.open();
   }
