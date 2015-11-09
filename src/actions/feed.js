@@ -63,6 +63,13 @@ export function recieveItems(items, keyword, length) {
   };
 }
 
+export function filterFavoriteItems(items) {
+    return {
+        type: types.FILTER_FAVORITE_ITEMS,
+        items
+    };
+}
+
 export function clearFeeds(menu) {
   return {
     type: types.CLEAR_ITEMS,
@@ -79,8 +86,12 @@ export function fetchFeed(feed, menu) {
         _fetchFeed(dispatch, keyword.name, page, menu.bookmarkFilter);
       }
     } else if (keyword === 'favorite') {
-
-
+      db.getArray('favorites').then((favorites) => {
+        _getBookmarkCount(favorites).then((bookmarks) => {
+          const filteredItems = _.filter(favorites, (item) => bookmarks[item.link] >= menu.bookmarkFilter);
+          dispatch(filterFavoriteItems(filteredItems, keyword));
+        });
+      });
     } else {
       let page = feed[keyword].page;
       _fetchFeed(dispatch, keyword, page, menu.bookmarkFilter);
