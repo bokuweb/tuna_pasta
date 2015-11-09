@@ -101,10 +101,13 @@ export function fetchFeed(feed, menu) {
 
 export function addFavorite(item) {
   return dispatch => {
-    console.dir(item);
+    item.isFavorite = true;
     db.put('favorites', item).then(() => {
       db.getArray('favorites').then((favorites) => {
-        console.dir(favorites);
+        favorites = _.map(favorites, (item) => {
+          item.isFavorite = true;
+          return item;
+        })
         dispatch({
           type: types.ADD_FAVORITE,
           favorites
@@ -127,6 +130,7 @@ function _fetchSearchFeed(dispatch, keyword, page = 0, threshold) {
   const url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
   fetchWithGoogleFeedApi(url).then((feed) => {
     const items = getItems(feed);
+
     dispatch(recieveItems(items, keyword, items.length));
   }, (error) => console.log(error));
   dispatch(fetchingItems(keyword));
@@ -153,4 +157,11 @@ function _getBookmarkCount(items) {
     }, (error) => console.log(error));
   });
 }
+
+function _appendFavoritedIfNeeded(items, favorites) {
+  for (let item of items) {
+      console.log(_.some(favorites, 'link', item.link));
+  }
+}
+
 

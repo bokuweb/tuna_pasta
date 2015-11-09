@@ -57998,10 +57998,13 @@ function fetchFeed(feed, menu) {
 
 function addFavorite(item) {
   return function (dispatch) {
-    console.dir(item);
+    item.isFavorite = true;
     db.put('favorites', item).then(function () {
       db.getArray('favorites').then(function (favorites) {
-        console.dir(favorites);
+        favorites = _lodash2['default'].map(favorites, function (item) {
+          item.isFavorite = true;
+          return item;
+        });
         dispatch({
           type: types.ADD_FAVORITE,
           favorites: favorites
@@ -58028,6 +58031,7 @@ function _fetchSearchFeed(dispatch, keyword, page, threshold) {
   var url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
   (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
     var items = getItems(feed);
+
     dispatch(recieveItems(items, keyword, items.length));
   }, function (error) {
     return console.log(error);
@@ -58086,6 +58090,33 @@ function _getBookmarkCount(items) {
       return console.log(error);
     });
   });
+}
+
+function _appendFavoritedIfNeeded(items, favorites) {
+  var _iteratorNormalCompletion4 = true;
+  var _didIteratorError4 = false;
+  var _iteratorError4 = undefined;
+
+  try {
+    for (var _iterator4 = items[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+      var item = _step4.value;
+
+      console.log(_lodash2['default'].some(favorites, 'link', item.link));
+    }
+  } catch (err) {
+    _didIteratorError4 = true;
+    _iteratorError4 = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion4 && _iterator4['return']) {
+        _iterator4['return']();
+      }
+    } finally {
+      if (_didIteratorError4) {
+        throw _iteratorError4;
+      }
+    }
+  }
 }
 
 },{"../api/feed":350,"../constants/action-types":352,"../lib/db":355,"lodash":6}],349:[function(require,module,exports){
@@ -58384,6 +58415,7 @@ var Pasta = (function (_Component) {
           var favicon = FAVICON_URI + encodeURIComponent(item.link);
           var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
           var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
+          var favoriteButtonClass = item.isFavorite ? "favorite-button favorited fa fa-heart" : "favorite-button fa fa-heart";
           return _react2['default'].createElement(
             'div',
             { className: 'item animated fadeIn', key: item.link + _this4.props.menu.activeKeyword },
@@ -58410,7 +58442,7 @@ var Pasta = (function (_Component) {
               { className: 'content-snippet' },
               (0, _libUtils.unescapeHTML)(item.contentSnippet)
             ),
-            _react2['default'].createElement('i', { className: "favorite-button fa fa-heart", onClick: _this4.onFavoriteClick.bind(_this4, item) })
+            _react2['default'].createElement('i', { className: favoriteButtonClass, onClick: _this4.onFavoriteClick.bind(_this4, item) })
           );
         });
       }

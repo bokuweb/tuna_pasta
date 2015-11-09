@@ -121,6 +121,7 @@ export default class Pasta extends Component {
         const favicon = FAVICON_URI + encodeURIComponent(item.link);
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
+        const favoriteButtonClass = item.isFavorite ? "favorite-button favorited fa fa-heart" : "favorite-button fa fa-heart";
         return (
           <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />
@@ -129,7 +130,7 @@ export default class Pasta extends Component {
             <span className="publish-date">{item.publishedDate}</span>
             {this.getCategories(item.categories)}
             <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
-            <i className={"favorite-button fa fa-heart"} onClick={this.onFavoriteClick.bind(this, item)}/>
+            <i className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}/>
           </div>
         );
       });
