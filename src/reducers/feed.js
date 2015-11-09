@@ -22,17 +22,17 @@ export default function feed(state={}, action) {
       }
       state.all = createProps();
       state.favorite = createProps();
+      state.favorite.isPageEnd = true;
+      state.favorite.isInfiniteLoading = false;
       state.isInitialized = true;
       return Object.assign({}, state);
 
-  case types.INITIALIZE_FAVORITE :
+    case types.INITIALIZE_FAVORITE :
       state.favorite.items = action.favorites;
       return Object.assign({}, state);
 
     case types.ADD_FAVORITE :
       state.favorite.items = state.favorite.items.concat(action.favorites);
-      state.favorite.isPageEnd = true;
-      state.favorite.isInfiniteLoading = false;
       return Object.assign({}, state);
 
     case types.RECIEVE_ITEMS :

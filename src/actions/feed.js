@@ -38,7 +38,6 @@ export function initialize() {
       }
     });
     db.getArray('favorites').then((favorites) => {
-      console.dir(favorites);
       dispatch({
         type: types.INITIALIZE_FAVORITE,
         favorites

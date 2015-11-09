@@ -57822,7 +57822,6 @@ function initialize() {
       }
     });
     db.getArray('favorites').then(function (favorites) {
-      console.dir(favorites);
       dispatch({
         type: types.INITIALIZE_FAVORITE,
         favorites: favorites
@@ -58155,7 +58154,7 @@ var Pasta = (function (_Component) {
       if (!_this.props.feed.isInitialized) return;
       var feed = _this.props.feed[_this.props.menu.activeKeyword];
       if (feed.items.length < 50 && !feed.isPageEnd && !feed.isInfiniteLoading && _this.props.menu.activeKeyword !== 'all') {
-        console.log("aaas!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       }
     }, 1000);
   }
@@ -58180,9 +58179,9 @@ var Pasta = (function (_Component) {
   }, {
     key: 'onInfiniteLoad',
     value: function onInfiniteLoad() {
-      console.log("loading..");
       if (this.props.menu.keywords.length === 0) return;
       if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
+      console.log("loading..");
       this.props.fetchFeed(this.props.feed, this.props.menu);
     }
   }, {
@@ -58213,8 +58212,8 @@ var Pasta = (function (_Component) {
       this.props.fetchFeed(this.props.feed, this.props.menu);
     }
   }, {
-    key: 'onClickKeyword',
-    value: function onClickKeyword(name) {
+    key: 'onSelectKeyword',
+    value: function onSelectKeyword(name) {
       this.props.selectKeyword(name);
       this.props.fetchFeed(this.props.feed, this.props.menu);
     }
@@ -58249,7 +58248,7 @@ var Pasta = (function (_Component) {
           { className: listClassName, key: keyword.name },
           _react2['default'].createElement(
             'span',
-            { onClick: _this3.onClickKeyword.bind(_this3, keyword.name) },
+            { onClick: _this3.onSelectKeyword.bind(_this3, keyword.name) },
             _react2['default'].createElement('i', { className: "fa fa-" + keyword.icon }),
             keyword.name
           ),
@@ -58357,7 +58356,7 @@ var Pasta = (function (_Component) {
               _react2['default'].createElement(
                 'li',
                 { className: this.props.menu.activeKeyword === 'all' ? 'selected' : '',
-                  onClick: this.onClickKeyword.bind(this, 'all') },
+                  onClick: this.onSelectKeyword.bind(this, 'all') },
                 _react2['default'].createElement(
                   'span',
                   null,
@@ -58368,7 +58367,7 @@ var Pasta = (function (_Component) {
               _react2['default'].createElement(
                 'li',
                 { className: this.props.menu.activeKeyword === 'favorite' ? 'selected' : '',
-                  onClick: this.onClickKeyword.bind(this, 'favorite') },
+                  onClick: this.onSelectKeyword.bind(this, 'favorite') },
                 _react2['default'].createElement(
                   'span',
                   null,
@@ -58663,6 +58662,8 @@ function feed(state, action) {
 
       state.all = createProps();
       state.favorite = createProps();
+      state.favorite.isPageEnd = true;
+      state.favorite.isInfiniteLoading = false;
       state.isInitialized = true;
       return Object.assign({}, state);
 
@@ -58672,8 +58673,6 @@ function feed(state, action) {
 
     case types.ADD_FAVORITE:
       state.favorite.items = state.favorite.items.concat(action.favorites);
-      state.favorite.isPageEnd = true;
-      state.favorite.isInfiniteLoading = false;
       return Object.assign({}, state);
 
     case types.RECIEVE_ITEMS:

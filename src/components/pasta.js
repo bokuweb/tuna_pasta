@@ -25,7 +25,7 @@ export default class Pasta extends Component {
       if (!this.props.feed.isInitialized) return;
       const feed = this.props.feed[this.props.menu.activeKeyword];
       if (feed.items.length < 50 && !feed.isPageEnd && !feed.isInfiniteLoading && this.props.menu.activeKeyword !== 'all') {
-        console.log("aaas!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       }
     }, 1000);
   }
@@ -45,9 +45,9 @@ export default class Pasta extends Component {
   }
 
   onInfiniteLoad() {
-    console.log("loading..")
     if (this.props.menu.keywords.length === 0) return;
     if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
+    console.log("loading..");
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
@@ -73,7 +73,7 @@ export default class Pasta extends Component {
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
-  onClickKeyword(name) {
+  onSelectKeyword(name) {
     this.props.selectKeyword(name);
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
@@ -97,7 +97,7 @@ export default class Pasta extends Component {
       const listClassName = keyword.name === this.props.menu.activeKeyword ? 'selected' : null;
       return (
         <li className={listClassName} key={keyword.name}>
-          <span onClick={this.onClickKeyword.bind(this, keyword.name)}>
+          <span onClick={this.onSelectKeyword.bind(this, keyword.name)}>
             <i className={"fa fa-" + keyword.icon} />
             {keyword.name}
           </span>
@@ -167,11 +167,11 @@ export default class Pasta extends Component {
           <div id="menu">
             <ul>
               <li className={this.props.menu.activeKeyword === 'all' ? 'selected' : ''}
-                  onClick={this.onClickKeyword.bind(this, 'all')}>
+                  onClick={this.onSelectKeyword.bind(this, 'all')}>
                 <span><i className={"fa fa-home"} />総合</span>
               </li>
               <li className={this.props.menu.activeKeyword === 'favorite' ? 'selected' : ''}
-                onClick={this.onClickKeyword.bind(this, 'favorite')}>
+                onClick={this.onSelectKeyword.bind(this, 'favorite')}>
                 <span><i className={"fa fa-heart"} />お気に入り</span>
               </li>
               {this.getKeywordList()}
