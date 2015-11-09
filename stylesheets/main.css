@@ -6711,12 +6711,15 @@ div.slider .bookmark-filter:after {
   -webkit-animation: rect-sk-rotateplane 1.2s infinite ease-in-out;
   animation: rect-sk-rotateplane 1.2s infinite ease-in-out;
 }
-.favorite-button {
+i.favorite-button {
   font-size: 11px;
   margin: 0 0 16px;
   cursor: pointer;
 }
-.favorite-button:hover {
+i.favorited {
+  color: #e74c3c;
+}
+i.favorite-button:hover {
   color: #e74c3c;
 }
 @-moz-keyframes rect-sk-rotateplane {
