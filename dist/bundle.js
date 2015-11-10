@@ -58297,7 +58297,13 @@ var Pasta = (function (_Component) {
         'div',
         null,
         'まだ記事はありません。キーワードを追加してください。'
-      );else {
+      );else if (feed.items.length === 0) {
+        items = _react2['default'].createElement(
+          'div',
+          null,
+          '記事が見つかりませんでした。'
+        );
+      } else {
         items = feed.items.map(function (item) {
           var favicon = FAVICON_URI + encodeURIComponent(item.link);
           var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);

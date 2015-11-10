@@ -113,7 +113,9 @@ export default class Pasta extends Component {
     let items = null;
     if (this.props.menu.keywords.length === 0)
       items = <div>まだ記事はありません。キーワードを追加してください。</div>;
-    else {
+    else if (feed.items.length === 0) {
+      items = <div>記事が見つかりませんでした。</div>;
+    } else {
       items = feed.items.map((item) => {
         const favicon = FAVICON_URI + encodeURIComponent(item.link);
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
