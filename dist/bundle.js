@@ -58023,6 +58023,7 @@ Object.defineProperty(exports, '__esModule', {
 exports.selectKeyword = selectKeyword;
 exports.changeKeywordInput = changeKeywordInput;
 exports.changeBookmarkThreshold = changeBookmarkThreshold;
+exports.toggleMenu = toggleMenu;
 exports.addKeyword = addKeyword;
 exports.removeKeyword = removeKeyword;
 
@@ -58059,6 +58060,12 @@ function changeBookmarkThreshold(value, x) {
     type: types.CHANGE_BOOKMARK_FILTER,
     value: value,
     x: x
+  };
+}
+
+function toggleMenu() {
+  return {
+    type: types.TOGGLE_MENU
   };
 }
 
@@ -58195,7 +58202,7 @@ var Pasta = (function (_Component) {
   _createClass(Pasta, [{
     key: 'onSliderChange',
     value: function onSliderChange(e, value) {
-      localStorage.setItem('threshold', ~ ~value);
+      // localStorage.setItem('threshold', ~~value);
       this.props.changeBookmarkThreshold(~ ~value, e.clientX);
     }
   }, {
@@ -58245,6 +58252,11 @@ var Pasta = (function (_Component) {
     value: function onKeywordRemoveButtonClick(name) {
       this.props.removeKeyword(name);
       this.props.fetchFeed(this.props.feed, this.props.menu);
+    }
+  }, {
+    key: 'onMenuButtonClick',
+    value: function onMenuButtonClick() {
+      this.props.toggleMenu();
     }
   }, {
     key: 'getCategories',
@@ -58297,7 +58309,7 @@ var Pasta = (function (_Component) {
         'div',
         null,
         'まだ記事はありません。キーワードを追加してください。'
-      );else if (feed.items.length === 0) {
+      );else if (feed.items.length === 0 && !feed.isInfiniteLoading) {
         items = _react2['default'].createElement(
           'div',
           null,
@@ -58308,7 +58320,6 @@ var Pasta = (function (_Component) {
           var favicon = FAVICON_URI + encodeURIComponent(item.link);
           var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
           var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
-          console.log(item.isFavorited);
           var favoriteButtonClass = item.isFavorited ? "favorite-button favorited" : "favorite-button";
           return _react2['default'].createElement(
             'div',
@@ -58340,7 +58351,7 @@ var Pasta = (function (_Component) {
               'div',
               { className: favoriteButtonClass, onClick: _this4.onFavoriteClick.bind(_this4, item) },
               _react2['default'].createElement('i', { className: 'fa fa-heart' }),
-              'お気に入りに追加'
+              'お気に入り'
             )
           );
         });
@@ -58349,12 +58360,18 @@ var Pasta = (function (_Component) {
       var x = this.props.menu.bookmarkFilterX - 24;
       if (x > 210) x = 210;
       if (x < 10) x = 10;
+      console.log("menu open = " + this.props.menu.isMenuOpen);
       return _react2['default'].createElement(
         'div',
         { id: 'container' },
         _react2['default'].createElement(
           'div',
-          { id: 'side-menu', className: 'animated slideInLeft' },
+          { id: 'header' },
+          _react2['default'].createElement('i', { className: 'fa fa-bars', onClick: this.onMenuButtonClick.bind(this) })
+        ),
+        _react2['default'].createElement(
+          'div',
+          { id: 'side-menu', className: this.props.menu.isMenuOpen ? "animated slideInLeft menu-open" : "animated slideInLeft menu-close" },
           _react2['default'].createElement('img', { id: 'logo', src: 'img/logo.png', alt: '' }),
           _react2['default'].createElement(
             'div',
@@ -58479,6 +58496,8 @@ var ADD_FAVORITE = 'ADD_FAVORITE';
 exports.ADD_FAVORITE = ADD_FAVORITE;
 var REMOVE_FAVORITE = 'REMOVE_FAVORITE';
 exports.REMOVE_FAVORITE = REMOVE_FAVORITE;
+var TOGGLE_MENU = 'TOGGLE_MENU';
+exports.TOGGLE_MENU = TOGGLE_MENU;
 
 },{}],350:[function(require,module,exports){
 'use strict';
@@ -58668,7 +58687,6 @@ function createProps() {
 
 function _getItemsUpdatedByFavorite(items, favorites) {
   return _lodash2['default'].map(items, function (item) {
-    console.log(_lodash2['default'].some(favorites, 'link', item.link));
     if (_lodash2['default'].some(favorites, 'link', item.link)) item.isFavorited = true;else item.isFavorited = false;
     return item;
   });
@@ -58694,7 +58712,6 @@ function feed(state, action) {
       return Object.assign({}, state);
 
     case types.INITIALIZE_KEYWORD:
-      console.log("keyword initialized..");
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -58725,7 +58742,6 @@ function feed(state, action) {
       return Object.assign({}, state);
 
     case types.INITIALIZE_FAVORITE:
-      console.log("favorite initialized..");
       state.favorite.items = action.favorites;
       return Object.assign({}, state);
 
@@ -58735,7 +58751,6 @@ function feed(state, action) {
       return Object.assign({}, state);
 
     case types.REMOVE_FAVORITE:
-      console.log("remove");
       state.favorite.items = action.favorites;
       _updateAllByFavorite(state, action.favorites);
       return Object.assign({}, state);
@@ -58856,6 +58871,7 @@ function menu(state, action) {
       state.bookmarkFilter = 1;
       state.bookmarkFilterX = 15;
       state.keywordInput = '';
+      state.isMenuOpen = false;
       return Object.assign({}, state);
 
     case types.SELECT_KEYWORD:
@@ -58878,6 +58894,10 @@ function menu(state, action) {
 
     case types.ADD_KEYWORD_COMPLETE:
       state.keywords = action.keywords;
+      return Object.assign({}, state);
+
+    case types.TOGGLE_MENU:
+      state.isMenuOpen = !state.isMenuOpen;
       return Object.assign({}, state);
 
     case types.REMOVE_KEYWORD:

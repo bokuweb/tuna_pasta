@@ -8,6 +8,7 @@ export default function menu(state={}, action) {
       state.bookmarkFilter = 1;
       state.bookmarkFilterX = 15;
       state.keywordInput = '';
+      state.isMenuOpen = false;
       return Object.assign({}, state);
 
     case types.SELECT_KEYWORD :
@@ -32,7 +33,11 @@ export default function menu(state={}, action) {
       state.keywords = action.keywords;
       return Object.assign({}, state);
 
-  case types.REMOVE_KEYWORD :
+    case types.TOGGLE_MENU :
+      state.isMenuOpen = !state.isMenuOpen;
+      return Object.assign({}, state);
+
+    case types.REMOVE_KEYWORD :
       state.keywords = action.keywords;
       if (state.keywords.length === 0 || action.keyword === state.activeKeyword)
         state.activeKeyword = 'all'

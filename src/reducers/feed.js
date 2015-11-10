@@ -12,7 +12,6 @@ function createProps() {
 
 function _getItemsUpdatedByFavorite(items, favorites) {
   return _.map(items, (item) => {
-    console.log(_.some(favorites, 'link', item.link));
     if (_.some(favorites, 'link', item.link)) item.isFavorited = true;
     else item.isFavorited = false;
     return item;
@@ -37,7 +36,6 @@ export default function feed(state={}, action) {
       return Object.assign({}, state);
 
     case types.INITIALIZE_KEYWORD :
-      console.log("keyword initialized..");
       for (let keyword of action.keywords) state[keyword.name] = createProps();
       state.favorite.isPageEnd = true;
       state.favorite.isInfiniteLoading = false;
@@ -45,7 +43,6 @@ export default function feed(state={}, action) {
       return Object.assign({}, state);
 
     case types.INITIALIZE_FAVORITE :
-      console.log("favorite initialized..");
       state.favorite.items = action.favorites;
       return Object.assign({}, state);
 
@@ -55,7 +52,6 @@ export default function feed(state={}, action) {
       return Object.assign({}, state);
 
     case types.REMOVE_FAVORITE :
-      console.log("remove"); 
       state.favorite.items = action.favorites;
       _updateAllByFavorite(state, action.favorites);
       return Object.assign({}, state);

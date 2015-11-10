@@ -32,7 +32,7 @@ export default class Pasta extends Component {
   }
 
   onSliderChange(e, value) {
-    localStorage.setItem('threshold', ~~value);
+   // localStorage.setItem('threshold', ~~value);
     this.props.changeBookmarkThreshold(~~value, e.clientX);
   }
 
@@ -79,6 +79,10 @@ export default class Pasta extends Component {
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
+  onMenuButtonClick() {
+    this.props.toggleMenu();
+  }
+
   getCategories(categories) {
     return categories.map((category) => {
       return (
@@ -113,14 +117,13 @@ export default class Pasta extends Component {
     let items = null;
     if (this.props.menu.keywords.length === 0)
       items = <div>まだ記事はありません。キーワードを追加してください。</div>;
-    else if (feed.items.length === 0) {
+    else if (feed.items.length === 0 && !feed.isInfiniteLoading) {
       items = <div>記事が見つかりませんでした。</div>;
     } else {
       items = feed.items.map((item) => {
         const favicon = FAVICON_URI + encodeURIComponent(item.link);
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
-        console.log(item.isFavorited);
         const favoriteButtonClass = item.isFavorited? "favorite-button favorited" : "favorite-button";
         return (
           <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
@@ -131,7 +134,7 @@ export default class Pasta extends Component {
             {this.getCategories(item.categories)}
             <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
             <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>
-              <i className="fa fa-heart" />お気に入りに追加
+              <i className="fa fa-heart" />お気に入り
             </div>
           </div>
         );
@@ -141,9 +144,13 @@ export default class Pasta extends Component {
     let x = this.props.menu.bookmarkFilterX - 24;
     if (x > 210) x = 210;
     if (x < 10) x = 10;
+    console.log("menu open = " +  this.props.menu.isMenuOpen);
     return (
       <div id="container">
-        <div id="side-menu" className="animated slideInLeft">
+        <div id="header">
+        <i className="fa fa-bars" onClick={this.onMenuButtonClick.bind(this)}></i>
+        </div>
+        <div id="side-menu" className={(this.props.menu.isMenuOpen) ? "animated slideInLeft menu-open" : "animated slideInLeft menu-close"}>
           <img id="logo" src="img/logo.png" alt="" />
           <div className="slider">
           <div className="bookmark-filter" style={{left:x}}>
