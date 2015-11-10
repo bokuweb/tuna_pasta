@@ -38,6 +38,11 @@ export function initialize() {
       }
     });
     db.getArray('favorites').then((favorites) => {
+      // TODO: refactoring
+      favorites = _.map(favorites, (item) => {
+        item.isFavorited = true;
+        return item;
+      });
       dispatch({
         type: types.INITIALIZE_FAVORITE,
         favorites
@@ -64,10 +69,10 @@ export function recieveItems(items, keyword, length) {
 }
 
 export function filterFavoriteItems(items) {
-    return {
-        type: types.FILTER_FAVORITE_ITEMS,
-        items
-    };
+  return {
+    type: types.FILTER_FAVORITE_ITEMS,
+    items
+  };
 }
 
 export function clearFeeds(menu) {
@@ -89,6 +94,10 @@ export function fetchFeed(feed, menu) {
       db.getArray('favorites').then((favorites) => {
         _getBookmarkCount(favorites).then((bookmarks) => {
           const filteredItems = _.filter(favorites, (item) => bookmarks[item.link] >= menu.bookmarkFilter);
+          favorites = _.map(favorites, (item) => {
+            item.isFavorited = true;
+            return item;
+          });
           dispatch(filterFavoriteItems(filteredItems, keyword));
         });
       });
@@ -105,12 +114,13 @@ export function addFavorite(item) {
     db.put('favorites', item).then(() => {
       db.getArray('favorites').then((favorites) => {
         favorites = _.map(favorites, (item) => {
-          item.isFavorite = true;
+          item.isFavorited = true;
           return item;
-        })
+        });
         dispatch({
           type: types.ADD_FAVORITE,
-          favorites
+          favorites,
+          item
         });
       });
     });
@@ -156,12 +166,6 @@ function _getBookmarkCount(items) {
       resolve(res);
     }, (error) => console.log(error));
   });
-}
-
-function _appendFavoritedIfNeeded(items, favorites) {
-  for (let item of items) {
-      console.log(_.some(favorites, 'link', item.link));
-  }
 }
 
 

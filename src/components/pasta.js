@@ -23,6 +23,7 @@ export default class Pasta extends Component {
 
     setInterval(() => {
       if (!this.props.feed.isInitialized) return;
+      // If the number of items is not enough to scroll, polling itmes by the following timer
       const feed = this.props.feed[this.props.menu.activeKeyword];
       const isLoadingNeeded = feed.items.length < 40 && !feed.isPageEnd && !feed.isInfiniteLoading;
       if (isLoadingNeeded && this.props.menu.activeKeyword !== 'all') {
@@ -121,7 +122,7 @@ export default class Pasta extends Component {
         const favicon = FAVICON_URI + encodeURIComponent(item.link);
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
-        const favoriteButtonClass = item.isFavorite ? "favorite-button favorited fa fa-heart" : "favorite-button fa fa-heart";
+        const favoriteButtonClass = item.isFavorited ? "favorite-button favorited fa fa-heart" : "favorite-button fa fa-heart";
         return (
           <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />
