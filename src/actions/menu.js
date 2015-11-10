@@ -25,6 +25,12 @@ export function changeBookmarkThreshold(value, x) {
   };
 }
 
+export function toggleMenu() {
+  return {
+    type: types.TOGGLE_MENU
+  };
+}
+
 export function addKeyword(keyword) {
   return dispatch => {
     if (keyword === '') return;

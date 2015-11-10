@@ -28,7 +28,7 @@ export function initialize() {
   return dispatch => {
     console.log("initialize..");
     db.create({keywords: "name, icon"});
-    db.create({favorites: "link, title, content, contentSnippet, publishedDate, categories"});
+    db.create({favorites: "link, title, content, contentSnippet, publishedDate, categories, isFavorited"});
     db.getArray('keywords').then((keywords) => {
       dispatch({type: types.INITIALIZE_KEYWORD, keywords});
       if (keywords.length !== 0) {
@@ -64,10 +64,10 @@ export function recieveItems(items, keyword, length) {
 }
 
 export function filterFavoriteItems(items) {
-    return {
-        type: types.FILTER_FAVORITE_ITEMS,
-        items
-    };
+  return {
+    type: types.FILTER_FAVORITE_ITEMS,
+    items
+  };
 }
 
 export function clearFeeds(menu) {
@@ -101,15 +101,26 @@ export function fetchFeed(feed, menu) {
 
 export function addFavorite(item) {
   return dispatch => {
-    item.isFavorite = true;
+    item.isFavorited = true;
     db.put('favorites', item).then(() => {
       db.getArray('favorites').then((favorites) => {
-        favorites = _.map(favorites, (item) => {
-          item.isFavorite = true;
-          return item;
-        })
         dispatch({
           type: types.ADD_FAVORITE,
+          favorites
+        });
+      });
+    });
+  }
+}
+
+export function removeFavorite(item) {
+  return dispatch => {
+    //item.isFavorited = false;
+    db.remove('favorites', item.link).then(() => {
+      db.getArray('favorites').then((favorites) => {
+        console.dir(favorites);
+        dispatch({
+          type: types.REMOVE_FAVORITE,
           favorites
         });
       });
@@ -130,7 +141,6 @@ function _fetchSearchFeed(dispatch, keyword, page = 0, threshold) {
   const url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
   fetchWithGoogleFeedApi(url).then((feed) => {
     const items = getItems(feed);
-
     dispatch(recieveItems(items, keyword, items.length));
   }, (error) => console.log(error));
   dispatch(fetchingItems(keyword));
@@ -156,12 +166,6 @@ function _getBookmarkCount(items) {
       resolve(res);
     }, (error) => console.log(error));
   });
-}
-
-function _appendFavoritedIfNeeded(items, favorites) {
-  for (let item of items) {
-      console.log(_.some(favorites, 'link', item.link));
-  }
 }
 
 

@@ -9,7 +9,6 @@ const BOOKMARK_IMAGE_URI = ENTRY_URI + 'image/';
 const TextField = Mui.TextField;
 const Slider = Mui.Slider;
 const RaisedButton = Mui.RaisedButton;
-//const Dialog = Mui.Dialog;
 
 export default class Pasta extends Component {
   constructor(props) {
@@ -23,6 +22,7 @@ export default class Pasta extends Component {
 
     setInterval(() => {
       if (!this.props.feed.isInitialized) return;
+      // If the number of items is not enough to scroll, polling itmes by the following timer
       const feed = this.props.feed[this.props.menu.activeKeyword];
       const isLoadingNeeded = feed.items.length < 40 && !feed.isPageEnd && !feed.isInfiniteLoading;
       if (isLoadingNeeded && this.props.menu.activeKeyword !== 'all') {
@@ -32,7 +32,7 @@ export default class Pasta extends Component {
   }
 
   onSliderChange(e, value) {
-    localStorage.setItem('threshold', ~~value);
+   // localStorage.setItem('threshold', ~~value);
     this.props.changeBookmarkThreshold(~~value, e.clientX);
   }
 
@@ -56,17 +56,12 @@ export default class Pasta extends Component {
     if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
     return  <div className="rect-spinner"></div>;
   }
-  /*
-  getCategoryStyle(category) {
-    switch (category) {
-      case 'テクノロジー' : return {'backgroundColor':'#1ABC9C'};
-      default             : return {'backgroundColor':'#8E44AD'};
-    }
-  }*/
 
   onFavoriteClick(item) {
-    console.log("fav!!");
-    this.props.addFavorite(item);
+    if (item.isFavorited)
+      this.props.removeFavorite(item);
+    else
+      this.props.addFavorite(item);
   }
 
   onAdditionalKeywordSubmit(value) {
@@ -84,10 +79,16 @@ export default class Pasta extends Component {
     this.props.fetchFeed(this.props.feed, this.props.menu);
   }
 
+  onMenuButtonClick() {
+    this.props.toggleMenu();
+  }
+
   getCategories(categories) {
     return categories.map((category) => {
       return (
-        <span className="category" key={category + this.props.menu.activeKeyword } style={{'backgroundColor':'#1ABC9C'}}>
+        <span className="category"
+              key={category + this.props.menu.activeKeyword }
+              style={{'backgroundColor':'#1ABC9C'}}>
           {category}
         </span>);
     });
@@ -116,12 +117,14 @@ export default class Pasta extends Component {
     let items = null;
     if (this.props.menu.keywords.length === 0)
       items = <div>まだ記事はありません。キーワードを追加してください。</div>;
-    else {
+    else if (feed.items.length === 0 && !feed.isInfiniteLoading) {
+      items = <div>記事が見つかりませんでした。</div>;
+    } else {
       items = feed.items.map((item) => {
         const favicon = FAVICON_URI + encodeURIComponent(item.link);
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
-        const favoriteButtonClass = item.isFavorite ? "favorite-button favorited fa fa-heart" : "favorite-button fa fa-heart";
+        const favoriteButtonClass = item.isFavorited? "favorite-button favorited" : "favorite-button";
         return (
           <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />
@@ -130,7 +133,9 @@ export default class Pasta extends Component {
             <span className="publish-date">{item.publishedDate}</span>
             {this.getCategories(item.categories)}
             <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
-            <i className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}/>
+            <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>
+              <i className="fa fa-heart" />お気に入り
+            </div>
           </div>
         );
       });
@@ -139,9 +144,13 @@ export default class Pasta extends Component {
     let x = this.props.menu.bookmarkFilterX - 24;
     if (x > 210) x = 210;
     if (x < 10) x = 10;
+    console.log("menu open = " +  this.props.menu.isMenuOpen);
     return (
       <div id="container">
-        <div id="side-menu" className="animated slideInLeft">
+        <div id="header">
+        <i className="fa fa-bars" onClick={this.onMenuButtonClick.bind(this)}></i>
+        </div>
+        <div id="side-menu" className={(this.props.menu.isMenuOpen) ? "animated slideInLeft menu-open" : "animated slideInLeft menu-close"}>
           <img id="logo" src="img/logo.png" alt="" />
           <div className="slider">
           <div className="bookmark-filter" style={{left:x}}>
