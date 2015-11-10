@@ -6704,6 +6704,10 @@ div.favorite-button {
   cursor: pointer;
   transition: all 0.4s ease;
   display: inline-block;
+  border-radius: 3px;
+  background: #ecf0f1;
+  text-shadow: none;
+  padding: 3px 10px;
 }
 div.favorite-button > i {
   margin: 0 12px 0 0;
@@ -6733,6 +6737,17 @@ div.favorited {
     top: 0;
     left: 0;
     z-index: 999;
+  }
+  #header #sp-logo {
+    height: 42px;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+  }
+  #header #menu-button {
+    position: absolute;
+    top: 10px;
+    left: calc(100% - 30px);
   }
   #content {
     padding: 40px 0 0 0;
