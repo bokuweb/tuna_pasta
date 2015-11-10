@@ -6518,7 +6518,7 @@ a {
   line-height: 32px;
   border-radius: 0 4px 4px 0;
   width: 200px;
-  transition: all 0.4s ease;
+  transition: all 0.5s ease;
   position: relative;
   height: 32px;
 }
@@ -6690,19 +6690,6 @@ div.slider .bookmark-filter:after {
   padding: 20px 30px 0 50px;
   height: 100%;
 }
-@media screen and (max-device-width: 768px) {
-  #side-menu {
-    position: absolute;
-    left: -800px;
-  }
-}
-@media screen and (min-device-width: 769px) {
-  #content {
-    overflow-y: auto;
-    max-height: 100%;
-    width: 100%;
-  }
-}
 .rect-spinner {
   width: 40px;
   height: 40px;
@@ -6711,16 +6698,48 @@ div.slider .bookmark-filter:after {
   -webkit-animation: rect-sk-rotateplane 1.2s infinite ease-in-out;
   animation: rect-sk-rotateplane 1.2s infinite ease-in-out;
 }
-i.favorite-button {
+div.favorite-button {
+  margin: 0 0 20px 0;
   font-size: 11px;
-  margin: 0 0 16px;
   cursor: pointer;
+  transition: all 0.4s ease;
+  display: inline-block;
 }
-i.favorited {
+div.favorite-button > i {
+  margin: 0 20px 0 0;
+}
+div.favorite-button:hover {
   color: #e74c3c;
 }
-i.favorite-button:hover {
+div.favorited {
   color: #e74c3c;
+}
+@media screen and (max-device-width: 768px) {
+  #side-menu {
+    position: absolute;
+    left: -800px;
+  }
+  .item {
+    min-height: 140px;
+    max-width: 100%;
+    padding: 20px 10px 40px 10px;
+    border-bottom: solid 1px #ddd;
+  }
+  div.favorite-button {
+    font-size: 20px;
+    margin: 0 0 20px 0;
+    display: inline-block;
+  }
+  div.favorite-button > i {
+    margin: 0 20px 0 0;
+  }
+}
+@media screen and (min-device-width: 769px) {
+  #content {
+    overflow-y: auto;
+    max-height: 100%;
+    width: 100%;
+  }
 }
 @-moz-keyframes rect-sk-rotateplane {
   0% {

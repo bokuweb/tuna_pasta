@@ -58303,7 +58303,7 @@ var Pasta = (function (_Component) {
           var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
           var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
           console.log(item.isFavorited);
-          var favoriteButtonClass = item.isFavorited ? "favorite-button favorited fa fa-heart" : "favorite-button fa fa-heart";
+          var favoriteButtonClass = item.isFavorited ? "favorite-button favorited" : "favorite-button";
           return _react2['default'].createElement(
             'div',
             { className: 'item animated fadeIn', key: item.link + _this4.props.menu.activeKeyword },
@@ -58330,7 +58330,12 @@ var Pasta = (function (_Component) {
               { className: 'content-snippet' },
               (0, _libUtils.unescapeHTML)(item.contentSnippet)
             ),
-            _react2['default'].createElement('i', { className: favoriteButtonClass, onClick: _this4.onFavoriteClick.bind(_this4, item) })
+            _react2['default'].createElement(
+              'div',
+              { className: favoriteButtonClass, onClick: _this4.onFavoriteClick.bind(_this4, item) },
+              _react2['default'].createElement('i', { className: 'fa fa-heart' }),
+              'お気に入りに追加'
+            )
           );
         });
       }
