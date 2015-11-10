@@ -32,7 +32,6 @@ export default class Pasta extends Component {
   }
 
   onSliderChange(e, value) {
-   // localStorage.setItem('threshold', ~~value);
     this.props.changeBookmarkThreshold(~~value, e.clientX);
   }
 
@@ -128,7 +127,7 @@ export default class Pasta extends Component {
         return (
           <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />
-            <a href={item.link} className="item-title">{item.title}</a>
+            <a href={item.link} target="blank" className="item-title">{item.title}</a>
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
             <span className="publish-date">{item.publishedDate}</span>
             {this.getCategories(item.categories)}
