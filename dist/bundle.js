@@ -57748,6 +57748,7 @@ exports.filterFavoriteItems = filterFavoriteItems;
 exports.clearFeeds = clearFeeds;
 exports.fetchFeed = fetchFeed;
 exports.addFavorite = addFavorite;
+exports.removeFavorite = removeFavorite;
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
@@ -57792,7 +57793,7 @@ function initialize() {
   return function (dispatch) {
     console.log("initialize..");
     db.create({ keywords: "name, icon" });
-    db.create({ favorites: "link, title, content, contentSnippet, publishedDate, categories" });
+    db.create({ favorites: "link, title, content, contentSnippet, publishedDate, categories, isFavorited" });
     db.getArray('keywords').then(function (keywords) {
       dispatch({ type: types.INITIALIZE_KEYWORD, keywords: keywords });
       if (keywords.length !== 0) {
@@ -57823,11 +57824,6 @@ function initialize() {
       }
     });
     db.getArray('favorites').then(function (favorites) {
-      // TODO: refactoring
-      favorites = _lodash2['default'].map(favorites, function (item) {
-        item.isFavorited = true;
-        return item;
-      });
       dispatch({
         type: types.INITIALIZE_FAVORITE,
         favorites: favorites
@@ -57902,10 +57898,6 @@ function fetchFeed(feed, menu) {
           var filteredItems = _lodash2['default'].filter(favorites, function (item) {
             return bookmarks[item.link] >= menu.bookmarkFilter;
           });
-          favorites = _lodash2['default'].map(favorites, function (item) {
-            item.isFavorited = true;
-            return item;
-          });
           dispatch(filterFavoriteItems(filteredItems, keyword));
         });
       });
@@ -57918,17 +57910,27 @@ function fetchFeed(feed, menu) {
 
 function addFavorite(item) {
   return function (dispatch) {
-    item.isFavorite = true;
+    item.isFavorited = true;
     db.put('favorites', item).then(function () {
       db.getArray('favorites').then(function (favorites) {
-        favorites = _lodash2['default'].map(favorites, function (item) {
-          item.isFavorited = true;
-          return item;
-        });
         dispatch({
           type: types.ADD_FAVORITE,
-          favorites: favorites,
-          item: item
+          favorites: favorites
+        });
+      });
+    });
+  };
+}
+
+function removeFavorite(item) {
+  return function (dispatch) {
+    //item.isFavorited = false;
+    db.remove('favorites', item.link).then(function () {
+      db.getArray('favorites').then(function (favorites) {
+        console.dir(favorites);
+        dispatch({
+          type: types.REMOVE_FAVORITE,
+          favorites: favorites
         });
       });
     });
@@ -57952,7 +57954,6 @@ function _fetchSearchFeed(dispatch, keyword, page, threshold) {
   var url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
   (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
     var items = getItems(feed);
-
     dispatch(recieveItems(items, keyword, items.length));
   }, function (error) {
     return console.log(error);
@@ -58163,7 +58164,6 @@ var BOOKMARK_IMAGE_URI = ENTRY_URI + 'image/';
 var TextField = _materialUi2['default'].TextField;
 var Slider = _materialUi2['default'].Slider;
 var RaisedButton = _materialUi2['default'].RaisedButton;
-//const Dialog = Mui.Dialog;
 
 var Pasta = (function (_Component) {
   _inherits(Pasta, _Component);
@@ -58223,20 +58223,10 @@ var Pasta = (function (_Component) {
       if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
       return _react2['default'].createElement('div', { className: 'rect-spinner' });
     }
-
-    /*
-    getCategoryStyle(category) {
-      switch (category) {
-        case 'テクノロジー' : return {'backgroundColor':'#1ABC9C'};
-        default             : return {'backgroundColor':'#8E44AD'};
-      }
-    }*/
-
   }, {
     key: 'onFavoriteClick',
     value: function onFavoriteClick(item) {
-      console.log("fav!!");
-      this.props.addFavorite(item);
+      if (item.isFavorited) this.props.removeFavorite(item);else this.props.addFavorite(item);
     }
   }, {
     key: 'onAdditionalKeywordSubmit',
@@ -58264,7 +58254,9 @@ var Pasta = (function (_Component) {
       return categories.map(function (category) {
         return _react2['default'].createElement(
           'span',
-          { className: 'category', key: category + _this2.props.menu.activeKeyword, style: { 'backgroundColor': '#1ABC9C' } },
+          { className: 'category',
+            key: category + _this2.props.menu.activeKeyword,
+            style: { 'backgroundColor': '#1ABC9C' } },
           category
         );
       });
@@ -58310,6 +58302,7 @@ var Pasta = (function (_Component) {
           var favicon = FAVICON_URI + encodeURIComponent(item.link);
           var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
           var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
+          console.log(item.isFavorited);
           var favoriteButtonClass = item.isFavorited ? "favorite-button favorited fa fa-heart" : "favorite-button fa fa-heart";
           return _react2['default'].createElement(
             'div',
@@ -58662,19 +58655,19 @@ function createProps() {
   };
 }
 
-function _getFavoriteAppendedItems(items, favorites) {
+function _getItemsUpdatedByFavorite(items, favorites) {
   return _lodash2['default'].map(items, function (item) {
     console.log(_lodash2['default'].some(favorites, 'link', item.link));
-    if (_lodash2['default'].some(favorites, 'link', item.link)) item.isFavorited = true;
+    if (_lodash2['default'].some(favorites, 'link', item.link)) item.isFavorited = true;else item.isFavorited = false;
     return item;
   });
 }
 
 // FIXME
-function _appendFavoriteToAllIfNeeded(state, favorites) {
-  for (var _feed in state) {
-    if (_feed.items !== undefined) {
-      _feed.items = _getFavoriteAppendedItems(_feed.items, favorites);
+function _updateAllByFavorite(state, favorites) {
+  for (var _name in state) {
+    if (state[_name].items !== undefined) {
+      state[_name].items = _getItemsUpdatedByFavorite(state[_name].items, favorites);
     }
   }
 }
@@ -58726,8 +58719,14 @@ function feed(state, action) {
       return Object.assign({}, state);
 
     case types.ADD_FAVORITE:
-      state.favorite.items = state.favorite.items.concat(action.favorites);
-      _appendFavoriteToAllIfNeeded(state, action.favorites);
+      state.favorite.items = action.favorites;
+      _updateAllByFavorite(state, action.favorites);
+      return Object.assign({}, state);
+
+    case types.REMOVE_FAVORITE:
+      console.log("remove");
+      state.favorite.items = action.favorites;
+      _updateAllByFavorite(state, action.favorites);
       return Object.assign({}, state);
 
     case types.FILTER_FAVORITE_ITEMS:
@@ -58735,7 +58734,7 @@ function feed(state, action) {
       return Object.assign({}, state);
 
     case types.RECIEVE_ITEMS:
-      var items = _getFavoriteAppendedItems(action.items, state.favorite.items);
+      var items = _getItemsUpdatedByFavorite(action.items, state.favorite.items);
       var keyword = action.keyword;
       state[keyword].isInfiniteLoading = false;
       if (items === null) {

@@ -9,7 +9,6 @@ const BOOKMARK_IMAGE_URI = ENTRY_URI + 'image/';
 const TextField = Mui.TextField;
 const Slider = Mui.Slider;
 const RaisedButton = Mui.RaisedButton;
-//const Dialog = Mui.Dialog;
 
 export default class Pasta extends Component {
   constructor(props) {
@@ -57,17 +56,12 @@ export default class Pasta extends Component {
     if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
     return  <div className="rect-spinner"></div>;
   }
-  /*
-  getCategoryStyle(category) {
-    switch (category) {
-      case 'テクノロジー' : return {'backgroundColor':'#1ABC9C'};
-      default             : return {'backgroundColor':'#8E44AD'};
-    }
-  }*/
 
   onFavoriteClick(item) {
-    console.log("fav!!");
-    this.props.addFavorite(item);
+    if (item.isFavorited)
+      this.props.removeFavorite(item);
+    else
+      this.props.addFavorite(item);
   }
 
   onAdditionalKeywordSubmit(value) {
@@ -88,7 +82,9 @@ export default class Pasta extends Component {
   getCategories(categories) {
     return categories.map((category) => {
       return (
-        <span className="category" key={category + this.props.menu.activeKeyword } style={{'backgroundColor':'#1ABC9C'}}>
+        <span className="category"
+              key={category + this.props.menu.activeKeyword }
+              style={{'backgroundColor':'#1ABC9C'}}>
           {category}
         </span>);
     });
@@ -122,7 +118,8 @@ export default class Pasta extends Component {
         const favicon = FAVICON_URI + encodeURIComponent(item.link);
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
-        const favoriteButtonClass = item.isFavorited ? "favorite-button favorited fa fa-heart" : "favorite-button fa fa-heart";
+        console.log(item.isFavorited);
+        const favoriteButtonClass = item.isFavorited? "favorite-button favorited fa fa-heart" : "favorite-button fa fa-heart";
         return (
           <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />

@@ -10,19 +10,20 @@ function createProps() {
   };
 }
 
-function _getFavoriteAppendedItems(items, favorites) {
+function _getItemsUpdatedByFavorite(items, favorites) {
   return _.map(items, (item) => {
     console.log(_.some(favorites, 'link', item.link));
     if (_.some(favorites, 'link', item.link)) item.isFavorited = true;
+    else item.isFavorited = false;
     return item;
   });
 }
 
 // FIXME
-function _appendFavoriteToAllIfNeeded(state, favorites) {
-  for (let feed in state) {
-    if(feed.items !== undefined) {
-      feed.items = _getFavoriteAppendedItems(feed.items, favorites)
+function _updateAllByFavorite(state, favorites) {
+  for (let name in state) {
+    if(state[name].items !== undefined) {
+      state[name].items = _getItemsUpdatedByFavorite(state[name].items, favorites)
     }
   }
 }
@@ -43,14 +44,20 @@ export default function feed(state={}, action) {
       state.isInitialized = true;
       return Object.assign({}, state);
 
-  case types.INITIALIZE_FAVORITE :
+    case types.INITIALIZE_FAVORITE :
       console.log("favorite initialized..");
       state.favorite.items = action.favorites;
       return Object.assign({}, state);
 
     case types.ADD_FAVORITE :
-      state.favorite.items = state.favorite.items.concat(action.favorites);
-      _appendFavoriteToAllIfNeeded(state, action.favorites);
+      state.favorite.items = action.favorites;
+      _updateAllByFavorite(state, action.favorites);
+      return Object.assign({}, state);
+
+    case types.REMOVE_FAVORITE :
+      console.log("remove"); 
+      state.favorite.items = action.favorites;
+      _updateAllByFavorite(state, action.favorites);
       return Object.assign({}, state);
 
     case types.FILTER_FAVORITE_ITEMS:
@@ -58,7 +65,7 @@ export default function feed(state={}, action) {
       return Object.assign({}, state);
 
     case types.RECIEVE_ITEMS :
-      const items = _getFavoriteAppendedItems(action.items, state.favorite.items);
+      const items = _getItemsUpdatedByFavorite(action.items, state.favorite.items);
       const keyword = action.keyword;
       state[keyword].isInfiniteLoading = false;
       if (items === null){

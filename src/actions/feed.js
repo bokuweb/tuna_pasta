@@ -28,7 +28,7 @@ export function initialize() {
   return dispatch => {
     console.log("initialize..");
     db.create({keywords: "name, icon"});
-    db.create({favorites: "link, title, content, contentSnippet, publishedDate, categories"});
+    db.create({favorites: "link, title, content, contentSnippet, publishedDate, categories, isFavorited"});
     db.getArray('keywords').then((keywords) => {
       dispatch({type: types.INITIALIZE_KEYWORD, keywords});
       if (keywords.length !== 0) {
@@ -38,11 +38,6 @@ export function initialize() {
       }
     });
     db.getArray('favorites').then((favorites) => {
-      // TODO: refactoring
-      favorites = _.map(favorites, (item) => {
-        item.isFavorited = true;
-        return item;
-      });
       dispatch({
         type: types.INITIALIZE_FAVORITE,
         favorites
@@ -94,10 +89,6 @@ export function fetchFeed(feed, menu) {
       db.getArray('favorites').then((favorites) => {
         _getBookmarkCount(favorites).then((bookmarks) => {
           const filteredItems = _.filter(favorites, (item) => bookmarks[item.link] >= menu.bookmarkFilter);
-          favorites = _.map(favorites, (item) => {
-            item.isFavorited = true;
-            return item;
-          });
           dispatch(filterFavoriteItems(filteredItems, keyword));
         });
       });
@@ -110,17 +101,27 @@ export function fetchFeed(feed, menu) {
 
 export function addFavorite(item) {
   return dispatch => {
-    item.isFavorite = true;
+    item.isFavorited = true;
     db.put('favorites', item).then(() => {
       db.getArray('favorites').then((favorites) => {
-        favorites = _.map(favorites, (item) => {
-          item.isFavorited = true;
-          return item;
-        });
         dispatch({
           type: types.ADD_FAVORITE,
-          favorites,
-          item
+          favorites
+        });
+      });
+    });
+  }
+}
+
+export function removeFavorite(item) {
+  return dispatch => {
+    //item.isFavorited = false;
+    db.remove('favorites', item.link).then(() => {
+      db.getArray('favorites').then((favorites) => {
+        console.dir(favorites);
+        dispatch({
+          type: types.REMOVE_FAVORITE,
+          favorites
         });
       });
     });
@@ -140,7 +141,6 @@ function _fetchSearchFeed(dispatch, keyword, page = 0, threshold) {
   const url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
   fetchWithGoogleFeedApi(url).then((feed) => {
     const items = getItems(feed);
-
     dispatch(recieveItems(items, keyword, items.length));
   }, (error) => console.log(error));
   dispatch(fetchingItems(keyword));
