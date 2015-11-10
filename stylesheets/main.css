@@ -6738,6 +6738,17 @@ div.favorited {
     left: 0;
     z-index: 999;
   }
+  #header #sp-logo {
+    height: 42px;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+  }
+  #header #menu-button {
+    position: absolute;
+    top: 10px;
+    left: calc(100% - 30px);
+  }
   #content {
     padding: 40px 0 0 0;
   }

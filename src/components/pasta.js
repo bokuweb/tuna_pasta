@@ -143,11 +143,15 @@ export default class Pasta extends Component {
     let x = this.props.menu.bookmarkFilterX - 24;
     if (x > 210) x = 210;
     if (x < 10) x = 10;
-    console.log("menu open = " +  this.props.menu.isMenuOpen);
+    console.log("menu open = " + this.props.menu.isMenuOpen);
     return (
       <div id="container">
         <div id="header">
-        <i className="fa fa-bars" onClick={this.onMenuButtonClick.bind(this)}></i>
+          <img src="img/logo-blue.png" id="sp-logo" />
+          <i className={this.props.menu.isMenuOpen? "fa fa-close" : "fa fa-bars"}
+             id="menu-button"
+             onClick={this.onMenuButtonClick.bind(this)}>
+          </i>
         </div>
         <div id="side-menu" className={(this.props.menu.isMenuOpen) ? "animated slideInLeft menu-open" : "animated slideInLeft menu-close"}>
           <img id="logo" src="img/logo.png" alt="" />

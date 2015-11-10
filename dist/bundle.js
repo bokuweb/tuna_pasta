@@ -58455,7 +58455,10 @@ var Pasta = (function (_Component) {
         _react2['default'].createElement(
           'div',
           { id: 'header' },
-          _react2['default'].createElement('i', { className: 'fa fa-bars', onClick: this.onMenuButtonClick.bind(this) })
+          _react2['default'].createElement('img', { src: 'img/logo-blue.png', id: 'sp-logo' }),
+          _react2['default'].createElement('i', { className: this.props.menu.isMenuOpen ? "fa fa-close" : "fa fa-bars",
+            id: 'menu-button',
+            onClick: this.onMenuButtonClick.bind(this) })
         ),
         _react2['default'].createElement(
           'div',
