@@ -64,7 +64,7 @@ export default function feed(state={}, action) {
       const items = _getItemsUpdatedByFavorite(action.items, state.favorite.items);
       const keyword = action.keyword;
       state[keyword].isInfiniteLoading = false;
-      if (items === null){
+      if (items === null) {
         state[keyword].isPageEnd = false;
         return Object.assign({}, state);
       }

@@ -129,7 +129,7 @@ export function removeFavorite(item) {
 }
 
 function _fetchFeed(dispatch, keyword, page = 0, threshold) {
-  const id = /^id:(.*)/.exec(keyword);
+  const id = /^id:(.*)/.exec(keyword.replace(/\s+/g, ""));
   if (id === null) {
     _fetchSearchFeed(dispatch, keyword, page, threshold);
   } else {
