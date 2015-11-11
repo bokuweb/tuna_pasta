@@ -63,6 +63,13 @@ export default class Pasta extends Component {
       this.props.addFavorite(item);
   }
 
+  onCommentClick(item) {
+    //if (item.isFavorited)
+    this.props.openComment(item, this.props.menu.activeKeyword);
+    //else
+    //  this.props.addFavorite(item);
+  }
+
   onAdditionalKeywordSubmit(value) {
     this.props.addKeyword(this.props.menu.keywordInput);
     this.props.fetchFeed(this.props.feed, this.props.menu);
@@ -98,10 +105,10 @@ export default class Pasta extends Component {
       const listClassName = keyword.name === this.props.menu.activeKeyword ? 'selected' : null;
       return (
         <li className={listClassName} key={keyword.name}>
-          <span onClick={this.onSelectKeyword.bind(this, keyword.name)}>
+          <div onClick={this.onSelectKeyword.bind(this, keyword.name)}>
             <i className={"fa fa-" + keyword.icon} />
             {keyword.name}
-          </span>
+          </div>
           <div className="remove" onClick={this.onKeywordRemoveButtonClick.bind(this, keyword.name)} >
             <i className={"fa fa-close"} />
           </div>
@@ -134,7 +141,7 @@ export default class Pasta extends Component {
             <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
             <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>             <i className="fa fa-heart" />お気に入り
             </div>
-            <div className="comment-button" onClick={this.onFavoriteClick.bind(this, item)}>             <i className="fa fa-commenting" />コメント
+            <div className="comment-button" onClick={this.onCommentClick.bind(this, item)}>             <i className="fa fa-commenting" />コメント
             </div>
           </div>
         );
@@ -183,11 +190,12 @@ export default class Pasta extends Component {
             <ul>
               <li className={this.props.menu.activeKeyword === 'all' ? 'selected' : ''}
                   onClick={this.onSelectKeyword.bind(this, 'all')}>
-                <span><i className={"fa fa-home"} />総合</span>
+                <div><i className={"fa fa-home"} />総合</div>
               </li>
               <li className={this.props.menu.activeKeyword === 'favorite' ? 'selected' : ''}
                 onClick={this.onSelectKeyword.bind(this, 'favorite')}>
-                <span><i className={"fa fa-heart"} />お気に入り</span>
+                <div><i className={"fa fa-heart"} />お気に入り</div>
+                <span className="favorite-number">{this.props.feed.favorite.items.length}</span>
               </li>
               {this.getKeywordList()}
             </ul>

@@ -6522,8 +6522,8 @@ a {
   position: relative;
   height: 32px;
 }
-#side-menu #menu li > span {
-  display: inline-block;
+#side-menu #menu li > div {
+  display: inline;
   width: 160px;
   overflow: hidden;
   white-space: nowrap;
@@ -6557,6 +6557,13 @@ a {
   display: inline-block;
   position: absolute;
   left: 230px;
+}
+#side-menu #menu span.favorite-number {
+  padding: 3px 6px;
+  font-size: 11px;
+  background: #2c3e50;
+  border-radius: 50%;
+  margin: 0 0 0 25px;
 }
 #side-menu::-webkit-scrollbar {
   width: 6px;

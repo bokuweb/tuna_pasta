@@ -6,6 +6,7 @@ import DbManager from '../lib/db'
 const HATENA_URL = 'http://b.hatena.ne.jp/'
 const HATENA_BOOKMARK_COUNT_URL = 'http://api.b.st-hatena.com/entry.counts?';
 const HATENA_SEARCH_URL = HATENA_URL + 'search/text?mode=rss&safe=off&q='
+const HATENA_ENTRY_URL = HATENA_URL + 'entry/json/?'
 
 const db = new DbManager('pastaDB');
 
@@ -47,14 +48,14 @@ export function initialize() {
   }
 }
 
-export function fetchingItems(keyword) {
+function fetchingItems(keyword) {
   return {
     type: types.FETCHING_ITEMS,
     keyword
   };
 }
 
-export function recieveItems(items, keyword, length) {
+function recieveItems(items, keyword, length) {
   return {
     type: types.RECIEVE_ITEMS,
     items,
@@ -104,10 +105,7 @@ export function addFavorite(item) {
     item.isFavorited = true;
     db.put('favorites', item).then(() => {
       db.getArray('favorites').then((favorites) => {
-        dispatch({
-          type: types.ADD_FAVORITE,
-          favorites
-        });
+        dispatch({type: types.ADD_FAVORITE, favorites});
       });
     });
   }
@@ -115,16 +113,23 @@ export function addFavorite(item) {
 
 export function removeFavorite(item) {
   return dispatch => {
-    //item.isFavorited = false;
     db.remove('favorites', item.link).then(() => {
       db.getArray('favorites').then((favorites) => {
-        console.dir(favorites);
-        dispatch({
-          type: types.REMOVE_FAVORITE,
-          favorites
-        });
+        dispatch({type: types.REMOVE_FAVORITE, favorites});
       });
     });
+  }
+}
+
+export function openComment(item, keyword) {
+  const url = HATENA_ENTRY_URL + 'url=' + encodeURIComponent(item.link);
+  return dispatch => {
+    fetch(url).then((res) => {
+      const commentedBookmarks = _.filter(res.bookmarks, bookmark => bookmark.comment !== '');
+      console.log(commentedBookmarks);
+      dispatch({type: types.OPEN_COMMENT, keyword, link: item.link, comments: commentedBookmarks});
+    }, (error) => console.log(error));
+    dispatch({type: types.FETCHING_COMMENT, keyword, link: item.link});
   }
 }
 
