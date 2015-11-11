@@ -58427,6 +58427,14 @@ var Pasta = (function (_Component) {
           var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
           var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
           var favoriteButtonClass = item.isFavorited ? "favorite-button favorited" : "favorite-button";
+          var comments = [];
+          if (item.comments !== undefined) comments = item.comments.map(function (comment) {
+            return _react2['default'].createElement(
+              'span',
+              { key: comment.user },
+              comment.comment
+            );
+          });
           return _react2['default'].createElement(
             'div',
             { className: 'item animated fadeIn', key: item.link + _this4.props.menu.activeKeyword },
@@ -58456,16 +58464,19 @@ var Pasta = (function (_Component) {
             _react2['default'].createElement(
               'div',
               { className: favoriteButtonClass, onClick: _this4.onFavoriteClick.bind(_this4, item) },
-              '             ',
               _react2['default'].createElement('i', { className: 'fa fa-heart' }),
               'お気に入り'
             ),
             _react2['default'].createElement(
               'div',
               { className: 'comment-button', onClick: _this4.onCommentClick.bind(_this4, item) },
-              '             ',
               _react2['default'].createElement('i', { className: 'fa fa-commenting' }),
               'コメント'
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'comment-box' },
+              comments
             )
           );
         });

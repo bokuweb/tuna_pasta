@@ -131,6 +131,8 @@ export default class Pasta extends Component {
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
         const favoriteButtonClass = item.isFavorited? "favorite-button favorited" : "favorite-button";
+        let comments = [];
+        if(item.comments !== undefined) comments = item.comments.map(comment => <span key={comment.user}>{comment.comment}</span>);
         return (
           <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />
@@ -139,9 +141,14 @@ export default class Pasta extends Component {
             <span className="publish-date">{item.publishedDate}</span>
             {this.getCategories(item.categories)}
             <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
-            <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>             <i className="fa fa-heart" />お気に入り
+            <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>
+              <i className="fa fa-heart" />お気に入り
             </div>
-            <div className="comment-button" onClick={this.onCommentClick.bind(this, item)}>             <i className="fa fa-commenting" />コメント
+            <div className="comment-button" onClick={this.onCommentClick.bind(this, item)}>
+              <i className="fa fa-commenting" />コメント
+            </div>
+            <div className="comment-box">
+              {comments}
             </div>
           </div>
         );
