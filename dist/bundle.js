@@ -57831,13 +57831,12 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 exports.initialize = initialize;
-exports.fetchingItems = fetchingItems;
-exports.recieveItems = recieveItems;
 exports.filterFavoriteItems = filterFavoriteItems;
 exports.clearFeeds = clearFeeds;
 exports.fetchFeed = fetchFeed;
 exports.addFavorite = addFavorite;
 exports.removeFavorite = removeFavorite;
+exports.openComment = openComment;
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
@@ -57860,6 +57859,7 @@ var _libDb2 = _interopRequireDefault(_libDb);
 var HATENA_URL = 'http://b.hatena.ne.jp/';
 var HATENA_BOOKMARK_COUNT_URL = 'http://api.b.st-hatena.com/entry.counts?';
 var HATENA_SEARCH_URL = HATENA_URL + 'search/text?mode=rss&safe=off&q=';
+var HATENA_ENTRY_URL = HATENA_URL + 'entry/json/?';
 
 var db = new _libDb2['default']('pastaDB');
 
@@ -58002,10 +58002,7 @@ function addFavorite(item) {
     item.isFavorited = true;
     db.put('favorites', item).then(function () {
       db.getArray('favorites').then(function (favorites) {
-        dispatch({
-          type: types.ADD_FAVORITE,
-          favorites: favorites
-        });
+        dispatch({ type: types.ADD_FAVORITE, favorites: favorites });
       });
     });
   };
@@ -58013,16 +58010,27 @@ function addFavorite(item) {
 
 function removeFavorite(item) {
   return function (dispatch) {
-    //item.isFavorited = false;
     db.remove('favorites', item.link).then(function () {
       db.getArray('favorites').then(function (favorites) {
-        console.dir(favorites);
-        dispatch({
-          type: types.REMOVE_FAVORITE,
-          favorites: favorites
-        });
+        dispatch({ type: types.REMOVE_FAVORITE, favorites: favorites });
       });
     });
+  };
+}
+
+function openComment(item, keyword) {
+  var url = HATENA_ENTRY_URL + 'url=' + encodeURIComponent(item.link);
+  return function (dispatch) {
+    (0, _apiFeed.fetch)(url).then(function (res) {
+      var commentedBookmarks = _lodash2['default'].filter(res.bookmarks, function (bookmark) {
+        return bookmark.comment !== '';
+      });
+      console.log(commentedBookmarks);
+      dispatch({ type: types.OPEN_COMMENT, keyword: keyword, link: item.link, comments: commentedBookmarks });
+    }, function (error) {
+      return console.log(error);
+    });
+    dispatch({ type: types.FETCHING_COMMENT, keyword: keyword, link: item.link });
   };
 }
 
@@ -58326,6 +58334,14 @@ var Pasta = (function (_Component) {
       if (item.isFavorited) this.props.removeFavorite(item);else this.props.addFavorite(item);
     }
   }, {
+    key: 'onCommentClick',
+    value: function onCommentClick(item) {
+      //if (item.isFavorited)
+      this.props.openComment(item, this.props.menu.activeKeyword);
+      //else
+      //  this.props.addFavorite(item);
+    }
+  }, {
     key: 'onAdditionalKeywordSubmit',
     value: function onAdditionalKeywordSubmit(value) {
       this.props.addKeyword(this.props.menu.keywordInput);
@@ -58374,7 +58390,7 @@ var Pasta = (function (_Component) {
           'li',
           { className: listClassName, key: keyword.name },
           _react2['default'].createElement(
-            'span',
+            'div',
             { onClick: _this3.onSelectKeyword.bind(_this3, keyword.name) },
             _react2['default'].createElement('i', { className: "fa fa-" + keyword.icon }),
             keyword.name
@@ -58399,12 +58415,26 @@ var Pasta = (function (_Component) {
         'div',
         null,
         'まだ記事はありません。キーワードを追加してください。'
-      );else {
+      );else if (feed.items.length === 0 && feed.isPageEnd) {
+        items = _react2['default'].createElement(
+          'div',
+          null,
+          '記事が見つかりませんでした。'
+        );
+      } else {
         items = feed.items.map(function (item) {
           var favicon = FAVICON_URI + encodeURIComponent(item.link);
           var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
           var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
           var favoriteButtonClass = item.isFavorited ? "favorite-button favorited" : "favorite-button";
+          var comments = [];
+          if (item.comments !== undefined) comments = item.comments.map(function (comment) {
+            return _react2['default'].createElement(
+              'span',
+              { key: comment.user },
+              comment.comment
+            );
+          });
           return _react2['default'].createElement(
             'div',
             { className: 'item animated fadeIn', key: item.link + _this4.props.menu.activeKeyword },
@@ -58436,6 +58466,17 @@ var Pasta = (function (_Component) {
               { className: favoriteButtonClass, onClick: _this4.onFavoriteClick.bind(_this4, item) },
               _react2['default'].createElement('i', { className: 'fa fa-heart' }),
               'お気に入り'
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'comment-button', onClick: _this4.onCommentClick.bind(_this4, item) },
+              _react2['default'].createElement('i', { className: 'fa fa-commenting' }),
+              'コメント'
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'comment-box' },
+              comments
             )
           );
         });
@@ -58500,7 +58541,7 @@ var Pasta = (function (_Component) {
                 { className: this.props.menu.activeKeyword === 'all' ? 'selected' : '',
                   onClick: this.onSelectKeyword.bind(this, 'all') },
                 _react2['default'].createElement(
-                  'span',
+                  'div',
                   null,
                   _react2['default'].createElement('i', { className: "fa fa-home" }),
                   '総合'
@@ -58511,10 +58552,15 @@ var Pasta = (function (_Component) {
                 { className: this.props.menu.activeKeyword === 'favorite' ? 'selected' : '',
                   onClick: this.onSelectKeyword.bind(this, 'favorite') },
                 _react2['default'].createElement(
-                  'span',
+                  'div',
                   null,
                   _react2['default'].createElement('i', { className: "fa fa-heart" }),
                   'お気に入り'
+                ),
+                _react2['default'].createElement(
+                  'span',
+                  { className: 'favorite-number' },
+                  this.props.feed.favorite.items.length
                 )
               ),
               this.getKeywordList()
@@ -58585,6 +58631,12 @@ var REMOVE_FAVORITE = 'REMOVE_FAVORITE';
 exports.REMOVE_FAVORITE = REMOVE_FAVORITE;
 var TOGGLE_MENU = 'TOGGLE_MENU';
 exports.TOGGLE_MENU = TOGGLE_MENU;
+var FETCHING_COMMENT = 'FETCHING_COMMENT';
+exports.FETCHING_COMMENT = FETCHING_COMMENT;
+var OPEN_COMMENT = 'OPEN_COMMENT';
+exports.OPEN_COMMENT = OPEN_COMMENT;
+var CLOSE_COMMENT = 'CLOSE_COMMENT';
+exports.CLOSE_COMMENT = CLOSE_COMMENT;
 
 },{}],353:[function(require,module,exports){
 'use strict';
@@ -58763,7 +58815,7 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-function createProps() {
+function _createProps() {
   return {
     page: 0,
     items: [],
@@ -58794,8 +58846,8 @@ function feed(state, action) {
   switch (action.type) {
     case types.INITIALIZING:
       state.isInitialized = false;
-      state.all = createProps();
-      state.favorite = createProps();
+      state.all = _createProps();
+      state.favorite = _createProps();
       return Object.assign({}, state);
 
     case types.INITIALIZE_KEYWORD:
@@ -58806,7 +58858,7 @@ function feed(state, action) {
       try {
         for (var _iterator = action.keywords[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var _keyword = _step.value;
-          state[_keyword.name] = createProps();
+          state[_keyword.name] = _createProps();
         }
       } catch (err) {
         _didIteratorError = true;
@@ -58869,7 +58921,7 @@ function feed(state, action) {
       try {
         for (var _iterator2 = action.keywords[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
           var _keyword2 = _step2.value;
-          state[_keyword2.name] = createProps();
+          state[_keyword2.name] = _createProps();
         }
       } catch (err) {
         _didIteratorError2 = true;
@@ -58893,11 +58945,36 @@ function feed(state, action) {
       return Object.assign({}, state);
 
     case types.ADD_KEYWORD:
-      state[action.keyword] = createProps();
+      state[action.keyword] = _createProps();
       return Object.assign({}, state);
 
     case types.REMOVE_KEYWORD:
-      state.all = createProps();
+      state.all = _createProps();
+      return Object.assign({}, state);
+
+    case types.FETCHING_COMMENT:
+      state[action.keyword].items = _lodash2['default'].map(state[action.keyword].items, function (item) {
+        if (item.link === action.link) item.isCommentFetching = true;
+        return item;
+      });
+      return Object.assign({}, state);
+
+    case types.OPEN_COMMENT:
+      state[action.keyword].items = _lodash2['default'].map(state[action.keyword].items, function (item) {
+        if (item.link === action.link) {
+          item.isCommentFetching = false;
+          item.isCommentOpen = true;
+          item.comments = action.comments;
+        }
+        return item;
+      });
+      return Object.assign({}, state);
+
+    case types.CLOSE_COMMENT:
+      state[action.keyword].items = _lodash2['default'].map(state[action.keyword].items, function (item) {
+        if (item.link === action.link) item.isCommentOpen = false;
+        return item;
+      });
       return Object.assign({}, state);
 
     default:

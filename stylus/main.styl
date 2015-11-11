@@ -53,6 +53,7 @@ a
   scrollbar-face-color accent-color
   scrollbar-track-color rgba(0, 0, 0, .1)
 
+
   #logo
     width 180px
     height auto
@@ -60,7 +61,6 @@ a
 
   #menu
     color #ECF0F1
-    //border-top 1px solid #1970A9
     margin 20px 0 0 0
 
     ul
@@ -77,8 +77,8 @@ a
       position relative
       height 32px
 
-      > span
-        display inline-block
+      > div
+        display inline
         width 160px
         overflow hidden
         white-space nowrap
@@ -112,6 +112,13 @@ a
       display inline-block
       position absolute
       left 230px
+
+    span.favorite-number
+      padding 3px 10px
+      font-size 11px
+      background #2C3E50
+      border-radius 40%
+      margin 0 0 0 25px
 
 #side-menu::-webkit-scrollbar
   width 6px
@@ -293,6 +300,22 @@ div.favorite-button:hover
 div.favorited
   color #E74C3C  
 
+div.comment-button
+  margin 0 0 20px 10px
+  font-size 11px
+  cursor pointer
+  transition  all .4s ease
+  display inline-block
+  border-radius 3px
+  background #ECF0F1
+  text-shadow none
+  padding 3px 10px
+  > i
+    margin 0 12px 0 0
+
+div.comment-button:hover
+  color #E74C3C
+
 #header
   display none
 
@@ -336,8 +359,6 @@ div.favorited
     #logo
       display none
 
-   
-
   .menu-close
     left -800px
     top 0
@@ -368,8 +389,20 @@ div.favorited
     > i
       margin 0 10px 0 0
 
+  div.comment-button
+    margin 10px 0 10px 
+    font-size 11px
+    cursor pointer
+    transition  all .4s ease
+    display inline-block
+    > i
+      margin 0 10px 0 0
+
+  .github-ribbon
+    display none
 @media screen and (min-width: 769px)
   #content
     overflow-y auto
     max-height 100%
     width 100%
+

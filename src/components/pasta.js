@@ -63,6 +63,13 @@ export default class Pasta extends Component {
       this.props.addFavorite(item);
   }
 
+  onCommentClick(item) {
+    //if (item.isFavorited)
+    this.props.openComment(item, this.props.menu.activeKeyword);
+    //else
+    //  this.props.addFavorite(item);
+  }
+
   onAdditionalKeywordSubmit(value) {
     this.props.addKeyword(this.props.menu.keywordInput);
     this.props.fetchFeed(this.props.feed, this.props.menu);
@@ -98,10 +105,10 @@ export default class Pasta extends Component {
       const listClassName = keyword.name === this.props.menu.activeKeyword ? 'selected' : null;
       return (
         <li className={listClassName} key={keyword.name}>
-          <span onClick={this.onSelectKeyword.bind(this, keyword.name)}>
+          <div onClick={this.onSelectKeyword.bind(this, keyword.name)}>
             <i className={"fa fa-" + keyword.icon} />
             {keyword.name}
-          </span>
+          </div>
           <div className="remove" onClick={this.onKeywordRemoveButtonClick.bind(this, keyword.name)} >
             <i className={"fa fa-close"} />
           </div>
@@ -116,12 +123,16 @@ export default class Pasta extends Component {
     let items = null;
     if (this.props.menu.keywords.length === 0)
       items = <div>まだ記事はありません。キーワードを追加してください。</div>;
-    else {
+    else if (feed.items.length === 0 && feed.isPageEnd) {
+      items = <div>記事が見つかりませんでした。</div>; 
+    } else {
       items = feed.items.map((item) => {
         const favicon = FAVICON_URI + encodeURIComponent(item.link);
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
         const favoriteButtonClass = item.isFavorited? "favorite-button favorited" : "favorite-button";
+        let comments = [];
+        if(item.comments !== undefined) comments = item.comments.map(comment => <span key={comment.user}>{comment.comment}</span>);
         return (
           <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />
@@ -132,6 +143,12 @@ export default class Pasta extends Component {
             <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
             <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>
               <i className="fa fa-heart" />お気に入り
+            </div>
+            <div className="comment-button" onClick={this.onCommentClick.bind(this, item)}>
+              <i className="fa fa-commenting" />コメント
+            </div>
+            <div className="comment-box">
+              {comments}
             </div>
           </div>
         );
@@ -154,16 +171,16 @@ export default class Pasta extends Component {
         <div id="side-menu" className={(this.props.menu.isMenuOpen) ? "animated slideInLeft menu-open" : "animated slideInLeft menu-close"}>
           <img id="logo" src="img/logo.png" alt="" />
           <div className="slider">
-          <div className="bookmark-filter" style={{left:x}}>
-            <i className="icon-hatena" />
-            {this.props.menu.bookmarkFilter}
-          </div>
-          <Slider name="slider"
-            defaultValue={1}
-            onChange={this.onSliderChange.bind(this)}
-            onDragStop={this.onSlideStop.bind(this)}
-            max={250}
-            min={1} />
+            <div className="bookmark-filter" style={{left:x}}>
+              <i className="icon-hatena" />
+              {this.props.menu.bookmarkFilter}
+            </div>
+            <Slider name="slider"
+              defaultValue={1}
+              onChange={this.onSliderChange.bind(this)}
+              onDragStop={this.onSlideStop.bind(this)}
+              max={250}
+              min={1} />
           </div>
           <div className="add-keyword">
             <input type="text"
@@ -180,11 +197,12 @@ export default class Pasta extends Component {
             <ul>
               <li className={this.props.menu.activeKeyword === 'all' ? 'selected' : ''}
                   onClick={this.onSelectKeyword.bind(this, 'all')}>
-                <span><i className={"fa fa-home"} />総合</span>
+                <div><i className={"fa fa-home"} />総合</div>
               </li>
               <li className={this.props.menu.activeKeyword === 'favorite' ? 'selected' : ''}
                 onClick={this.onSelectKeyword.bind(this, 'favorite')}>
-                <span><i className={"fa fa-heart"} />お気に入り</span>
+                <div><i className={"fa fa-heart"} />お気に入り</div>
+                <span className="favorite-number">{this.props.feed.favorite.items.length}</span>
               </li>
               {this.getKeywordList()}
             </ul>
