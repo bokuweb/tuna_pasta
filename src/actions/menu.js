@@ -34,7 +34,9 @@ export function toggleMenu() {
 export function addKeyword(keyword) {
   return dispatch => {
     if (keyword === '') return;
-    db.put('keywords', {name: keyword, icon:'tag'}).then(() => {
+    const id = /^id:(.*)/.exec(keyword.replace(/\s+/g, ""));
+    let icon (id === null)? 'tag' : 'user';
+    db.put('keywords', {name: keyword, icon}).then(() => {
       db.getArray('keywords').then((keywords) => {
         dispatch({
           type: types.ADD_KEYWORD_COMPLETE,
