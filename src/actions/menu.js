@@ -35,7 +35,7 @@ export function addKeyword(keyword) {
   return dispatch => {
     if (keyword === '') return;
     const id = /^id:(.*)/.exec(keyword.replace(/\s+/g, ""));
-    let icon (id === null)? 'tag' : 'user';
+    let icon = (id === null)? 'tag' : 'user';
     db.put('keywords', {name: keyword, icon}).then(() => {
       db.getArray('keywords').then((keywords) => {
         dispatch({
