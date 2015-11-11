@@ -58029,7 +58029,7 @@ function removeFavorite(item) {
 function _fetchFeed(dispatch, keyword, page, threshold) {
   if (page === undefined) page = 0;
 
-  var id = /^id:(.*)/.exec(keyword);
+  var id = /^id:(.*)/.exec(keyword.replace(/\s+/g, ""));
   if (id === null) {
     _fetchSearchFeed(dispatch, keyword, page, threshold);
   } else {
@@ -58161,7 +58161,9 @@ function toggleMenu() {
 function addKeyword(keyword) {
   return function (dispatch) {
     if (keyword === '') return;
-    db.put('keywords', { name: keyword, icon: 'tag' }).then(function () {
+    var id = /^id:(.*)/.exec(keyword.replace(/\s+/g, ""));
+    var icon = id === null ? 'tag' : 'user';
+    db.put('keywords', { name: keyword, icon: icon }).then(function () {
       db.getArray('keywords').then(function (keywords) {
         dispatch({
           type: types.ADD_KEYWORD_COMPLETE,
@@ -58397,13 +58399,7 @@ var Pasta = (function (_Component) {
         'div',
         null,
         'まだ記事はありません。キーワードを追加してください。'
-      );else if (feed.items.length === 0 && !feed.isInfiniteLoading) {
-        items = _react2['default'].createElement(
-          'div',
-          null,
-          '記事が見つかりませんでした。'
-        );
-      } else {
+      );else {
         items = feed.items.map(function (item) {
           var favicon = FAVICON_URI + encodeURIComponent(item.link);
           var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);

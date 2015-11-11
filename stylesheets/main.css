@@ -6792,6 +6792,9 @@ div.favorited {
   div.favorite-button > i {
     margin: 0 10px 0 0;
   }
+  .github-ribbon {
+    display: none;
+  }
 }
 @media screen and (min-width: 769px) {
   #content {
