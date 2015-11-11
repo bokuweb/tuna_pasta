@@ -58399,7 +58399,13 @@ var Pasta = (function (_Component) {
         'div',
         null,
         'まだ記事はありません。キーワードを追加してください。'
-      );else {
+      );else if (feed.items.length === 0 && feed.isPageEnd) {
+        items = _react2['default'].createElement(
+          'div',
+          null,
+          '記事が見つかりませんでした。'
+        );
+      } else {
         items = feed.items.map(function (item) {
           var favicon = FAVICON_URI + encodeURIComponent(item.link);
           var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
@@ -58434,8 +58440,16 @@ var Pasta = (function (_Component) {
             _react2['default'].createElement(
               'div',
               { className: favoriteButtonClass, onClick: _this4.onFavoriteClick.bind(_this4, item) },
+              '             ',
               _react2['default'].createElement('i', { className: 'fa fa-heart' }),
               'お気に入り'
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'comment-button', onClick: _this4.onFavoriteClick.bind(_this4, item) },
+              '             ',
+              _react2['default'].createElement('i', { className: 'fa fa-commenting' }),
+              'コメント'
             )
           );
         });

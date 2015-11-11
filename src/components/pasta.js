@@ -116,7 +116,9 @@ export default class Pasta extends Component {
     let items = null;
     if (this.props.menu.keywords.length === 0)
       items = <div>まだ記事はありません。キーワードを追加してください。</div>;
-    else {
+    else if (feed.items.length === 0 && feed.isPageEnd) {
+      items = <div>記事が見つかりませんでした。</div>; 
+    } else {
       items = feed.items.map((item) => {
         const favicon = FAVICON_URI + encodeURIComponent(item.link);
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
@@ -130,8 +132,9 @@ export default class Pasta extends Component {
             <span className="publish-date">{item.publishedDate}</span>
             {this.getCategories(item.categories)}
             <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
-            <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>
-              <i className="fa fa-heart" />お気に入り
+            <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>             <i className="fa fa-heart" />お気に入り
+            </div>
+            <div className="comment-button" onClick={this.onFavoriteClick.bind(this, item)}>             <i className="fa fa-commenting" />コメント
             </div>
           </div>
         );
@@ -154,16 +157,16 @@ export default class Pasta extends Component {
         <div id="side-menu" className={(this.props.menu.isMenuOpen) ? "animated slideInLeft menu-open" : "animated slideInLeft menu-close"}>
           <img id="logo" src="img/logo.png" alt="" />
           <div className="slider">
-          <div className="bookmark-filter" style={{left:x}}>
-            <i className="icon-hatena" />
-            {this.props.menu.bookmarkFilter}
-          </div>
-          <Slider name="slider"
-            defaultValue={1}
-            onChange={this.onSliderChange.bind(this)}
-            onDragStop={this.onSlideStop.bind(this)}
-            max={250}
-            min={1} />
+            <div className="bookmark-filter" style={{left:x}}>
+              <i className="icon-hatena" />
+              {this.props.menu.bookmarkFilter}
+            </div>
+            <Slider name="slider"
+              defaultValue={1}
+              onChange={this.onSliderChange.bind(this)}
+              onDragStop={this.onSlideStop.bind(this)}
+              max={250}
+              min={1} />
           </div>
           <div className="add-keyword">
             <input type="text"

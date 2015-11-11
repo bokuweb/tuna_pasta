@@ -6718,6 +6718,23 @@ div.favorite-button:hover {
 div.favorited {
   color: #e74c3c;
 }
+div.comment-button {
+  margin: 0 0 20px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  display: inline-block;
+  border-radius: 3px;
+  background: #ecf0f1;
+  text-shadow: none;
+  padding: 3px 10px;
+}
+div.comment-button > i {
+  margin: 0 12px 0 0;
+}
+div.comment-button:hover {
+  color: #e74c3c;
+}
 #header {
   display: none;
 }
@@ -6791,6 +6808,19 @@ div.favorited {
   }
   div.favorite-button > i {
     margin: 0 10px 0 0;
+  }
+  div.comment-button {
+    margin: 10px 0 10px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    display: inline-block;
+  }
+  div.comment-button > i {
+    margin: 0 10px 0 0;
+  }
+  .github-ribbon {
+    display: none;
   }
 }
 @media screen and (min-width: 769px) {
