@@ -58347,10 +58347,29 @@ var Pasta = (function (_Component) {
           var comments = [];
           if (item.comments !== undefined) {
             comments = item.comments.map(function (comment) {
+              // <span key={comment.user}>{comment.comment}</span>;
               return _react2['default'].createElement(
-                'span',
-                { key: comment.user },
-                comment.comment
+                'div',
+                { className: 'question_Box animated fadeIn' },
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'question_image' },
+                  _react2['default'].createElement('img', { className: 'comment-avatar', src: 'http://n.hatena.com/' + comment.user + '/profile/image.gif?type=face&size=32' }),
+                  _react2['default'].createElement(
+                    'span',
+                    { className: 'comment-user' },
+                    comment.user
+                  )
+                ),
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'arrow_question' },
+                  _react2['default'].createElement(
+                    'p',
+                    null,
+                    comment.comment
+                  )
+                )
               );
             });
             if (comments.length === 0) comments = _react2['default'].createElement(
@@ -58406,10 +58425,16 @@ var Pasta = (function (_Component) {
         });
       }
 
+      // FIXME
+      //var el = document.querySelectorAll(".item");
+      //console.dir(el);
+      var heightOfElements = feed.items.map(function (item) {
+        if (item.isCommentOpen) return item.comments.length * 90 + 40 + 170;else return 170;
+      });
+      console.dir(heightOfElements);
       var x = this.props.menu.bookmarkFilterX - 24;
       if (x > 210) x = 210;
       if (x < 10) x = 10;
-      console.log("menu open = " + this.props.menu.isMenuOpen);
       return _react2['default'].createElement(
         'div',
         { id: 'container' },
@@ -58497,9 +58522,9 @@ var Pasta = (function (_Component) {
           _react2['default'].createElement(
             _reactInfinite2['default'],
             {
-              elementHeight: 140,
+              elementHeight: heightOfElements,
               containerHeight: this.innerHeight - 40,
-              infiniteLoadBeginBottomOffset: this.innerHeight * 0.2,
+              infiniteLoadBeginBottomOffset: 200,
               onInfiniteLoad: this.onInfiniteLoad.bind(this),
               loadingSpinnerDelegate: this.elementInfiniteLoad(),
               isInfiniteLoading: feed.isInfiniteLoading,

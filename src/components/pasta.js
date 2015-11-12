@@ -133,7 +133,20 @@ export default class Pasta extends Component {
         const favoriteButtonClass = item.isFavorited? "favorite-button favorited" : "favorite-button";
         let comments = [];
         if(item.comments !== undefined) {
-          comments = item.comments.map(comment => <span key={comment.user}>{comment.comment}</span>);
+          comments = item.comments.map(comment => {
+            // <span key={comment.user}>{comment.comment}</span>; 
+            return (
+              <div className="question_Box animated fadeIn">
+                <div className="question_image">
+                  <img className="comment-avatar" src={`http://n.hatena.com/${comment.user}/profile/image.gif?type=face&size=32`} />
+                  <span className="comment-user">{comment.user}</span>
+                </div>
+                <div className="arrow_question">
+                  <p>{comment.comment}</p>
+                </div>
+              </div>
+            );
+          });
           if (comments.length === 0) comments = <span>コメントがありませんでした</span>
         }
         return (
@@ -158,10 +171,17 @@ export default class Pasta extends Component {
       });
     }
 
+    // FIXME
+    //var el = document.querySelectorAll(".item");
+    //console.dir(el);
+    const heightOfElements = feed.items.map((item) => {
+      if (item.isCommentOpen) return item.comments.length * 90 + 40 + 170;
+      else return 170;
+    });
+      console.dir(heightOfElements);
     let x = this.props.menu.bookmarkFilterX - 24;
     if (x > 210) x = 210;
     if (x < 10) x = 10;
-    console.log("menu open = " + this.props.menu.isMenuOpen);
     return (
       <div id="container">
         <div id="header">
@@ -213,9 +233,9 @@ export default class Pasta extends Component {
         </div>
         <div id="content">
             <Infinite
-              elementHeight={140}
+              elementHeight={heightOfElements}
               containerHeight={this.innerHeight-40}
-              infiniteLoadBeginBottomOffset={this.innerHeight * 0.2}
+              infiniteLoadBeginBottomOffset={200}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}
               loadingSpinnerDelegate={this.elementInfiniteLoad()}
               isInfiniteLoading={feed.isInfiniteLoading}
