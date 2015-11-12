@@ -126,7 +126,7 @@ export default class Pasta extends Component {
     else if (feed.items.length === 0 && feed.isPageEnd) {
       items = <div>記事が見つかりませんでした。</div>; 
     } else {
-      items = feed.items.map((item) => {
+      items = feed.items.map((item, i) => {
         const favicon = FAVICON_URI + encodeURIComponent(item.link);
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
@@ -150,7 +150,7 @@ export default class Pasta extends Component {
           if (comments.length === 0) comments = <span>コメントがありませんでした</span>
         }
         return (
-          <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
+          <div id={this.props.menu.activeKeyword + i} className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />
             <a href={item.link} target="blank" className="item-title">{item.title}</a>
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
@@ -172,11 +172,15 @@ export default class Pasta extends Component {
     }
 
     // FIXME
-    //var el = document.querySelectorAll(".item");
-    //console.dir(el);
-    const heightOfElements = feed.items.map((item) => {
-      if (item.isCommentOpen) return item.comments.length * 90 + 40 + 205;
-      else return 205;
+    //const el = document.querySelectorAll(".item");
+    //console.dir(el[0]);
+    const heightOfElements = feed.items.map((item, i) => {
+      const el = document.getElementById(this.props.menu.activeKeyword + i);
+      if (el) return el.clientHeight;
+      else return 200;
+      //if (item.isCommentOpen) return item.comments.length * 90 + 40 + 205;
+      //else return 205;
+      // TODO : add state, close to inifinite item component
     });
       console.dir(heightOfElements);
     let x = this.props.menu.bookmarkFilterX - 24;

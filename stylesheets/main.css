@@ -6675,7 +6675,7 @@ div.comment-box-open {
   border-radius: 2px;
 }
 .item {
-  height: 185px;
+  min-height: 160px;
   max-width: 800px;
   padding: 20px 0 0 0;
   border-bottom: solid 1px #ddd;
@@ -6809,7 +6809,7 @@ div.comment-button:hover {
     height: 100%;
   }
   .item {
-    min-height: 100px;
+    min-height: 130px;
     max-width: 100%;
     padding: 10px 5px 10px 5px;
     border-bottom: solid 1px #ddd;
