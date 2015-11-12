@@ -6,7 +6,8 @@ function _createProps() {
     page : 0,
     items : [],
     isPageEnd : false,
-    isInfiniteLoading : false
+    isInfiniteLoading : false,
+    heightOfElements : [] 
   };
 }
 
@@ -123,6 +124,11 @@ export default function feed(state={}, action) {
       });
       return Object.assign({}, state);
 
+    case types.CHANGE_ELEMENT_HEIGHT :
+      //console.dir(action.heightOfElements);
+      //debugger;
+      state[action.keyword].heightOfElements = action.heightOfElements;
+      return Object.assign({}, state);
 
     default:
       return state;

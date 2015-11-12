@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Infinite from 'react-infinite';
 import Mui from 'material-ui';
+import _ from 'lodash';
 import {unescapeHTML} from '../lib/utils';
 
 const FAVICON_URI = 'http://cdn-ak.favicon.st-hatena.com/?url=';
@@ -89,6 +90,9 @@ export default class Pasta extends Component {
     this.props.toggleMenu();
   }
 
+  onChangeHeight(heightOfElements) {
+    this.props.changeElementHeight(heightOfElements, this.props.menu.activeKeyword);        
+  }
   getCategories(categories) {
     return categories.map((category) => {
       return (
@@ -134,7 +138,6 @@ export default class Pasta extends Component {
         let comments = [];
         if(item.comments !== undefined) {
           comments = item.comments.map(comment => {
-            // <span key={comment.user}>{comment.comment}</span>; 
             return (
               <div className="question_Box animated fadeIn" key={comment.user}>
                 <div className="question_image">
@@ -172,17 +175,17 @@ export default class Pasta extends Component {
     }
 
     // FIXME
-    //const el = document.querySelectorAll(".item");
-    //console.dir(el[0]);
     const heightOfElements = feed.items.map((item, i) => {
       const el = document.getElementById(this.props.menu.activeKeyword + i);
       if (el) return el.clientHeight;
       else return 200;
-      //if (item.isCommentOpen) return item.comments.length * 90 + 40 + 205;
-      //else return 205;
-      // TODO : add state, close to inifinite item component
     });
+
+    if (!_.isEqual(this.props.feed[this.props.menu.activeKeyword].heightOfElements, heightOfElements)) {
       console.dir(heightOfElements);
+      this.onChangeHeight.bind(this, heightOfElements);
+    }
+    console.dir(heightOfElements);
     let x = this.props.menu.bookmarkFilterX - 24;
     if (x > 210) x = 210;
     if (x < 10) x = 10;

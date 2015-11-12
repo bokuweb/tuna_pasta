@@ -141,6 +141,15 @@ export function closeComment(item, keyword) {
   });
 }
 
+export function changeElementHeight(heightOfElements, keyword) {
+  console.dir(heightOfElements);
+  return ({
+    type: types.CHANGE_ELEMENT_HEIGHT,
+    heightOfElements,
+    keyword
+  });
+}
+
 
 function _fetchFeed(dispatch, keyword, page = 0, threshold) {
   const id = /^id:(.*)/.exec(keyword.replace(/\s+/g, ""));
