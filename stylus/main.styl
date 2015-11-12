@@ -210,6 +210,17 @@ div.slider
     font-size 95%
     padding 0 0 3px
 
+div.comment-box
+  padding 20px 0 20px 0
+  transition  all .4s ease
+
+div.comment-box-close
+  transition  all .4s ease
+  display none
+
+div.comment-box-open
+  height auto
+
 #content > div::-webkit-scrollbar
   width 10px
   height 10px
@@ -219,7 +230,8 @@ div.slider
   border-radius 2px
 
 .item
-  min-height 140px
+  min-height 160px
+  //height 185px
   max-width 800px
   padding 20px 0 0 0
   border-bottom solid 1px #DDD
@@ -372,7 +384,7 @@ div.comment-button:hover
     height 100%
 
   .item
-    min-height 100px
+    min-height 130px
     max-width 100%
     padding 10px 5px 10px 5px
     border-bottom solid 1px #DDD
@@ -406,3 +418,73 @@ div.comment-button:hover
     max-height 100%
     width 100%
 
+
+/* question */
+.arrow_question
+    position relative
+    background #fff
+    padding 5px 10px
+    border-radius 10px
+    width calc(100% - 90px)
+    color #34495E
+    font-size 11px
+    
+.arrow_question
+    float right
+
+.arrow_question:after,
+.arrow_question:before
+    top: 50%
+    border: solid transparent
+    content: " "
+    height: 0
+    width: 0
+    position: absolute
+    pointer-events: none
+
+.arrow_question:after,
+.arrow_question:before
+  right 100% 
+.arrow_question:after 
+    border-color rgba(255, 255, 255, 0)
+    border-width 15px
+    margin-top -15px
+
+.arrow_question:after
+  border-right-color #fff
+.arrow_question:before
+    border-width 16px
+    margin-top -16px
+
+.question_image
+  float left
+  width 60px
+  padding 5px 0 0 0
+
+.question_image
+  height auto
+
+  img
+    border-radius 50%
+    width 32px
+    height 32px
+    margin-left 10px
+    border solid 2px #1ABC9C
+
+.question_Box 
+    margin-bottom: 25px
+    overflow: hidden
+
+
+.question_Box p{ line-height: 1.5}
+
+i.comment
+  font-size 14px
+  margin 2px 0 0 0
+
+span.comment-user
+  color #34495E
+  padding 5px 5px 0 5px
+  font-size 11px
+  display inline-block
+  width 40px

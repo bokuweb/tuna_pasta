@@ -92,14 +92,14 @@ export default function feed(state={}, action) {
       return Object.assign({}, state);
 
     case types.FETCHING_COMMENT :
-      state[action.keyword].items = _.map(state[action.keyword].items, (item) => {
+      state[action.keyword].items = _.map(state[action.keyword].items, item => {
         if (item.link === action.link) item.isCommentFetching = true;
         return item;
       });
       return Object.assign({}, state);
 
     case types.OPEN_COMMENT :
-      state[action.keyword].items = _.map(state[action.keyword].items, (item) => {
+      state[action.keyword].items = _.map(state[action.keyword].items, item => {
         if (item.link === action.link) {
           item.isCommentFetching = false;
           item.isCommentOpen = true;
@@ -110,7 +110,14 @@ export default function feed(state={}, action) {
       return Object.assign({}, state);
 
     case types.CLOSE_COMMENT :
-      state[action.keyword].items = _.map(state[action.keyword].items, (item) => {
+      state[action.keyword].items = _.map(state[action.keyword].items, item => {
+        if (item.link === action.link) item.isCommentOpen = false;
+        return item;
+      });
+      return Object.assign({}, state);
+
+    case types.CLOSE_COMMENT :
+      state[action.keyword].items = _.map(state[action.keyword].items, item => {
         if (item.link === action.link) item.isCommentOpen = false;
         return item;
       });

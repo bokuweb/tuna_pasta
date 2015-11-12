@@ -64,10 +64,10 @@ export default class Pasta extends Component {
   }
 
   onCommentClick(item) {
-    //if (item.isFavorited)
-    this.props.openComment(item, this.props.menu.activeKeyword);
-    //else
-    //  this.props.addFavorite(item);
+    if (item.isCommentOpen)
+      this.props.closeComment(item, this.props.menu.activeKeyword);
+    else
+      this.props.openComment(item, this.props.menu.activeKeyword);
   }
 
   onAdditionalKeywordSubmit(value) {
@@ -126,15 +126,31 @@ export default class Pasta extends Component {
     else if (feed.items.length === 0 && feed.isPageEnd) {
       items = <div>記事が見つかりませんでした。</div>; 
     } else {
-      items = feed.items.map((item) => {
+      items = feed.items.map((item, i) => {
         const favicon = FAVICON_URI + encodeURIComponent(item.link);
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
         const favoriteButtonClass = item.isFavorited? "favorite-button favorited" : "favorite-button";
         let comments = [];
-        if(item.comments !== undefined) comments = item.comments.map(comment => <span key={comment.user}>{comment.comment}</span>);
+        if(item.comments !== undefined) {
+          comments = item.comments.map(comment => {
+            // <span key={comment.user}>{comment.comment}</span>; 
+            return (
+              <div className="question_Box animated fadeIn" key={comment.user}>
+                <div className="question_image">
+                  <img className="comment-avatar" src={`http://n.hatena.com/${comment.user}/profile/image.gif?type=face&size=32`} />
+                  <span className="comment-user">{comment.user}</span>
+                </div>
+                <div className="arrow_question">
+                  <p>{comment.comment}</p>
+                </div>
+              </div>
+            );
+          });
+          if (comments.length === 0) comments = <span>コメントがありませんでした</span>
+        }
         return (
-          <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
+          <div id={this.props.menu.activeKeyword + i} className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />
             <a href={item.link} target="blank" className="item-title">{item.title}</a>
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
@@ -147,7 +163,7 @@ export default class Pasta extends Component {
             <div className="comment-button" onClick={this.onCommentClick.bind(this, item)}>
               <i className="fa fa-commenting" />コメント
             </div>
-            <div className="comment-box">
+            <div className={(item.isCommentOpen) ? "comment-box comment-box-open": "comment-box comment-box-close"}>
               {comments}
             </div>
           </div>
@@ -155,10 +171,21 @@ export default class Pasta extends Component {
       });
     }
 
+    // FIXME
+    //const el = document.querySelectorAll(".item");
+    //console.dir(el[0]);
+    const heightOfElements = feed.items.map((item, i) => {
+      const el = document.getElementById(this.props.menu.activeKeyword + i);
+      if (el) return el.clientHeight;
+      else return 200;
+      //if (item.isCommentOpen) return item.comments.length * 90 + 40 + 205;
+      //else return 205;
+      // TODO : add state, close to inifinite item component
+    });
+      console.dir(heightOfElements);
     let x = this.props.menu.bookmarkFilterX - 24;
     if (x > 210) x = 210;
     if (x < 10) x = 10;
-    console.log("menu open = " + this.props.menu.isMenuOpen);
     return (
       <div id="container">
         <div id="header">
@@ -210,9 +237,9 @@ export default class Pasta extends Component {
         </div>
         <div id="content">
             <Infinite
-              elementHeight={140}
+              elementHeight={heightOfElements}
               containerHeight={this.innerHeight-40}
-              infiniteLoadBeginBottomOffset={this.innerHeight * 0.2}
+              infiniteLoadBeginBottomOffset={100}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}
               loadingSpinnerDelegate={this.elementInfiniteLoad()}
               isInfiniteLoading={feed.isInfiniteLoading}
