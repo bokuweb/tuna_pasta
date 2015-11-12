@@ -136,7 +136,7 @@ export default class Pasta extends Component {
           comments = item.comments.map(comment => {
             // <span key={comment.user}>{comment.comment}</span>; 
             return (
-              <div className="question_Box animated fadeIn">
+              <div className="question_Box animated fadeIn" key={comment.user}>
                 <div className="question_image">
                   <img className="comment-avatar" src={`http://n.hatena.com/${comment.user}/profile/image.gif?type=face&size=32`} />
                   <span className="comment-user">{comment.user}</span>
@@ -175,8 +175,8 @@ export default class Pasta extends Component {
     //var el = document.querySelectorAll(".item");
     //console.dir(el);
     const heightOfElements = feed.items.map((item) => {
-      if (item.isCommentOpen) return item.comments.length * 90 + 40 + 170;
-      else return 170;
+      if (item.isCommentOpen) return item.comments.length * 90 + 40 + 205;
+      else return 205;
     });
       console.dir(heightOfElements);
     let x = this.props.menu.bookmarkFilterX - 24;
@@ -235,7 +235,7 @@ export default class Pasta extends Component {
             <Infinite
               elementHeight={heightOfElements}
               containerHeight={this.innerHeight-40}
-              infiniteLoadBeginBottomOffset={200}
+              infiniteLoadBeginBottomOffset={100}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}
               loadingSpinnerDelegate={this.elementInfiniteLoad()}
               isInfiniteLoading={feed.isInfiniteLoading}
