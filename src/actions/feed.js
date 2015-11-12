@@ -133,6 +133,15 @@ export function openComment(item, keyword) {
   }
 }
 
+export function closeComment(item, keyword) {
+  return ({
+    type: types.CLOSE_COMMENT,
+    keyword,
+    link: item.link
+  });
+}
+
+
 function _fetchFeed(dispatch, keyword, page = 0, threshold) {
   const id = /^id:(.*)/.exec(keyword.replace(/\s+/g, ""));
   if (id === null) {

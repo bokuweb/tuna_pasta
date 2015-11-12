@@ -64,10 +64,10 @@ export default class Pasta extends Component {
   }
 
   onCommentClick(item) {
-    //if (item.isFavorited)
-    this.props.openComment(item, this.props.menu.activeKeyword);
-    //else
-    //  this.props.addFavorite(item);
+    if (item.isCommentOpen)
+      this.props.closeComment(item, this.props.menu.activeKeyword);
+    else
+      this.props.openComment(item, this.props.menu.activeKeyword);
   }
 
   onAdditionalKeywordSubmit(value) {
@@ -132,7 +132,10 @@ export default class Pasta extends Component {
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
         const favoriteButtonClass = item.isFavorited? "favorite-button favorited" : "favorite-button";
         let comments = [];
-        if(item.comments !== undefined) comments = item.comments.map(comment => <span key={comment.user}>{comment.comment}</span>);
+        if(item.comments !== undefined) {
+          comments = item.comments.map(comment => <span key={comment.user}>{comment.comment}</span>);
+          if (comments.length === 0) comments = <span>コメントがありませんでした</span>
+        }
         return (
           <div className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
             <img className="favicon" src={favicon} alt="favicon" />
@@ -147,7 +150,7 @@ export default class Pasta extends Component {
             <div className="comment-button" onClick={this.onCommentClick.bind(this, item)}>
               <i className="fa fa-commenting" />コメント
             </div>
-            <div className="comment-box">
+            <div className={(item.isCommentOpen) ? "comment-box comment-box-open": "comment-box comment-box-close"}>
               {comments}
             </div>
           </div>
