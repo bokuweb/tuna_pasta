@@ -64,15 +64,25 @@ export default function feed(state={}, action) {
     case types.RECIEVE_ITEMS :
       const items = _getItemsUpdatedByFavorite(action.items, state.favorite.items);
       const keyword = action.keyword;
+      const heightOfElements = items.map(item => 200);
+      if (heightOfElements.length > 0) {
+        state.all.heightOfElements = state.all.heightOfElements.concat(heightOfElements);
+        state[keyword].heightOfElements = state[keyword].heightOfElements.concat(heightOfElements);
+      } else {
+        state.all.heightOfElements = 200;
+        state[keyword].heightOfElements = 200;
+      }
       state[keyword].isInfiniteLoading = false;
       if (items === null) {
         state[keyword].isPageEnd = false;
         return Object.assign({}, state);
       }
+
       state.all.items = state.all.items.concat(items);
       state[keyword].items = state[keyword].items.concat(items);
       state[keyword].isPageEnd = action.length === 0;
       state[keyword].page += 1;
+
       return Object.assign({}, state);
 
     case types.CLEAR_ITEMS :
@@ -127,6 +137,7 @@ export default function feed(state={}, action) {
     case types.CHANGE_ELEMENT_HEIGHT :
       //console.dir(action.heightOfElements);
       //debugger;
+      console.log("change reducer");
       state[action.keyword].heightOfElements = action.heightOfElements;
       return Object.assign({}, state);
 
