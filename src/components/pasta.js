@@ -29,6 +29,26 @@ export default class Pasta extends Component {
       if (isLoadingNeeded && this.props.menu.activeKeyword !== 'all') {
         this.props.fetchFeed(this.props.feed, this.props.menu);
       }
+      // FIXME
+      let heightOfElements = feed.items.map((item, i) => {
+        const el = document.getElementById(this.props.menu.activeKeyword + i);
+        if (el) return el.clientHeight;
+        else if (this.props.feed[this.props.menu.activeKeyword].heightOfElements[i])
+          return this.props.feed[this.props.menu.activeKeyword].heightOfElements[i];
+        else return 200;
+      });
+
+      if (feed.items.length === 0) heightOfElements = 200;
+
+      console.log("isequal");
+      console.dir(heightOfElements);
+      console.dir(this.props.feed[this.props.menu.activeKeyword].heightOfElements);
+      if (!_.isEqual(this.props.feed[this.props.menu.activeKeyword].heightOfElements, heightOfElements)) {
+        console.dir(heightOfElements);
+        console.log("change height");
+        this.onChangeHeight(heightOfElements);
+      }
+      console.dir(heightOfElements);
     }, 1000);
   }
 
@@ -174,18 +194,6 @@ export default class Pasta extends Component {
       });
     }
 
-    // FIXME
-    const heightOfElements = feed.items.map((item, i) => {
-      const el = document.getElementById(this.props.menu.activeKeyword + i);
-      if (el) return el.clientHeight;
-      else return 200;
-    });
-
-    if (!_.isEqual(this.props.feed[this.props.menu.activeKeyword].heightOfElements, heightOfElements)) {
-      console.dir(heightOfElements);
-      this.onChangeHeight.bind(this, heightOfElements);
-    }
-    console.dir(heightOfElements);
     let x = this.props.menu.bookmarkFilterX - 24;
     if (x > 210) x = 210;
     if (x < 10) x = 10;
@@ -240,7 +248,7 @@ export default class Pasta extends Component {
         </div>
         <div id="content">
             <Infinite
-              elementHeight={heightOfElements}
+              elementHeight={this.props.feed[this.props.menu.activeKeyword].heightOfElements}
               containerHeight={this.innerHeight-40}
               infiniteLoadBeginBottomOffset={100}
               onInfiniteLoad={this.onInfiniteLoad.bind(this)}

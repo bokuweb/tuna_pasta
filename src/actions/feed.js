@@ -143,6 +143,7 @@ export function closeComment(item, keyword) {
 
 export function changeElementHeight(heightOfElements, keyword) {
   console.dir(heightOfElements);
+  console.log("change action");
   return ({
     type: types.CHANGE_ELEMENT_HEIGHT,
     heightOfElements,
