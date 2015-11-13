@@ -59037,7 +59037,6 @@ function recieveItems(items, keyword, length) {
   return {
     type: types.RECIEVE_ITEMS,
     items: items,
-    length: length,
     keyword: keyword
   };
 }
@@ -59173,7 +59172,7 @@ function _fetchSearchFeed(dispatch, keyword, page, threshold) {
   var url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
   (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
     var items = getItems(feed);
-    dispatch(recieveItems(items, keyword, items.length));
+    dispatch(recieveItems(items, keyword));
   }, function (error) {
     return console.log(error);
   });
@@ -59428,13 +59427,7 @@ var Pasta = (function (_Component) {
       });
 
       if (feed.items.length === 0) heightOfElements = 200;
-
-      console.log("isequal");
-      console.dir(heightOfElements);
-      console.dir(_this.props.feed[_this.props.menu.activeKeyword].heightOfElements);
       if (!_lodash2['default'].isEqual(_this.props.feed[_this.props.menu.activeKeyword].heightOfElements, heightOfElements)) {
-        console.dir(heightOfElements);
-        console.log("change height");
         _this.onChangeHeight(heightOfElements);
       }
       console.dir(heightOfElements);
@@ -59652,6 +59645,7 @@ var Pasta = (function (_Component) {
         });
       }
 
+      console.log(this.props.feed[this.props.menu.activeKeyword].heightOfElements);
       var x = this.props.menu.bookmarkFilterX - 24;
       if (x > 210) x = 210;
       if (x < 10) x = 10;
@@ -59992,7 +59986,7 @@ function _createProps() {
     items: [],
     isPageEnd: false,
     isInfiniteLoading: false,
-    heightOfElements: []
+    heightOfElements: 200
   };
 }
 
@@ -60047,6 +60041,7 @@ function feed(state, action) {
         }
       }
 
+      console.log("ini");
       state.favorite.isPageEnd = true;
       state.favorite.isInfiniteLoading = false;
       state.isInitialized = true;
@@ -60077,23 +60072,18 @@ function feed(state, action) {
         return 200;
       });
       if (heightOfElements.length > 0) {
-        state.all.heightOfElements = state.all.heightOfElements.concat(heightOfElements);
-        state[keyword].heightOfElements = state[keyword].heightOfElements.concat(heightOfElements);
-      } else {
-        state.all.heightOfElements = 200;
-        state[keyword].heightOfElements = 200;
+        if (state.all.heightOfElements.length > 0) state.all.heightOfElements = state.all.heightOfElements.concat(heightOfElements);else state.all.heightOfElements = heightOfElements;
+        if (state[keyword].heightOfElements.length > 0) state[keyword].heightOfElements = state[keyword].heightOfElements.concat(heightOfElements);else state[keyword].heightOfElements = heightOfElements;
       }
       state[keyword].isInfiniteLoading = false;
       if (items === null) {
-        state[keyword].isPageEnd = false;
+        state[keyword].isPageEnd = true;
         return Object.assign({}, state);
       }
-
       state.all.items = state.all.items.concat(items);
       state[keyword].items = state[keyword].items.concat(items);
-      state[keyword].isPageEnd = action.length === 0;
+      state[keyword].isPageEnd = items.length < 40;
       state[keyword].page += 1;
-
       return Object.assign({}, state);
 
     case types.CLEAR_ITEMS:

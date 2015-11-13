@@ -59,7 +59,6 @@ function recieveItems(items, keyword, length) {
   return {
     type: types.RECIEVE_ITEMS,
     items,
-    length,
     keyword
   };
 }
@@ -165,7 +164,7 @@ function _fetchSearchFeed(dispatch, keyword, page = 0, threshold) {
   const url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
   fetchWithGoogleFeedApi(url).then((feed) => {
     const items = getItems(feed);
-    dispatch(recieveItems(items, keyword, items.length));
+    dispatch(recieveItems(items, keyword));
   }, (error) => console.log(error));
   dispatch(fetchingItems(keyword));
 }

@@ -39,13 +39,7 @@ export default class Pasta extends Component {
       });
 
       if (feed.items.length === 0) heightOfElements = 200;
-
-      console.log("isequal");
-      console.dir(heightOfElements);
-      console.dir(this.props.feed[this.props.menu.activeKeyword].heightOfElements);
       if (!_.isEqual(this.props.feed[this.props.menu.activeKeyword].heightOfElements, heightOfElements)) {
-        console.dir(heightOfElements);
-        console.log("change height");
         this.onChangeHeight(heightOfElements);
       }
       console.dir(heightOfElements);
@@ -194,6 +188,7 @@ export default class Pasta extends Component {
       });
     }
 
+    console.log(this.props.feed[this.props.menu.activeKeyword].heightOfElements);
     let x = this.props.menu.bookmarkFilterX - 24;
     if (x > 210) x = 210;
     if (x < 10) x = 10;

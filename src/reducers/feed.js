@@ -7,7 +7,7 @@ function _createProps() {
     items : [],
     isPageEnd : false,
     isInfiniteLoading : false,
-    heightOfElements : [] 
+    heightOfElements : 200
   };
 }
 
@@ -38,6 +38,7 @@ export default function feed(state={}, action) {
 
     case types.INITIALIZE_KEYWORD :
       for (let keyword of action.keywords) state[keyword.name] = _createProps();
+      console.log("ini");
       state.favorite.isPageEnd = true;
       state.favorite.isInfiniteLoading = false;
       state.isInitialized = true;
@@ -66,23 +67,24 @@ export default function feed(state={}, action) {
       const keyword = action.keyword;
       const heightOfElements = items.map(item => 200);
       if (heightOfElements.length > 0) {
-        state.all.heightOfElements = state.all.heightOfElements.concat(heightOfElements);
-        state[keyword].heightOfElements = state[keyword].heightOfElements.concat(heightOfElements);
-      } else {
-        state.all.heightOfElements = 200;
-        state[keyword].heightOfElements = 200;
+        if (state.all.heightOfElements.length > 0)
+          state.all.heightOfElements = state.all.heightOfElements.concat(heightOfElements);
+        else
+          state.all.heightOfElements = heightOfElements;
+        if (state[keyword].heightOfElements.length > 0)
+          state[keyword].heightOfElements = state[keyword].heightOfElements.concat(heightOfElements);
+        else
+          state[keyword].heightOfElements = heightOfElements;
       }
       state[keyword].isInfiniteLoading = false;
       if (items === null) {
-        state[keyword].isPageEnd = false;
+        state[keyword].isPageEnd = true;
         return Object.assign({}, state);
       }
-
       state.all.items = state.all.items.concat(items);
       state[keyword].items = state[keyword].items.concat(items);
-      state[keyword].isPageEnd = action.length === 0;
+      state[keyword].isPageEnd = items.length < 40;
       state[keyword].page += 1;
-
       return Object.assign({}, state);
 
     case types.CLEAR_ITEMS :
