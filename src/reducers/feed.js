@@ -88,7 +88,7 @@ export default function feed(state={}, action) {
       return Object.assign({}, state);
 
     case types.CLEAR_ITEMS :
-      state.all.items = [];
+      state.all = _createProps();
       for (let keyword of action.keywords) state[keyword.name] = _createProps();
       return Object.assign({}, state);
 

@@ -60087,7 +60087,7 @@ function feed(state, action) {
       return Object.assign({}, state);
 
     case types.CLEAR_ITEMS:
-      state.all.items = [];
+      state.all = _createProps();
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
       var _iteratorError2 = undefined;
