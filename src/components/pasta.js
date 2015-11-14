@@ -164,7 +164,8 @@ export default class Pasta extends Component {
             return (
               <div className="question_Box animated fadeIn" key={comment.user}>
                 <div className="question_image">
-                  <img className="comment-avatar" src={`http://n.hatena.com/${comment.user}/profile/image.gif?type=face&size=32`} />
+                <a href={`http://b.hatena.ne.jp/${comment.user}`} target="blank">
+                    <img className="comment-avatar" src={`http://n.hatena.com/${comment.user}/profile/image.gif?type=face&size=32`} />  </a>
                   <span className="comment-user">{comment.user}</span>
                 </div>
                 <div className="arrow_question">

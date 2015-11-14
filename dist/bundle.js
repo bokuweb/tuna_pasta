@@ -59580,7 +59580,12 @@ var Pasta = (function (_Component) {
                 _react2['default'].createElement(
                   'div',
                   { className: 'question_image' },
-                  _react2['default'].createElement('img', { className: 'comment-avatar', src: 'http://n.hatena.com/' + comment.user + '/profile/image.gif?type=face&size=32' }),
+                  _react2['default'].createElement(
+                    'a',
+                    { href: 'http://b.hatena.ne.jp/' + comment.user, target: 'blank' },
+                    _react2['default'].createElement('img', { className: 'comment-avatar', src: 'http://n.hatena.com/' + comment.user + '/profile/image.gif?type=face&size=32' }),
+                    '  '
+                  ),
                   _react2['default'].createElement(
                     'span',
                     { className: 'comment-user' },
