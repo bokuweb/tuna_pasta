@@ -59542,6 +59542,18 @@ var Pasta = (function (_Component) {
       });
     }
   }, {
+    key: 'getCommentButton',
+    value: function getCommentButton(item) {
+      var icon = item.isCommentFetching ? "fa fa-spinner fa-spin" : "fa fa-commenting";
+      var text = item.isCommentOpen ? "コメントを閉じる" : "コメントを見る";
+      return _react2['default'].createElement(
+        'div',
+        { className: 'comment-button', onClick: this.onCommentClick.bind(this, item) },
+        _react2['default'].createElement('i', { className: icon }),
+        text
+      );
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this4 = this;
@@ -59630,12 +59642,7 @@ var Pasta = (function (_Component) {
               _react2['default'].createElement('i', { className: 'fa fa-heart' }),
               'お気に入り'
             ),
-            _react2['default'].createElement(
-              'div',
-              { className: 'comment-button', onClick: _this4.onCommentClick.bind(_this4, item) },
-              _react2['default'].createElement('i', { className: 'fa fa-commenting' }),
-              'コメント'
-            ),
+            _this4.getCommentButton(item),
             _react2['default'].createElement(
               'div',
               { className: item.isCommentOpen ? "comment-box comment-box-open" : "comment-box comment-box-close" },
@@ -60041,7 +60048,6 @@ function feed(state, action) {
         }
       }
 
-      console.log("ini");
       state.favorite.isPageEnd = true;
       state.favorite.isInfiniteLoading = false;
       state.isInitialized = true;
@@ -60159,9 +60165,6 @@ function feed(state, action) {
       return Object.assign({}, state);
 
     case types.CHANGE_ELEMENT_HEIGHT:
-      //console.dir(action.heightOfElements);
-      //debugger;
-      console.log("change reducer");
       state[action.keyword].heightOfElements = action.heightOfElements;
       return Object.assign({}, state);
 

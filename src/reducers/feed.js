@@ -38,7 +38,6 @@ export default function feed(state={}, action) {
 
     case types.INITIALIZE_KEYWORD :
       for (let keyword of action.keywords) state[keyword.name] = _createProps();
-      console.log("ini");
       state.favorite.isPageEnd = true;
       state.favorite.isInfiniteLoading = false;
       state.isInitialized = true;
@@ -137,9 +136,6 @@ export default function feed(state={}, action) {
       return Object.assign({}, state);
 
     case types.CHANGE_ELEMENT_HEIGHT :
-      //console.dir(action.heightOfElements);
-      //debugger;
-      console.log("change reducer");
       state[action.keyword].heightOfElements = action.heightOfElements;
       return Object.assign({}, state);
 

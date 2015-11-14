@@ -135,6 +135,16 @@ export default class Pasta extends Component {
     });
   }
 
+  getCommentButton(item) {
+    const icon = item.isCommentFetching? "fa fa-spinner fa-spin" : "fa fa-commenting";
+    const text = item.isCommentOpen? "コメントを閉じる" : "コメントを見る";
+    return (
+      <div className="comment-button" onClick={this.onCommentClick.bind(this, item)}>
+        <i className={icon} />{text}
+      </div>
+    );
+  }
+
   render() {
     if (!this.props.feed.isInitialized) return <div className="rect-spinner"></div>;
     const feed = this.props.feed[this.props.menu.activeKeyword];
@@ -177,9 +187,7 @@ export default class Pasta extends Component {
             <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>
               <i className="fa fa-heart" />お気に入り
             </div>
-            <div className="comment-button" onClick={this.onCommentClick.bind(this, item)}>
-              <i className="fa fa-commenting" />コメント
-            </div>
+            {this.getCommentButton(item)}
             <div className={(item.isCommentOpen) ? "comment-box comment-box-open": "comment-box comment-box-close"}>
               {comments}
             </div>
