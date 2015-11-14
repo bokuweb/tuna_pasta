@@ -6920,6 +6920,9 @@ span.comment-user {
   display: inline-block;
   width: 40px;
 }
+span.comment-notfound {
+  font-size: 12px;
+}
 @-moz-keyframes rect-sk-rotateplane {
   0% {
     transform: perspective(120px) rotateX(0deg) rotateY(0deg);

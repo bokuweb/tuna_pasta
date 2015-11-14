@@ -174,7 +174,7 @@ export default class Pasta extends Component {
               </div>
             );
           });
-          if (comments.length === 0) comments = <span>コメントがありませんでした</span>
+          if (comments.length === 0) comments = <span className="comment-notfound">コメントがありませんでした</span>
         }
         return (
           <div id={this.props.menu.activeKeyword + i} className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
