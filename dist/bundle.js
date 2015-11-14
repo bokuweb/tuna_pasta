@@ -58970,15 +58970,8 @@ var db = new _libDb2['default']('pastaDB');
 function getItems(feed) {
   console.log('---------- fetch feed -----------');
   console.dir(feed);
-  if (feed.responseData === null) {
-    console.log("feed null");
-    return;
-  }
-
-  if (feed.responseData.feed === undefined) {
-    console.log("feed none");
-    return [];
-  }
+  if (feed.responseData === null) return;
+  if (feed.responseData.feed === undefined) return [];
   return feed.responseData.feed.entries;
 }
 
@@ -58997,7 +58990,6 @@ function initialize() {
         try {
           for (var _iterator = keywords[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var keyword = _step.value;
-
             _fetchFeed(dispatch, keyword.name, 0, 1);
           }
         } catch (err) {
@@ -59017,10 +59009,7 @@ function initialize() {
       }
     });
     db.getArray('favorites').then(function (favorites) {
-      dispatch({
-        type: types.INITIALIZE_FAVORITE,
-        favorites: favorites
-      });
+      dispatch({ type: types.INITIALIZE_FAVORITE, favorites: favorites });
     });
     dispatch({ type: types.INITIALIZING });
   };
@@ -59037,7 +59026,8 @@ function recieveItems(items, keyword, length) {
   return {
     type: types.RECIEVE_ITEMS,
     items: items,
-    keyword: keyword
+    keyword: keyword,
+    length: length
   };
 }
 
@@ -59172,7 +59162,7 @@ function _fetchSearchFeed(dispatch, keyword, page, threshold) {
   var url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
   (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
     var items = getItems(feed);
-    dispatch(recieveItems(items, keyword));
+    dispatch(recieveItems(items, keyword, items.length));
   }, function (error) {
     return console.log(error);
   });
@@ -59430,7 +59420,6 @@ var Pasta = (function (_Component) {
       if (!_lodash2['default'].isEqual(_this.props.feed[_this.props.menu.activeKeyword].heightOfElements, heightOfElements)) {
         _this.onChangeHeight(heightOfElements);
       }
-      console.dir(heightOfElements);
     }, 1000);
   }
 
@@ -59606,13 +59595,13 @@ var Pasta = (function (_Component) {
             });
             if (comments.length === 0) comments = _react2['default'].createElement(
               'span',
-              null,
+              { className: 'comment-notfound' },
               'コメントがありませんでした'
             );
           }
           return _react2['default'].createElement(
             'div',
-            { id: _this4.props.menu.activeKeyword + i, className: 'item animated fadeIn', key: item.link + _this4.props.menu.activeKeyword },
+            { id: _this4.props.menu.activeKeyword + i, className: 'item animated fadeIn', key: item.link + _this4.props.menu.activeKeyword + i },
             _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
             _react2['default'].createElement(
               'a',
@@ -59652,7 +59641,6 @@ var Pasta = (function (_Component) {
         });
       }
 
-      console.log(this.props.feed[this.props.menu.activeKeyword].heightOfElements);
       var x = this.props.menu.bookmarkFilterX - 24;
       if (x > 210) x = 210;
       if (x < 10) x = 10;
@@ -60088,7 +60076,7 @@ function feed(state, action) {
       }
       state.all.items = state.all.items.concat(items);
       state[keyword].items = state[keyword].items.concat(items);
-      state[keyword].isPageEnd = items.length < 40;
+      state[keyword].isPageEnd = action.length === 0;
       state[keyword].page += 1;
       return Object.assign({}, state);
 

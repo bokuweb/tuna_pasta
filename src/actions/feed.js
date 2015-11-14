@@ -13,15 +13,8 @@ const db = new DbManager('pastaDB');
 function getItems(feed) {
     console.log('---------- fetch feed -----------');
     console.dir(feed);
-    if (feed.responseData === null) {
-        console.log("feed null");
-        return;
-    }
-
-    if (feed.responseData.feed === undefined) {
-        console.log("feed none");
-        return [];
-    }
+    if (feed.responseData === null)  return;
+    if (feed.responseData.feed === undefined) return [];
     return feed.responseData.feed.entries;
 }
 
@@ -33,16 +26,11 @@ export function initialize() {
     db.getArray('keywords').then((keywords) => {
       dispatch({type: types.INITIALIZE_KEYWORD, keywords});
       if (keywords.length !== 0) {
-        for (let keyword of keywords) {
-          _fetchFeed(dispatch, keyword.name, 0, 1);
-        }
+        for (let keyword of keywords)  _fetchFeed(dispatch, keyword.name, 0, 1);
       }
     });
     db.getArray('favorites').then((favorites) => {
-      dispatch({
-        type: types.INITIALIZE_FAVORITE,
-        favorites
-      });
+      dispatch({type: types.INITIALIZE_FAVORITE, favorites });
     });
     dispatch({type: types.INITIALIZING});
   }
@@ -59,7 +47,8 @@ function recieveItems(items, keyword, length) {
   return {
     type: types.RECIEVE_ITEMS,
     items,
-    keyword
+    keyword,
+    length
   };
 }
 
@@ -164,7 +153,7 @@ function _fetchSearchFeed(dispatch, keyword, page = 0, threshold) {
   const url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
   fetchWithGoogleFeedApi(url).then((feed) => {
     const items = getItems(feed);
-    dispatch(recieveItems(items, keyword));
+    dispatch(recieveItems(items, keyword, items.length));
   }, (error) => console.log(error));
   dispatch(fetchingItems(keyword));
 }

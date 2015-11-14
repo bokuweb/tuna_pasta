@@ -42,7 +42,6 @@ export default class Pasta extends Component {
       if (!_.isEqual(this.props.feed[this.props.menu.activeKeyword].heightOfElements, heightOfElements)) {
         this.onChangeHeight(heightOfElements);
       }
-      console.dir(heightOfElements);
     }, 1000);
   }
 
@@ -177,7 +176,7 @@ export default class Pasta extends Component {
           if (comments.length === 0) comments = <span className="comment-notfound">コメントがありませんでした</span>
         }
         return (
-          <div id={this.props.menu.activeKeyword + i} className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
+          <div id={this.props.menu.activeKeyword + i} className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword + i}>
             <img className="favicon" src={favicon} alt="favicon" />
             <a href={item.link} target="blank" className="item-title">{item.title}</a>
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
@@ -196,7 +195,6 @@ export default class Pasta extends Component {
       });
     }
 
-    console.log(this.props.feed[this.props.menu.activeKeyword].heightOfElements);
     let x = this.props.menu.bookmarkFilterX - 24;
     if (x > 210) x = 210;
     if (x < 10) x = 10;

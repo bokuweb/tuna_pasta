@@ -82,7 +82,7 @@ export default function feed(state={}, action) {
       }
       state.all.items = state.all.items.concat(items);
       state[keyword].items = state[keyword].items.concat(items);
-      state[keyword].isPageEnd = items.length < 40;
+      state[keyword].isPageEnd = action.length === 0;
       state[keyword].page += 1;
       return Object.assign({}, state);
 
