@@ -29,6 +29,7 @@ function _updateAllByFavorite(state, favorites) {
 }
 
 export default function feed(state={}, action) {
+  let elementHeight;
   switch(action.type){
     case types.INITIALIZING :
       state.isInitialized = false;
@@ -48,13 +49,23 @@ export default function feed(state={}, action) {
       return Object.assign({}, state);
 
     case types.ADD_FAVORITE :
-      state.favorite.items = action.favorites;
-      _updateAllByFavorite(state, action.favorites);
+    if (action.item !== null) state.favorite.items.push(action.item);
+    if (state.favorite.heightOfElements.length > 0)
+      state.favorite.heightOfElements.push(200);
+    else
+      state.favorite.heightOfElements = 200;
+      _updateAllByFavorite(state, state.favorite.items);
       return Object.assign({}, state);
 
-    case types.REMOVE_FAVORITE :
-      state.favorite.items = action.favorites;
-      _updateAllByFavorite(state, action.favorites);
+  case types.REMOVE_FAVORITE :
+      state.favorite.items.map((item, i) => {
+        if (action.item.link === item.link) {
+          state.favorite.items.splice( i , 1);
+          if (state.favorite.heightOfElements.length > 0)
+            state.favorite.heightOfElements.splice( i , 1);
+        }
+      });
+      _updateAllByFavorite(state, state.favorite.items);
       return Object.assign({}, state);
 
     case types.FILTER_FAVORITE_ITEMS:

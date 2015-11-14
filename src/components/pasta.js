@@ -72,9 +72,9 @@ export default class Pasta extends Component {
 
   onFavoriteClick(item) {
     if (item.isFavorited)
-      this.props.removeFavorite(item);
+      this.props.removeFavorite(item, this.props.menu.bookmarkFilter);
     else
-      this.props.addFavorite(item);
+      this.props.addFavorite(item, this.props.menu.bookmarkFilter);
   }
 
   onCommentClick(item) {
@@ -241,7 +241,6 @@ export default class Pasta extends Component {
               <li className={this.props.menu.activeKeyword === 'favorite' ? 'selected' : ''}
                 onClick={this.onSelectKeyword.bind(this, 'favorite')}>
                 <div><i className={"fa fa-heart"} />お気に入り</div>
-                <span className="favorite-number">{this.props.feed.favorite.items.length}</span>
               </li>
               {this.getKeywordList()}
             </ul>

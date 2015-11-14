@@ -88,26 +88,32 @@ export function fetchFeed(feed, menu) {
   }
 }
 
-export function addFavorite(item) {
+export function addFavorite(item, threshold) {
   return dispatch => {
     item.isFavorited = true;
     db.put('favorites', item).then(() => {
       db.getArray('favorites').then((favorites) => {
-        dispatch({type: types.ADD_FAVORITE, favorites});
+        _getBookmarkCount(favorites).then((bookmarks) => {
+          const filteredItem = (bookmarks[item.link] >= threshold)? item : null;
+          dispatch({type: types.ADD_FAVORITE,  item:filteredItem});
+        });
       });
     });
   }
 }
 
-export function removeFavorite(item) {
+export function removeFavorite(item, threshold) {
   return dispatch => {
     db.remove('favorites', item.link).then(() => {
-      db.getArray('favorites').then((favorites) => {
-        dispatch({type: types.REMOVE_FAVORITE, favorites});
-      });
+      //db.getArray('favorites').then((favorites) => {
+        //_getBookmarkCount(favorites).then((bookmarks) => {
+        //  const filteredItems = _.filter(favorites, (item) => bookmarks[item.link] >= threshold);
+          dispatch({type: types.REMOVE_FAVORITE,  item});
+        //});
     });
   }
 }
+
 
 export function openComment(item, keyword) {
   const url = HATENA_ENTRY_URL + 'url=' + encodeURIComponent(item.link);

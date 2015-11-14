@@ -59090,23 +59090,28 @@ function fetchFeed(feed, menu) {
   };
 }
 
-function addFavorite(item) {
+function addFavorite(item, threshold) {
   return function (dispatch) {
     item.isFavorited = true;
     db.put('favorites', item).then(function () {
       db.getArray('favorites').then(function (favorites) {
-        dispatch({ type: types.ADD_FAVORITE, favorites: favorites });
+        _getBookmarkCount(favorites).then(function (bookmarks) {
+          var filteredItem = bookmarks[item.link] >= threshold ? item : null;
+          dispatch({ type: types.ADD_FAVORITE, item: filteredItem });
+        });
       });
     });
   };
 }
 
-function removeFavorite(item) {
+function removeFavorite(item, threshold) {
   return function (dispatch) {
     db.remove('favorites', item.link).then(function () {
-      db.getArray('favorites').then(function (favorites) {
-        dispatch({ type: types.REMOVE_FAVORITE, favorites: favorites });
-      });
+      //db.getArray('favorites').then((favorites) => {
+      //_getBookmarkCount(favorites).then((bookmarks) => {
+      //  const filteredItems = _.filter(favorites, (item) => bookmarks[item.link] >= threshold);
+      dispatch({ type: types.REMOVE_FAVORITE, item: item });
+      //});
     });
   };
 }
@@ -59456,7 +59461,7 @@ var Pasta = (function (_Component) {
   }, {
     key: 'onFavoriteClick',
     value: function onFavoriteClick(item) {
-      if (item.isFavorited) this.props.removeFavorite(item);else this.props.addFavorite(item);
+      if (item.isFavorited) this.props.removeFavorite(item, this.props.menu.bookmarkFilter);else this.props.addFavorite(item, this.props.menu.bookmarkFilter);
     }
   }, {
     key: 'onCommentClick',
@@ -59714,11 +59719,6 @@ var Pasta = (function (_Component) {
                   null,
                   _react2['default'].createElement('i', { className: "fa fa-heart" }),
                   'お気に入り'
-                ),
-                _react2['default'].createElement(
-                  'span',
-                  { className: 'favorite-number' },
-                  this.props.feed.favorite.items.length
                 )
               ),
               this.getKeywordList()
@@ -60004,6 +60004,7 @@ function _updateAllByFavorite(state, favorites) {
 function feed(state, action) {
   if (state === undefined) state = {};
 
+  var elementHeight = undefined;
   switch (action.type) {
     case types.INITIALIZING:
       state.isInitialized = false;
@@ -60046,13 +60047,19 @@ function feed(state, action) {
       return Object.assign({}, state);
 
     case types.ADD_FAVORITE:
-      state.favorite.items = action.favorites;
-      _updateAllByFavorite(state, action.favorites);
+      if (action.item !== null) state.favorite.items.push(action.item);
+      if (state.favorite.heightOfElements.length > 0) state.favorite.heightOfElements.push(200);else state.favorite.heightOfElements = 200;
+      _updateAllByFavorite(state, state.favorite.items);
       return Object.assign({}, state);
 
     case types.REMOVE_FAVORITE:
-      state.favorite.items = action.favorites;
-      _updateAllByFavorite(state, action.favorites);
+      state.favorite.items.map(function (item, i) {
+        if (action.item.link === item.link) {
+          state.favorite.items.splice(i, 1);
+          if (state.favorite.heightOfElements.length > 0) state.favorite.heightOfElements.splice(i, 1);
+        }
+      });
+      _updateAllByFavorite(state, state.favorite.items);
       return Object.assign({}, state);
 
     case types.FILTER_FAVORITE_ITEMS:
