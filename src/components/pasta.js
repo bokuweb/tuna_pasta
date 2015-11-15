@@ -39,16 +39,9 @@ export default class Pasta extends Component {
       });
 
       if (feed.items.length === 0) heightOfElements = 200;
-
-      console.log("isequal");
-      console.dir(heightOfElements);
-      console.dir(this.props.feed[this.props.menu.activeKeyword].heightOfElements);
       if (!_.isEqual(this.props.feed[this.props.menu.activeKeyword].heightOfElements, heightOfElements)) {
-        console.dir(heightOfElements);
-        console.log("change height");
         this.onChangeHeight(heightOfElements);
       }
-      console.dir(heightOfElements);
     }, 1000);
   }
 
@@ -79,9 +72,9 @@ export default class Pasta extends Component {
 
   onFavoriteClick(item) {
     if (item.isFavorited)
-      this.props.removeFavorite(item);
+      this.props.removeFavorite(item, this.props.menu.bookmarkFilter);
     else
-      this.props.addFavorite(item);
+      this.props.addFavorite(item, this.props.menu.bookmarkFilter);
   }
 
   onCommentClick(item) {
@@ -141,6 +134,16 @@ export default class Pasta extends Component {
     });
   }
 
+  getCommentButton(item) {
+    const icon = item.isCommentFetching? "fa fa-spinner fa-spin" : "fa fa-commenting";
+    const text = item.isCommentOpen? "コメントを閉じる" : "コメントを見る";
+    return (
+      <div className="comment-button" onClick={this.onCommentClick.bind(this, item)}>
+        <i className={icon} />{text}
+      </div>
+    );
+  }
+
   render() {
     if (!this.props.feed.isInitialized) return <div className="rect-spinner"></div>;
     const feed = this.props.feed[this.props.menu.activeKeyword];
@@ -161,7 +164,8 @@ export default class Pasta extends Component {
             return (
               <div className="question_Box animated fadeIn" key={comment.user}>
                 <div className="question_image">
-                  <img className="comment-avatar" src={`http://n.hatena.com/${comment.user}/profile/image.gif?type=face&size=32`} />
+                <a href={`http://b.hatena.ne.jp/${comment.user}`} target="blank">
+                    <img className="comment-avatar" src={`http://n.hatena.com/${comment.user}/profile/image.gif?type=face&size=32`} />  </a>
                   <span className="comment-user">{comment.user}</span>
                 </div>
                 <div className="arrow_question">
@@ -170,10 +174,10 @@ export default class Pasta extends Component {
               </div>
             );
           });
-          if (comments.length === 0) comments = <span>コメントがありませんでした</span>
+          if (comments.length === 0) comments = <span className="comment-notfound">コメントがありませんでした</span>
         }
         return (
-          <div id={this.props.menu.activeKeyword + i} className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword}>
+          <div id={this.props.menu.activeKeyword + i} className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword + i}>
             <img className="favicon" src={favicon} alt="favicon" />
             <a href={item.link} target="blank" className="item-title">{item.title}</a>
             <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
@@ -183,9 +187,7 @@ export default class Pasta extends Component {
             <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>
               <i className="fa fa-heart" />お気に入り
             </div>
-            <div className="comment-button" onClick={this.onCommentClick.bind(this, item)}>
-              <i className="fa fa-commenting" />コメント
-            </div>
+            {this.getCommentButton(item)}
             <div className={(item.isCommentOpen) ? "comment-box comment-box-open": "comment-box comment-box-close"}>
               {comments}
             </div>
@@ -240,7 +242,6 @@ export default class Pasta extends Component {
               <li className={this.props.menu.activeKeyword === 'favorite' ? 'selected' : ''}
                 onClick={this.onSelectKeyword.bind(this, 'favorite')}>
                 <div><i className={"fa fa-heart"} />お気に入り</div>
-                <span className="favorite-number">{this.props.feed.favorite.items.length}</span>
               </li>
               {this.getKeywordList()}
             </ul>

@@ -58970,15 +58970,8 @@ var db = new _libDb2['default']('pastaDB');
 function getItems(feed) {
   console.log('---------- fetch feed -----------');
   console.dir(feed);
-  if (feed.responseData === null) {
-    console.log("feed null");
-    return;
-  }
-
-  if (feed.responseData.feed === undefined) {
-    console.log("feed none");
-    return [];
-  }
+  if (feed.responseData === null) return;
+  if (feed.responseData.feed === undefined) return [];
   return feed.responseData.feed.entries;
 }
 
@@ -58997,7 +58990,6 @@ function initialize() {
         try {
           for (var _iterator = keywords[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var keyword = _step.value;
-
             _fetchFeed(dispatch, keyword.name, 0, 1);
           }
         } catch (err) {
@@ -59017,10 +59009,7 @@ function initialize() {
       }
     });
     db.getArray('favorites').then(function (favorites) {
-      dispatch({
-        type: types.INITIALIZE_FAVORITE,
-        favorites: favorites
-      });
+      dispatch({ type: types.INITIALIZE_FAVORITE, favorites: favorites });
     });
     dispatch({ type: types.INITIALIZING });
   };
@@ -59037,8 +59026,8 @@ function recieveItems(items, keyword, length) {
   return {
     type: types.RECIEVE_ITEMS,
     items: items,
-    length: length,
-    keyword: keyword
+    keyword: keyword,
+    length: length
   };
 }
 
@@ -59101,23 +59090,28 @@ function fetchFeed(feed, menu) {
   };
 }
 
-function addFavorite(item) {
+function addFavorite(item, threshold) {
   return function (dispatch) {
     item.isFavorited = true;
     db.put('favorites', item).then(function () {
       db.getArray('favorites').then(function (favorites) {
-        dispatch({ type: types.ADD_FAVORITE, favorites: favorites });
+        _getBookmarkCount(favorites).then(function (bookmarks) {
+          var filteredItem = bookmarks[item.link] >= threshold ? item : null;
+          dispatch({ type: types.ADD_FAVORITE, item: filteredItem });
+        });
       });
     });
   };
 }
 
-function removeFavorite(item) {
+function removeFavorite(item, threshold) {
   return function (dispatch) {
     db.remove('favorites', item.link).then(function () {
-      db.getArray('favorites').then(function (favorites) {
-        dispatch({ type: types.REMOVE_FAVORITE, favorites: favorites });
-      });
+      //db.getArray('favorites').then((favorites) => {
+      //_getBookmarkCount(favorites).then((bookmarks) => {
+      //  const filteredItems = _.filter(favorites, (item) => bookmarks[item.link] >= threshold);
+      dispatch({ type: types.REMOVE_FAVORITE, item: item });
+      //});
     });
   };
 }
@@ -59428,16 +59422,9 @@ var Pasta = (function (_Component) {
       });
 
       if (feed.items.length === 0) heightOfElements = 200;
-
-      console.log("isequal");
-      console.dir(heightOfElements);
-      console.dir(_this.props.feed[_this.props.menu.activeKeyword].heightOfElements);
       if (!_lodash2['default'].isEqual(_this.props.feed[_this.props.menu.activeKeyword].heightOfElements, heightOfElements)) {
-        console.dir(heightOfElements);
-        console.log("change height");
         _this.onChangeHeight(heightOfElements);
       }
-      console.dir(heightOfElements);
     }, 1000);
   }
 
@@ -59474,7 +59461,7 @@ var Pasta = (function (_Component) {
   }, {
     key: 'onFavoriteClick',
     value: function onFavoriteClick(item) {
-      if (item.isFavorited) this.props.removeFavorite(item);else this.props.addFavorite(item);
+      if (item.isFavorited) this.props.removeFavorite(item, this.props.menu.bookmarkFilter);else this.props.addFavorite(item, this.props.menu.bookmarkFilter);
     }
   }, {
     key: 'onCommentClick',
@@ -59549,6 +59536,18 @@ var Pasta = (function (_Component) {
       });
     }
   }, {
+    key: 'getCommentButton',
+    value: function getCommentButton(item) {
+      var icon = item.isCommentFetching ? "fa fa-spinner fa-spin" : "fa fa-commenting";
+      var text = item.isCommentOpen ? "コメントを閉じる" : "コメントを見る";
+      return _react2['default'].createElement(
+        'div',
+        { className: 'comment-button', onClick: this.onCommentClick.bind(this, item) },
+        _react2['default'].createElement('i', { className: icon }),
+        text
+      );
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this4 = this;
@@ -59581,7 +59580,12 @@ var Pasta = (function (_Component) {
                 _react2['default'].createElement(
                   'div',
                   { className: 'question_image' },
-                  _react2['default'].createElement('img', { className: 'comment-avatar', src: 'http://n.hatena.com/' + comment.user + '/profile/image.gif?type=face&size=32' }),
+                  _react2['default'].createElement(
+                    'a',
+                    { href: 'http://b.hatena.ne.jp/' + comment.user, target: 'blank' },
+                    _react2['default'].createElement('img', { className: 'comment-avatar', src: 'http://n.hatena.com/' + comment.user + '/profile/image.gif?type=face&size=32' }),
+                    '  '
+                  ),
                   _react2['default'].createElement(
                     'span',
                     { className: 'comment-user' },
@@ -59601,13 +59605,13 @@ var Pasta = (function (_Component) {
             });
             if (comments.length === 0) comments = _react2['default'].createElement(
               'span',
-              null,
+              { className: 'comment-notfound' },
               'コメントがありませんでした'
             );
           }
           return _react2['default'].createElement(
             'div',
-            { id: _this4.props.menu.activeKeyword + i, className: 'item animated fadeIn', key: item.link + _this4.props.menu.activeKeyword },
+            { id: _this4.props.menu.activeKeyword + i, className: 'item animated fadeIn', key: item.link + _this4.props.menu.activeKeyword + i },
             _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
             _react2['default'].createElement(
               'a',
@@ -59637,12 +59641,7 @@ var Pasta = (function (_Component) {
               _react2['default'].createElement('i', { className: 'fa fa-heart' }),
               'お気に入り'
             ),
-            _react2['default'].createElement(
-              'div',
-              { className: 'comment-button', onClick: _this4.onCommentClick.bind(_this4, item) },
-              _react2['default'].createElement('i', { className: 'fa fa-commenting' }),
-              'コメント'
-            ),
+            _this4.getCommentButton(item),
             _react2['default'].createElement(
               'div',
               { className: item.isCommentOpen ? "comment-box comment-box-open" : "comment-box comment-box-close" },
@@ -59725,11 +59724,6 @@ var Pasta = (function (_Component) {
                   null,
                   _react2['default'].createElement('i', { className: "fa fa-heart" }),
                   'お気に入り'
-                ),
-                _react2['default'].createElement(
-                  'span',
-                  { className: 'favorite-number' },
-                  this.props.feed.favorite.items.length
                 )
               ),
               this.getKeywordList()
@@ -59992,7 +59986,7 @@ function _createProps() {
     items: [],
     isPageEnd: false,
     isInfiniteLoading: false,
-    heightOfElements: []
+    heightOfElements: 200
   };
 }
 
@@ -60015,6 +60009,7 @@ function _updateAllByFavorite(state, favorites) {
 function feed(state, action) {
   if (state === undefined) state = {};
 
+  var elementHeight = undefined;
   switch (action.type) {
     case types.INITIALIZING:
       state.isInitialized = false;
@@ -60057,13 +60052,19 @@ function feed(state, action) {
       return Object.assign({}, state);
 
     case types.ADD_FAVORITE:
-      state.favorite.items = action.favorites;
-      _updateAllByFavorite(state, action.favorites);
+      if (action.item !== null) state.favorite.items.push(action.item);
+      if (state.favorite.heightOfElements.length > 0) state.favorite.heightOfElements.push(200);else state.favorite.heightOfElements = 200;
+      _updateAllByFavorite(state, state.favorite.items);
       return Object.assign({}, state);
 
     case types.REMOVE_FAVORITE:
-      state.favorite.items = action.favorites;
-      _updateAllByFavorite(state, action.favorites);
+      state.favorite.items.map(function (item, i) {
+        if (action.item.link === item.link) {
+          state.favorite.items.splice(i, 1);
+          if (state.favorite.heightOfElements.length > 0) state.favorite.heightOfElements.splice(i, 1);
+        }
+      });
+      _updateAllByFavorite(state, state.favorite.items);
       return Object.assign({}, state);
 
     case types.FILTER_FAVORITE_ITEMS:
@@ -60077,27 +60078,22 @@ function feed(state, action) {
         return 200;
       });
       if (heightOfElements.length > 0) {
-        state.all.heightOfElements = state.all.heightOfElements.concat(heightOfElements);
-        state[keyword].heightOfElements = state[keyword].heightOfElements.concat(heightOfElements);
-      } else {
-        state.all.heightOfElements = 200;
-        state[keyword].heightOfElements = 200;
+        if (state.all.heightOfElements.length > 0) state.all.heightOfElements = state.all.heightOfElements.concat(heightOfElements);else state.all.heightOfElements = heightOfElements;
+        if (state[keyword].heightOfElements.length > 0) state[keyword].heightOfElements = state[keyword].heightOfElements.concat(heightOfElements);else state[keyword].heightOfElements = heightOfElements;
       }
       state[keyword].isInfiniteLoading = false;
       if (items === null) {
-        state[keyword].isPageEnd = false;
+        state[keyword].isPageEnd = true;
         return Object.assign({}, state);
       }
-
       state.all.items = state.all.items.concat(items);
       state[keyword].items = state[keyword].items.concat(items);
       state[keyword].isPageEnd = action.length === 0;
       state[keyword].page += 1;
-
       return Object.assign({}, state);
 
     case types.CLEAR_ITEMS:
-      state.all.items = [];
+      state.all = _createProps();
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
       var _iteratorError2 = undefined;
@@ -60169,9 +60165,6 @@ function feed(state, action) {
       return Object.assign({}, state);
 
     case types.CHANGE_ELEMENT_HEIGHT:
-      //console.dir(action.heightOfElements);
-      //debugger;
-      console.log("change reducer");
       state[action.keyword].heightOfElements = action.heightOfElements;
       return Object.assign({}, state);
 
