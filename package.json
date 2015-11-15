@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "watch": "npm run watch:js & npm run watch:stylus",
     "watch:js": "watchify --extension=js -o dist/bundle.js src/index.js",
     "watch:stylus": "stylus stylus/ --watch  --out stylesheets/",
     "build:stylus": "stylus stylus/ --out stylesheets/",
