@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
 import Infinite from 'react-infinite';
-import Mui from 'material-ui';
 import _ from 'lodash';
+import SideMenu from './side-menu';
 import {unescapeHTML} from '../lib/utils';
 
 const FAVICON_URI = 'http://cdn-ak.favicon.st-hatena.com/?url=';
 const ENTRY_URI = 'http://b.hatena.ne.jp/entry/';
 const BOOKMARK_IMAGE_URI = ENTRY_URI + 'image/';
-const TextField = Mui.TextField;
-const Slider = Mui.Slider;
-const RaisedButton = Mui.RaisedButton;
 
 export default class Pasta extends Component {
   constructor(props) {
@@ -45,19 +42,6 @@ export default class Pasta extends Component {
     }, 1000);
   }
 
-  onSliderChange(e, value) {
-    this.props.changeBookmarkThreshold(~~value, e.clientX);
-  }
-
-  onKeywordInputChange(e) {
-    this.props.changeKeywordInput(e.target.value);
-  }
-
-  onSlideStop() {
-    this.props.clearFeeds(this.props.menu);
-    this.props.fetchFeed(this.props.feed, this.props.menu);
-  }
-
   onInfiniteLoad() {
     if (this.props.menu.keywords.length === 0) return;
     if (this.props.feed[this.props.menu.activeKeyword].isPageEnd) return;
@@ -84,21 +68,6 @@ export default class Pasta extends Component {
       this.props.openComment(item, this.props.menu.activeKeyword);
   }
 
-  onAdditionalKeywordSubmit(value) {
-    this.props.addKeyword(this.props.menu.keywordInput);
-    this.props.fetchFeed(this.props.feed, this.props.menu);
-  }
-
-  onSelectKeyword(name) {
-    this.props.selectKeyword(name);
-    this.props.fetchFeed(this.props.feed, this.props.menu);
-  }
-
-  onKeywordRemoveButtonClick(name) {
-    this.props.removeKeyword(name);
-    this.props.fetchFeed(this.props.feed, this.props.menu);
-  }
-
   onMenuButtonClick() {
     this.props.toggleMenu();
   }
@@ -116,24 +85,6 @@ export default class Pasta extends Component {
         </span>);
     });
   }
-
-  getKeywordList() {
-    return this.props.menu.keywords.map((keyword) => {
-      const listClassName = keyword.name === this.props.menu.activeKeyword ? 'selected' : null;
-      return (
-        <li className={listClassName} key={keyword.name}>
-          <div onClick={this.onSelectKeyword.bind(this, keyword.name)}>
-            <i className={"fa fa-" + keyword.icon} />
-            {keyword.name}
-          </div>
-          <div className="remove" onClick={this.onKeywordRemoveButtonClick.bind(this, keyword.name)} >
-            <i className={"fa fa-close"} />
-          </div>
-        </li>
-      );
-    });
-  }
-
   getCommentButton(item) {
     const icon = item.isCommentFetching? "fa fa-spinner fa-spin" : "fa fa-commenting";
     const text = item.isCommentOpen? "コメントを閉じる" : "コメントを見る";
@@ -208,45 +159,18 @@ export default class Pasta extends Component {
              onClick={this.onMenuButtonClick.bind(this)}>
           </i>
         </div>
-        <div id="side-menu" className={(this.props.menu.isMenuOpen) ? "animated slideInLeft menu-open" : "animated slideInLeft menu-close"}>
-          <img id="logo" src="img/logo.png" alt="" />
-          <div className="slider">
-            <div className="bookmark-filter" style={{left:x}}>
-              <i className="icon-hatena" />
-              {this.props.menu.bookmarkFilter}
-            </div>
-            <Slider name="slider"
-              defaultValue={1}
-              onChange={this.onSliderChange.bind(this)}
-              onDragStop={this.onSlideStop.bind(this)}
-              max={250}
-              min={1} />
-          </div>
-          <div className="add-keyword">
-            <input type="text"
-              placeholder="キーワードを追加"
-              onChange={this.onKeywordInputChange.bind(this)}
-              value={this.props.menu.keywordInput}/>
-            <RaisedButton label="追加"
-              onClick={this.onAdditionalKeywordSubmit.bind(this)}
-              secondary={true}
-              style={{height: 26, minWidth: 40}}
-              labelStyle={{fontSize: '12px', lineHeight: '24px'}} />
-          </div>
-          <div id="menu">
-            <ul>
-              <li className={this.props.menu.activeKeyword === 'all' ? 'selected' : ''}
-                  onClick={this.onSelectKeyword.bind(this, 'all')}>
-                <div><i className={"fa fa-home"} />総合</div>
-              </li>
-              <li className={this.props.menu.activeKeyword === 'favorite' ? 'selected' : ''}
-                onClick={this.onSelectKeyword.bind(this, 'favorite')}>
-                <div><i className={"fa fa-heart"} />お気に入り</div>
-              </li>
-              {this.getKeywordList()}
-            </ul>
-          </div>
-        </div>
+        <SideMenu
+          changeBookmarkThreshold = {this.props.changeBookmarkThreshold}
+          clearFeeds={this.props.clearFeeds}
+          fetchFeed={this.props.fetchFeed}
+          changeKeywordInput={this.props.changeKeywordInput}
+          addKeyword={this.props.addKeyword}
+          selectKeyword={this.props.selectKeyword}
+          removeKeyword={this.props.removeKeyword}
+          toggleMenu={this.props.toggleMenu}
+          feed={this.props.feed}
+          menu={this.props.menu}
+        />
         <div id="content">
             <Infinite
               elementHeight={this.props.feed[this.props.menu.activeKeyword].heightOfElements}

@@ -59107,11 +59107,7 @@ function addFavorite(item, threshold) {
 function removeFavorite(item, threshold) {
   return function (dispatch) {
     db.remove('favorites', item.link).then(function () {
-      //db.getArray('favorites').then((favorites) => {
-      //_getBookmarkCount(favorites).then((bookmarks) => {
-      //  const filteredItems = _.filter(favorites, (item) => bookmarks[item.link] >= threshold);
-      dispatch({ type: types.REMOVE_FAVORITE, item: item });
-      //});
+      return dispatch({ type: types.REMOVE_FAVORITE, item: item });
     });
   };
 }
@@ -59227,7 +59223,7 @@ function _getBookmarkCount(items) {
   });
 }
 
-},{"../api/feed":364,"../constants/action-types":366,"../lib/db":369,"lodash":6}],363:[function(require,module,exports){
+},{"../api/feed":364,"../constants/action-types":367,"../lib/db":370,"lodash":6}],363:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59314,7 +59310,7 @@ function removeKeyword(keyword) {
   };
 }
 
-},{"../constants/action-types":366,"../lib/db":369}],364:[function(require,module,exports){
+},{"../constants/action-types":367,"../lib/db":370}],364:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59374,22 +59370,19 @@ var _reactInfinite = require('react-infinite');
 
 var _reactInfinite2 = _interopRequireDefault(_reactInfinite);
 
-var _materialUi = require('material-ui');
-
-var _materialUi2 = _interopRequireDefault(_materialUi);
-
 var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
+
+var _sideMenu = require('./side-menu');
+
+var _sideMenu2 = _interopRequireDefault(_sideMenu);
 
 var _libUtils = require('../lib/utils');
 
 var FAVICON_URI = 'http://cdn-ak.favicon.st-hatena.com/?url=';
 var ENTRY_URI = 'http://b.hatena.ne.jp/entry/';
 var BOOKMARK_IMAGE_URI = ENTRY_URI + 'image/';
-var TextField = _materialUi2['default'].TextField;
-var Slider = _materialUi2['default'].Slider;
-var RaisedButton = _materialUi2['default'].RaisedButton;
 
 var Pasta = (function (_Component) {
   _inherits(Pasta, _Component);
@@ -59429,22 +59422,6 @@ var Pasta = (function (_Component) {
   }
 
   _createClass(Pasta, [{
-    key: 'onSliderChange',
-    value: function onSliderChange(e, value) {
-      this.props.changeBookmarkThreshold(~ ~value, e.clientX);
-    }
-  }, {
-    key: 'onKeywordInputChange',
-    value: function onKeywordInputChange(e) {
-      this.props.changeKeywordInput(e.target.value);
-    }
-  }, {
-    key: 'onSlideStop',
-    value: function onSlideStop() {
-      this.props.clearFeeds(this.props.menu);
-      this.props.fetchFeed(this.props.feed, this.props.menu);
-    }
-  }, {
     key: 'onInfiniteLoad',
     value: function onInfiniteLoad() {
       if (this.props.menu.keywords.length === 0) return;
@@ -59467,24 +59444,6 @@ var Pasta = (function (_Component) {
     key: 'onCommentClick',
     value: function onCommentClick(item) {
       if (item.isCommentOpen) this.props.closeComment(item, this.props.menu.activeKeyword);else this.props.openComment(item, this.props.menu.activeKeyword);
-    }
-  }, {
-    key: 'onAdditionalKeywordSubmit',
-    value: function onAdditionalKeywordSubmit(value) {
-      this.props.addKeyword(this.props.menu.keywordInput);
-      this.props.fetchFeed(this.props.feed, this.props.menu);
-    }
-  }, {
-    key: 'onSelectKeyword',
-    value: function onSelectKeyword(name) {
-      this.props.selectKeyword(name);
-      this.props.fetchFeed(this.props.feed, this.props.menu);
-    }
-  }, {
-    key: 'onKeywordRemoveButtonClick',
-    value: function onKeywordRemoveButtonClick(name) {
-      this.props.removeKeyword(name);
-      this.props.fetchFeed(this.props.feed, this.props.menu);
     }
   }, {
     key: 'onMenuButtonClick',
@@ -59512,30 +59471,6 @@ var Pasta = (function (_Component) {
       });
     }
   }, {
-    key: 'getKeywordList',
-    value: function getKeywordList() {
-      var _this3 = this;
-
-      return this.props.menu.keywords.map(function (keyword) {
-        var listClassName = keyword.name === _this3.props.menu.activeKeyword ? 'selected' : null;
-        return _react2['default'].createElement(
-          'li',
-          { className: listClassName, key: keyword.name },
-          _react2['default'].createElement(
-            'div',
-            { onClick: _this3.onSelectKeyword.bind(_this3, keyword.name) },
-            _react2['default'].createElement('i', { className: "fa fa-" + keyword.icon }),
-            keyword.name
-          ),
-          _react2['default'].createElement(
-            'div',
-            { className: 'remove', onClick: _this3.onKeywordRemoveButtonClick.bind(_this3, keyword.name) },
-            _react2['default'].createElement('i', { className: "fa fa-close" })
-          )
-        );
-      });
-    }
-  }, {
     key: 'getCommentButton',
     value: function getCommentButton(item) {
       var icon = item.isCommentFetching ? "fa fa-spinner fa-spin" : "fa fa-commenting";
@@ -59550,7 +59485,7 @@ var Pasta = (function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this4 = this;
+      var _this3 = this;
 
       if (!this.props.feed.isInitialized) return _react2['default'].createElement('div', { className: 'rect-spinner' });
       var feed = this.props.feed[this.props.menu.activeKeyword];
@@ -59611,7 +59546,7 @@ var Pasta = (function (_Component) {
           }
           return _react2['default'].createElement(
             'div',
-            { id: _this4.props.menu.activeKeyword + i, className: 'item animated fadeIn', key: item.link + _this4.props.menu.activeKeyword + i },
+            { id: _this3.props.menu.activeKeyword + i, className: 'item animated fadeIn', key: item.link + _this3.props.menu.activeKeyword + i },
             _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
             _react2['default'].createElement(
               'a',
@@ -59629,7 +59564,7 @@ var Pasta = (function (_Component) {
               { className: 'publish-date' },
               item.publishedDate
             ),
-            _this4.getCategories(item.categories),
+            _this3.getCategories(item.categories),
             _react2['default'].createElement(
               'p',
               { className: 'content-snippet' },
@@ -59637,11 +59572,11 @@ var Pasta = (function (_Component) {
             ),
             _react2['default'].createElement(
               'div',
-              { className: favoriteButtonClass, onClick: _this4.onFavoriteClick.bind(_this4, item) },
+              { className: favoriteButtonClass, onClick: _this3.onFavoriteClick.bind(_this3, item) },
               _react2['default'].createElement('i', { className: 'fa fa-heart' }),
               'お気に入り'
             ),
-            _this4.getCommentButton(item),
+            _this3.getCommentButton(item),
             _react2['default'].createElement(
               'div',
               { className: item.isCommentOpen ? "comment-box comment-box-open" : "comment-box comment-box-close" },
@@ -59665,71 +59600,18 @@ var Pasta = (function (_Component) {
             id: 'menu-button',
             onClick: this.onMenuButtonClick.bind(this) })
         ),
-        _react2['default'].createElement(
-          'div',
-          { id: 'side-menu', className: this.props.menu.isMenuOpen ? "animated slideInLeft menu-open" : "animated slideInLeft menu-close" },
-          _react2['default'].createElement('img', { id: 'logo', src: 'img/logo.png', alt: '' }),
-          _react2['default'].createElement(
-            'div',
-            { className: 'slider' },
-            _react2['default'].createElement(
-              'div',
-              { className: 'bookmark-filter', style: { left: x } },
-              _react2['default'].createElement('i', { className: 'icon-hatena' }),
-              this.props.menu.bookmarkFilter
-            ),
-            _react2['default'].createElement(Slider, { name: 'slider',
-              defaultValue: 1,
-              onChange: this.onSliderChange.bind(this),
-              onDragStop: this.onSlideStop.bind(this),
-              max: 250,
-              min: 1 })
-          ),
-          _react2['default'].createElement(
-            'div',
-            { className: 'add-keyword' },
-            _react2['default'].createElement('input', { type: 'text',
-              placeholder: 'キーワードを追加',
-              onChange: this.onKeywordInputChange.bind(this),
-              value: this.props.menu.keywordInput }),
-            _react2['default'].createElement(RaisedButton, { label: '追加',
-              onClick: this.onAdditionalKeywordSubmit.bind(this),
-              secondary: true,
-              style: { height: 26, minWidth: 40 },
-              labelStyle: { fontSize: '12px', lineHeight: '24px' } })
-          ),
-          _react2['default'].createElement(
-            'div',
-            { id: 'menu' },
-            _react2['default'].createElement(
-              'ul',
-              null,
-              _react2['default'].createElement(
-                'li',
-                { className: this.props.menu.activeKeyword === 'all' ? 'selected' : '',
-                  onClick: this.onSelectKeyword.bind(this, 'all') },
-                _react2['default'].createElement(
-                  'div',
-                  null,
-                  _react2['default'].createElement('i', { className: "fa fa-home" }),
-                  '総合'
-                )
-              ),
-              _react2['default'].createElement(
-                'li',
-                { className: this.props.menu.activeKeyword === 'favorite' ? 'selected' : '',
-                  onClick: this.onSelectKeyword.bind(this, 'favorite') },
-                _react2['default'].createElement(
-                  'div',
-                  null,
-                  _react2['default'].createElement('i', { className: "fa fa-heart" }),
-                  'お気に入り'
-                )
-              ),
-              this.getKeywordList()
-            )
-          )
-        ),
+        _react2['default'].createElement(_sideMenu2['default'], {
+          changeBookmarkThreshold: this.props.changeBookmarkThreshold,
+          clearFeeds: this.props.clearFeeds,
+          fetchFeed: this.props.fetchFeed,
+          changeKeywordInput: this.props.changeKeywordInput,
+          addKeyword: this.props.addKeyword,
+          selectKeyword: this.props.selectKeyword,
+          removeKeyword: this.props.removeKeyword,
+          toggleMenu: this.props.toggleMenu,
+          feed: this.props.feed,
+          menu: this.props.menu
+        }),
         _react2['default'].createElement(
           'div',
           { id: 'content' },
@@ -59756,7 +59638,189 @@ var Pasta = (function (_Component) {
 exports['default'] = Pasta;
 module.exports = exports['default'];
 
-},{"../lib/utils":370,"lodash":6,"material-ui":44,"react":349,"react-infinite":169}],366:[function(require,module,exports){
+},{"../lib/utils":371,"./side-menu":366,"lodash":6,"react":349,"react-infinite":169}],366:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _materialUi = require('material-ui');
+
+var _materialUi2 = _interopRequireDefault(_materialUi);
+
+var TextField = _materialUi2['default'].TextField;
+var Slider = _materialUi2['default'].Slider;
+var RaisedButton = _materialUi2['default'].RaisedButton;
+
+var SideMenu = (function (_Component) {
+  _inherits(SideMenu, _Component);
+
+  function SideMenu(props) {
+    _classCallCheck(this, SideMenu);
+
+    _get(Object.getPrototypeOf(SideMenu.prototype), 'constructor', this).call(this, props);
+  }
+
+  _createClass(SideMenu, [{
+    key: 'onSliderChange',
+    value: function onSliderChange(e, value) {
+      this.props.changeBookmarkThreshold(~ ~value, e.clientX);
+    }
+  }, {
+    key: 'onSlideStop',
+    value: function onSlideStop() {
+      this.props.clearFeeds(this.props.menu);
+      this.props.fetchFeed(this.props.feed, this.props.menu);
+    }
+  }, {
+    key: 'onKeywordInputChange',
+    value: function onKeywordInputChange(e) {
+      this.props.changeKeywordInput(e.target.value);
+    }
+  }, {
+    key: 'onAdditionalKeywordSubmit',
+    value: function onAdditionalKeywordSubmit(value) {
+      this.props.addKeyword(this.props.keywordInput);
+      this.props.fetchFeed(this.props.feed, this.props.menu);
+    }
+  }, {
+    key: 'onSelectKeyword',
+    value: function onSelectKeyword(name) {
+      this.props.selectKeyword(name);
+      this.props.fetchFeed(this.props.feed, this.props.menu);
+    }
+  }, {
+    key: 'onKeywordRemoveButtonClick',
+    value: function onKeywordRemoveButtonClick(name) {
+      this.props.removeKeyword(name);
+      this.props.fetchFeed(this.props.feed, this.props.menu);
+    }
+  }, {
+    key: 'onMenuButtonClick',
+    value: function onMenuButtonClick() {
+      this.props.toggleMenu();
+    }
+  }, {
+    key: 'getKeywordList',
+    value: function getKeywordList() {
+      var _this = this;
+
+      return this.props.menu.keywords.map(function (keyword) {
+        var listClassName = keyword.name === _this.props.menu.activeKeyword ? 'selected' : null;
+        return _react2['default'].createElement(
+          'li',
+          { className: listClassName, key: keyword.name },
+          _react2['default'].createElement(
+            'div',
+            { onClick: _this.onSelectKeyword.bind(_this, keyword.name) },
+            _react2['default'].createElement('i', { className: "fa fa-" + keyword.icon }),
+            keyword.name
+          ),
+          _react2['default'].createElement(
+            'div',
+            { className: 'remove', onClick: _this.onKeywordRemoveButtonClick.bind(_this, keyword.name) },
+            _react2['default'].createElement('i', { className: "fa fa-close" })
+          )
+        );
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var x = this.props.menu.bookmarkFilterX - 24;
+      if (x > 210) x = 210;
+      if (x < 10) x = 10;
+      return _react2['default'].createElement(
+        'div',
+        { id: 'side-menu',
+          className: this.props.menu.isMenuOpen ? "animated slideInLeft menu-open" : "animated slideInLeft menu-close" },
+        _react2['default'].createElement('img', { id: 'logo', src: 'img/logo.png', alt: '' }),
+        _react2['default'].createElement(
+          'div',
+          { className: 'slider' },
+          _react2['default'].createElement(
+            'div',
+            { className: 'bookmark-filter', style: { left: x } },
+            _react2['default'].createElement('i', { className: 'icon-hatena' }),
+            this.props.menu.bookmarkFilter
+          ),
+          _react2['default'].createElement(Slider, { name: 'slider',
+            defaultValue: 1,
+            onChange: this.onSliderChange.bind(this),
+            onDragStop: this.onSlideStop.bind(this),
+            max: 250,
+            min: 1 })
+        ),
+        _react2['default'].createElement(
+          'div',
+          { className: 'add-keyword' },
+          _react2['default'].createElement('input', { type: 'text',
+            placeholder: 'キーワードを追加',
+            onChange: this.onKeywordInputChange.bind(this),
+            value: this.props.menu.keywordInput }),
+          _react2['default'].createElement(RaisedButton, { label: '追加',
+            onClick: this.onAdditionalKeywordSubmit.bind(this),
+            secondary: true,
+            style: { height: 26, minWidth: 40 },
+            labelStyle: { fontSize: '12px', lineHeight: '24px' } })
+        ),
+        _react2['default'].createElement(
+          'div',
+          { id: 'menu' },
+          _react2['default'].createElement(
+            'ul',
+            null,
+            _react2['default'].createElement(
+              'li',
+              { className: this.props.menu.activeKeyword === 'all' ? 'selected' : '',
+                onClick: this.onSelectKeyword.bind(this, 'all') },
+              _react2['default'].createElement(
+                'div',
+                null,
+                _react2['default'].createElement('i', { className: "fa fa-home" }),
+                '総合'
+              )
+            ),
+            _react2['default'].createElement(
+              'li',
+              { className: this.props.menu.activeKeyword === 'favorite' ? 'selected' : '',
+                onClick: this.onSelectKeyword.bind(this, 'favorite') },
+              _react2['default'].createElement(
+                'div',
+                null,
+                _react2['default'].createElement('i', { className: "fa fa-heart" }),
+                'お気に入り'
+              )
+            ),
+            this.getKeywordList()
+          )
+        )
+      );
+    }
+  }]);
+
+  return SideMenu;
+})(_react.Component);
+
+exports['default'] = SideMenu;
+module.exports = exports['default'];
+
+},{"material-ui":44,"react":349}],367:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59803,7 +59867,7 @@ exports.CLOSE_COMMENT = CLOSE_COMMENT;
 var CHANGE_ELEMENT_HEIGHT = 'CHANGE_ELEMENT_HEIGHT';
 exports.CHANGE_ELEMENT_HEIGHT = CHANGE_ELEMENT_HEIGHT;
 
-},{}],367:[function(require,module,exports){
+},{}],368:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59847,7 +59911,7 @@ function mapDispatchToProps(dispatch) {
 exports['default'] = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_componentsPasta2['default']);
 module.exports = exports['default'];
 
-},{"../actions/feed":362,"../actions/menu":363,"../components/pasta":365,"lodash":6,"react-redux":181,"redux":353}],368:[function(require,module,exports){
+},{"../actions/feed":362,"../actions/menu":363,"../components/pasta":365,"lodash":6,"react-redux":181,"redux":353}],369:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -59880,7 +59944,7 @@ var store = (0, _storesConfigureStore2['default'])();
   _react2['default'].createElement(_containersApp2['default'], null)
 ), document.getElementById('pasta'));
 
-},{"./components/pasta":365,"./containers/app":367,"./stores/configure-store":374,"react":349,"react-dom":165,"react-redux":181}],369:[function(require,module,exports){
+},{"./components/pasta":365,"./containers/app":368,"./stores/configure-store":375,"react":349,"react-dom":165,"react-redux":181}],370:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59946,7 +60010,7 @@ var DbManager = (function () {
 exports['default'] = DbManager;
 module.exports = exports['default'];
 
-},{"dexie":1}],370:[function(require,module,exports){
+},{"dexie":1}],371:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -59960,7 +60024,7 @@ function unescapeHTML(str) {
     return div.textContent || div.innerText;
 }
 
-},{}],371:[function(require,module,exports){
+},{}],372:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60175,7 +60239,7 @@ function feed(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":366,"lodash":6}],372:[function(require,module,exports){
+},{"../constants/action-types":367,"lodash":6}],373:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60202,7 +60266,7 @@ var rootReducer = (0, _redux.combineReducers)({
 exports['default'] = rootReducer;
 module.exports = exports['default'];
 
-},{"./feed":371,"./menu":373,"redux":353}],373:[function(require,module,exports){
+},{"./feed":372,"./menu":374,"redux":353}],374:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60267,7 +60331,7 @@ function menu(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":366}],374:[function(require,module,exports){
+},{"../constants/action-types":367}],375:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60299,4 +60363,4 @@ function configureStore() {
 
 module.exports = exports['default'];
 
-},{"../reducers":372,"redux":353,"redux-logger":350,"redux-thunk":351}]},{},[368]);
+},{"../reducers":373,"redux":353,"redux-logger":350,"redux-thunk":351}]},{},[369]);

@@ -104,13 +104,7 @@ export function addFavorite(item, threshold) {
 
 export function removeFavorite(item, threshold) {
   return dispatch => {
-    db.remove('favorites', item.link).then(() => {
-      //db.getArray('favorites').then((favorites) => {
-        //_getBookmarkCount(favorites).then((bookmarks) => {
-        //  const filteredItems = _.filter(favorites, (item) => bookmarks[item.link] >= threshold);
-          dispatch({type: types.REMOVE_FAVORITE,  item});
-        //});
-    });
+    db.remove('favorites', item.link).then(() => dispatch({type: types.REMOVE_FAVORITE,  item}));
   }
 }
 
