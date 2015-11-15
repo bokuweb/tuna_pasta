@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Infinite from 'react-infinite';
 import _ from 'lodash';
+import Header from './header';
 import SideMenu from './side-menu';
 import {unescapeHTML} from '../lib/utils';
 
@@ -68,10 +69,6 @@ export default class Pasta extends Component {
       this.props.openComment(item, this.props.menu.activeKeyword);
   }
 
-  onMenuButtonClick() {
-    this.props.toggleMenu();
-  }
-
   onChangeHeight(heightOfElements) {
     this.props.changeElementHeight(heightOfElements, this.props.menu.activeKeyword);        
   }
@@ -85,6 +82,7 @@ export default class Pasta extends Component {
         </span>);
     });
   }
+
   getCommentButton(item) {
     const icon = item.isCommentFetching? "fa fa-spinner fa-spin" : "fa fa-commenting";
     const text = item.isCommentOpen? "コメントを閉じる" : "コメントを見る";
@@ -146,19 +144,11 @@ export default class Pasta extends Component {
         );
       });
     }
-
-    let x = this.props.menu.bookmarkFilterX - 24;
-    if (x > 210) x = 210;
-    if (x < 10) x = 10;
     return (
       <div id="container">
-        <div id="header">
-          <img src="img/logo-blue.png" id="sp-logo" />
-          <i className={this.props.menu.isMenuOpen? "fa fa-close" : "fa fa-bars"}
-             id="menu-button"
-             onClick={this.onMenuButtonClick.bind(this)}>
-          </i>
-        </div>
+        <Header
+          isMenuOpen={this.props.menu.isMenuOpen}
+          toggleMenu={this.props.toggleMenu} />
         <SideMenu
           changeBookmarkThreshold = {this.props.changeBookmarkThreshold}
           clearFeeds={this.props.clearFeeds}

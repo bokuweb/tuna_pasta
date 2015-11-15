@@ -59223,7 +59223,7 @@ function _getBookmarkCount(items) {
   });
 }
 
-},{"../api/feed":364,"../constants/action-types":367,"../lib/db":370,"lodash":6}],363:[function(require,module,exports){
+},{"../api/feed":364,"../constants/action-types":368,"../lib/db":371,"lodash":6}],363:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59310,7 +59310,7 @@ function removeKeyword(keyword) {
   };
 }
 
-},{"../constants/action-types":367,"../lib/db":370}],364:[function(require,module,exports){
+},{"../constants/action-types":368,"../lib/db":371}],364:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59346,6 +59346,61 @@ function fetch(url) {
 }
 
 },{"jsonp":2}],365:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var Header = (function (_Component) {
+  _inherits(Header, _Component);
+
+  function Header(props) {
+    _classCallCheck(this, Header);
+
+    _get(Object.getPrototypeOf(Header.prototype), "constructor", this).call(this, props);
+  }
+
+  _createClass(Header, [{
+    key: "onMenuButtonClick",
+    value: function onMenuButtonClick() {
+      this.props.toggleMenu();
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react2["default"].createElement(
+        "div",
+        { id: "header" },
+        _react2["default"].createElement("img", { src: "img/logo-blue.png", id: "sp-logo" }),
+        _react2["default"].createElement("i", { className: this.props.isMenuOpen ? "fa fa-close" : "fa fa-bars",
+          id: "menu-button",
+          onClick: this.onMenuButtonClick.bind(this) })
+      );
+    }
+  }]);
+
+  return Header;
+})(_react.Component);
+
+exports["default"] = Header;
+module.exports = exports["default"];
+
+},{"react":349}],366:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59373,6 +59428,10 @@ var _reactInfinite2 = _interopRequireDefault(_reactInfinite);
 var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
+
+var _header = require('./header');
+
+var _header2 = _interopRequireDefault(_header);
 
 var _sideMenu = require('./side-menu');
 
@@ -59444,11 +59503,6 @@ var Pasta = (function (_Component) {
     key: 'onCommentClick',
     value: function onCommentClick(item) {
       if (item.isCommentOpen) this.props.closeComment(item, this.props.menu.activeKeyword);else this.props.openComment(item, this.props.menu.activeKeyword);
-    }
-  }, {
-    key: 'onMenuButtonClick',
-    value: function onMenuButtonClick() {
-      this.props.toggleMenu();
     }
   }, {
     key: 'onChangeHeight',
@@ -59585,21 +59639,12 @@ var Pasta = (function (_Component) {
           );
         });
       }
-
-      var x = this.props.menu.bookmarkFilterX - 24;
-      if (x > 210) x = 210;
-      if (x < 10) x = 10;
       return _react2['default'].createElement(
         'div',
         { id: 'container' },
-        _react2['default'].createElement(
-          'div',
-          { id: 'header' },
-          _react2['default'].createElement('img', { src: 'img/logo-blue.png', id: 'sp-logo' }),
-          _react2['default'].createElement('i', { className: this.props.menu.isMenuOpen ? "fa fa-close" : "fa fa-bars",
-            id: 'menu-button',
-            onClick: this.onMenuButtonClick.bind(this) })
-        ),
+        _react2['default'].createElement(_header2['default'], {
+          isMenuOpen: this.props.menu.isMenuOpen,
+          toggleMenu: this.props.toggleMenu }),
         _react2['default'].createElement(_sideMenu2['default'], {
           changeBookmarkThreshold: this.props.changeBookmarkThreshold,
           clearFeeds: this.props.clearFeeds,
@@ -59638,7 +59683,7 @@ var Pasta = (function (_Component) {
 exports['default'] = Pasta;
 module.exports = exports['default'];
 
-},{"../lib/utils":371,"./side-menu":366,"lodash":6,"react":349,"react-infinite":169}],366:[function(require,module,exports){
+},{"../lib/utils":372,"./header":365,"./side-menu":367,"lodash":6,"react":349,"react-infinite":169}],367:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59820,7 +59865,7 @@ var SideMenu = (function (_Component) {
 exports['default'] = SideMenu;
 module.exports = exports['default'];
 
-},{"material-ui":44,"react":349}],367:[function(require,module,exports){
+},{"material-ui":44,"react":349}],368:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59867,7 +59912,7 @@ exports.CLOSE_COMMENT = CLOSE_COMMENT;
 var CHANGE_ELEMENT_HEIGHT = 'CHANGE_ELEMENT_HEIGHT';
 exports.CHANGE_ELEMENT_HEIGHT = CHANGE_ELEMENT_HEIGHT;
 
-},{}],368:[function(require,module,exports){
+},{}],369:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59911,7 +59956,7 @@ function mapDispatchToProps(dispatch) {
 exports['default'] = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_componentsPasta2['default']);
 module.exports = exports['default'];
 
-},{"../actions/feed":362,"../actions/menu":363,"../components/pasta":365,"lodash":6,"react-redux":181,"redux":353}],369:[function(require,module,exports){
+},{"../actions/feed":362,"../actions/menu":363,"../components/pasta":366,"lodash":6,"react-redux":181,"redux":353}],370:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -59944,7 +59989,7 @@ var store = (0, _storesConfigureStore2['default'])();
   _react2['default'].createElement(_containersApp2['default'], null)
 ), document.getElementById('pasta'));
 
-},{"./components/pasta":365,"./containers/app":368,"./stores/configure-store":375,"react":349,"react-dom":165,"react-redux":181}],370:[function(require,module,exports){
+},{"./components/pasta":366,"./containers/app":369,"./stores/configure-store":376,"react":349,"react-dom":165,"react-redux":181}],371:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60010,7 +60055,7 @@ var DbManager = (function () {
 exports['default'] = DbManager;
 module.exports = exports['default'];
 
-},{"dexie":1}],371:[function(require,module,exports){
+},{"dexie":1}],372:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -60024,7 +60069,7 @@ function unescapeHTML(str) {
     return div.textContent || div.innerText;
 }
 
-},{}],372:[function(require,module,exports){
+},{}],373:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60239,7 +60284,7 @@ function feed(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":367,"lodash":6}],373:[function(require,module,exports){
+},{"../constants/action-types":368,"lodash":6}],374:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60266,7 +60311,7 @@ var rootReducer = (0, _redux.combineReducers)({
 exports['default'] = rootReducer;
 module.exports = exports['default'];
 
-},{"./feed":372,"./menu":374,"redux":353}],374:[function(require,module,exports){
+},{"./feed":373,"./menu":375,"redux":353}],375:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60331,7 +60376,7 @@ function menu(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":367}],375:[function(require,module,exports){
+},{"../constants/action-types":368}],376:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60363,4 +60408,4 @@ function configureStore() {
 
 module.exports = exports['default'];
 
-},{"../reducers":373,"redux":353,"redux-logger":350,"redux-thunk":351}]},{},[369]);
+},{"../reducers":374,"redux":353,"redux-logger":350,"redux-thunk":351}]},{},[370]);

@@ -108,7 +108,6 @@ export function removeFavorite(item, threshold) {
   }
 }
 
-
 export function openComment(item, keyword) {
   const url = HATENA_ENTRY_URL + 'url=' + encodeURIComponent(item.link);
   return dispatch => {
