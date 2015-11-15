@@ -6522,8 +6522,8 @@ a {
   position: relative;
   height: 32px;
 }
-#side-menu #menu li > span {
-  display: inline-block;
+#side-menu #menu li > div {
+  display: inline;
   width: 160px;
   overflow: hidden;
   white-space: nowrap;
@@ -6557,6 +6557,13 @@ a {
   display: inline-block;
   position: absolute;
   left: 230px;
+}
+#side-menu #menu span.favorite-number {
+  padding: 3px 10px;
+  font-size: 11px;
+  background: #2c3e50;
+  border-radius: 40%;
+  margin: 0 0 0 25px;
 }
 #side-menu::-webkit-scrollbar {
   width: 6px;
@@ -6648,6 +6655,17 @@ div.slider .bookmark-filter:after {
   font-size: 95%;
   padding: 0 0 3px;
 }
+div.comment-box {
+  padding: 20px 0 20px 0;
+  transition: all 0.4s ease;
+}
+div.comment-box-close {
+  transition: all 0.4s ease;
+  display: none;
+}
+div.comment-box-open {
+  height: auto;
+}
 #content > div::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -6657,7 +6675,7 @@ div.slider .bookmark-filter:after {
   border-radius: 2px;
 }
 .item {
-  min-height: 140px;
+  min-height: 160px;
   max-width: 800px;
   padding: 20px 0 0 0;
   border-bottom: solid 1px #ddd;
@@ -6718,6 +6736,23 @@ div.favorite-button:hover {
 div.favorited {
   color: #e74c3c;
 }
+div.comment-button {
+  margin: 0 0 20px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  display: inline-block;
+  border-radius: 3px;
+  background: #ecf0f1;
+  text-shadow: none;
+  padding: 3px 10px;
+}
+div.comment-button > i {
+  margin: 0 12px 0 0;
+}
+div.comment-button:hover {
+  color: #e74c3c;
+}
 #header {
   display: none;
 }
@@ -6774,7 +6809,7 @@ div.favorited {
     height: 100%;
   }
   .item {
-    min-height: 100px;
+    min-height: 130px;
     max-width: 100%;
     padding: 10px 5px 10px 5px;
     border-bottom: solid 1px #ddd;
@@ -6792,6 +6827,16 @@ div.favorited {
   div.favorite-button > i {
     margin: 0 10px 0 0;
   }
+  div.comment-button {
+    margin: 10px 0 10px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    display: inline-block;
+  }
+  div.comment-button > i {
+    margin: 0 10px 0 0;
+  }
   .github-ribbon {
     display: none;
   }
@@ -6802,6 +6847,81 @@ div.favorited {
     max-height: 100%;
     width: 100%;
   }
+}
+/* question */
+.arrow_question {
+  position: relative;
+  background: #fff;
+  padding: 5px 10px;
+  border-radius: 10px;
+  width: calc(100% - 90px);
+  color: #34495e;
+  font-size: 11px;
+}
+.arrow_question {
+  float: right;
+}
+.arrow_question:after,
+.arrow_question:before {
+  top: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.arrow_question:after,
+.arrow_question:before {
+  right: 100%;
+}
+.arrow_question:after {
+  border-color: rgba(255,255,255,0);
+  border-width: 15px;
+  margin-top: -15px;
+}
+.arrow_question:after {
+  border-right-color: #fff;
+}
+.arrow_question:before {
+  border-width: 16px;
+  margin-top: -16px;
+}
+.question_image {
+  float: left;
+  width: 60px;
+  padding: 5px 0 0 0;
+}
+.question_image {
+  height: auto;
+}
+.question_image img {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  margin-left: 10px;
+  border: solid 2px #1abc9c;
+}
+.question_Box {
+  margin-bottom: 25px;
+  overflow: hidden;
+}
+.question_Box p {
+  line-height: 1.5;
+}
+i.comment {
+  font-size: 14px;
+  margin: 2px 0 0 0;
+}
+span.comment-user {
+  color: #34495e;
+  padding: 5px 5px 0 5px;
+  font-size: 11px;
+  display: inline-block;
+  width: 40px;
+}
+span.comment-notfound {
+  font-size: 12px;
 }
 @-moz-keyframes rect-sk-rotateplane {
   0% {

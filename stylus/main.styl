@@ -1,0 +1,493 @@
+@import 'font-style'
+@import 'animate'
+
+html, body, #pasta
+  height 100%
+  padding 0
+  margin 0
+  -webkit-text-size-adjust 100%
+  -ms-text-size-adjust 100%
+  background #f5f5f5
+  font-family helvetica, "メイリオ", arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif
+
+div,
+input,
+textarea
+  font-family helvetica, "メイリオ", arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif  
+
+input,
+textarea,
+select
+  outline none
+
+html,
+a,
+input,
+textarea
+  -webkit-font-smoothing  antialiased
+  text-shadow  1px 1px 1px rgba(0, 0, 0, 0.004)
+  color #ccc
+
+li
+  list-style none
+
+a
+  text-decoration none
+
+#container
+  height 100%
+  width 100%
+  display flex
+  flex-direction row
+  box-orient horizontal
+
+#side-menu
+  background #2980B9
+  width 280px
+  height 100%
+  flex 0 280px
+  box-flex 0
+  padding 0
+  font-size 14px
+  overflow-y auto
+  scrollbar-face-color accent-color
+  scrollbar-track-color rgba(0, 0, 0, .1)
+
+
+  #logo
+    width 180px
+    height auto
+    margin 20px auto 0 30px
+
+  #menu
+    color #ECF0F1
+    margin 20px 0 0 0
+
+    ul
+      padding 0
+
+    li
+      font-size 16px
+      margin 5px 0 8px 0
+      padding 0px 0 0px 60px
+      line-height 32px
+      border-radius 0 4px 4px 0
+      width 200px
+      transition  all .5s ease
+      position relative
+      height 32px
+
+      > div
+        display inline
+        width 160px
+        overflow hidden
+        white-space nowrap
+        text-overflow ellipsis
+
+      a
+        color #ffffff
+        width 100%
+
+      i
+        font-size 12px
+        margin -1px 30px 0 0
+
+      span
+        cursor pointer
+
+      div.remove
+        display none
+        cursor pointer
+
+    li.selected
+      font-size 16px
+      margin 5px 0 8px 0
+      background #34495E
+      padding 0 0 0 60px
+
+    li:not(.selected):hover
+      background #D35400
+
+    li:hover > div.remove
+      display inline-block
+      position absolute
+      left 230px
+
+    span.favorite-number
+      padding 3px 10px
+      font-size 11px
+      background #2C3E50
+      border-radius 40%
+      margin 0 0 0 25px
+
+#side-menu::-webkit-scrollbar
+  width 6px
+  height 6px
+
+#side-menu::-webkit-scrollbar-thumb
+  background rgba(0, 0, 0, 0.4)
+  border-radius 2px
+
+div.add-keyword
+  margin 0 0 46px 20px
+  display -webkit-flex
+  display flex
+  -webkit-flex-direction row
+  flex-direction         row
+
+  input
+    border 0
+    border solid 1px #2C3E50
+    background #34495E
+    opacity 0.9
+    padding 0 10px
+    color #f5f5f5
+    border-radius 3px
+    margin 0 5px 0 0
+    -moz-box-shadow inset 0 0 4px rgba(0,0,0,0.1)
+    -webkit-box-shadow inset 0 0 4px rgba(0, 0, 0, 0.1)
+    box-shadow inner 0 0 4px rgba(0, 0, 0, 0.1)
+    height 26px
+    line-height 26px
+    font-size 14px
+    width 140px
+
+div.slider
+  width 100%
+  margin 0 auto
+  position relative
+  padding 15px 0 0 0
+
+  div[name="slider"]
+    width 70%
+    margin 0 0 0 15%
+
+  .bookmark-filter
+    background #34495E
+    color #f5f5f5
+    padding 8px
+    width 40px
+    position absolute
+    top 0
+    left 10px
+    border-radius 4px
+    text-align center
+    vertical-align middle
+
+    i
+      color #f5f5f5
+      margin 0 2px -2px 0
+      display inline-block
+
+  .bookmark-filter:after
+    content ''
+    position absolute
+    border-top 10px solid #34495E
+    border-right 5px solid transparent
+    border-left 5px solid transparent
+    bottom -9px
+    left 20px
+
+#content
+  flex 1
+  box-flex 1
+  text-shadow -1px 1px 0 rgba(255, 255, 255, 1)
+  color #7F8C8D
+  width 100%
+  min-height 100%
+
+  a
+    color #34495E
+
+  .favicon
+    margin 0 8px -2px 0
+
+  a.hatebu img
+    margin 0px 0 -2px 5px
+
+  a.item-title
+    line-height 28px
+    font-size 95%
+    padding 0 0 3px
+
+div.comment-box
+  padding 20px 0 20px 0
+  transition  all .4s ease
+
+div.comment-box-close
+  transition  all .4s ease
+  display none
+
+div.comment-box-open
+  height auto
+
+#content > div::-webkit-scrollbar
+  width 10px
+  height 10px
+
+#content > div::-webkit-scrollbar-thumb
+  background #34495E
+  border-radius 2px
+
+.item
+  min-height 160px
+  //height 185px
+  max-width 800px
+  padding 20px 0 0 0
+  border-bottom solid 1px #DDD
+
+  .publish-date
+    margin 5px 0 0 0
+    font-size 10px
+    color #95A5A6
+
+  .category
+   font-size 11px
+   background #16A085
+   padding 3px
+   border-radius 2px
+   line-height 11px
+   color #fff
+   font-weight bold
+   display inline-block
+   text-shadow none
+   margin 0 0 0 10px
+
+  .content-snippet
+    color #7F8C8D
+    font-size 90%
+    padding 10px 0 10px 0
+    //border-bottom solid 1px #DDD
+    line-height 20px
+    word-break break-all
+
+.items
+  padding 20px 30px 0 50px
+  height 100%
+
+
+.rect-spinner
+  width 40px
+  height 40px
+  background-color #3498DB
+
+  margin 100px auto
+  -webkit-animation rect-sk-rotateplane 1.2s infinite ease-in-out
+  animation rect-sk-rotateplane 1.2s infinite ease-in-out
+
+@-webkit-keyframes rect-sk-rotateplane
+  0%  -webkit-transform perspective(120px)
+  50%  -webkit-transform perspective(120px) rotateY(180deg)
+  100%  -webkit-transform perspective(120px) rotateY(180deg)  rotateX(180deg)
+
+
+@keyframes rect-sk-rotateplane
+  0%
+    transform perspective(120px) rotateX(0deg) rotateY(0deg)
+    -webkit-transform perspective(120px) rotateX(0deg) rotateY(0deg)
+  50%
+    transform perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+    -webkit-transform perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+  100%
+    transform perspective(120px) rotateX(-180deg) rotateY(-179.9deg)
+    -webkit-transform perspective(120px) rotateX(-180deg) rotateY(-179.9deg)
+
+
+div.favorite-button
+  margin 0 0 20px 0
+  font-size 11px
+  cursor pointer
+  transition  all .4s ease
+  display inline-block
+  border-radius 3px
+  background #ECF0F1
+  text-shadow none
+  padding 3px 10px
+  > i
+    margin 0 12px 0 0
+
+div.favorite-button:hover
+  color #E74C3C
+
+div.favorited
+  color #E74C3C  
+
+div.comment-button
+  margin 0 0 20px 10px
+  font-size 11px
+  cursor pointer
+  transition  all .4s ease
+  display inline-block
+  border-radius 3px
+  background #ECF0F1
+  text-shadow none
+  padding 3px 10px
+  > i
+    margin 0 12px 0 0
+
+div.comment-button:hover
+  color #E74C3C
+
+#header
+  display none
+
+@media screen and (max-width: 768px)
+  #container
+    height 100%
+    width 100%
+    padding 0px 0 0 0
+
+  #header
+    display block
+    position fixed
+    height 48px
+    width 100%
+    border-bottom solid 1px #ddd
+    background #f5f5f5
+    top 0
+    left 0
+    z-index 999
+
+    #sp-logo
+      height 52px
+      width auto
+      display block
+      margin 0 auto
+
+    #menu-button
+      position absolute
+      top 16px
+      left calc(100% - 30px)
+
+  #content
+    padding 40px 0 0 0
+
+  #side-menu
+    position fixed
+    transition  all .4s ease
+    z-index 1000
+    padding 40px 0 0 0
+
+    #logo
+      display none
+
+  .menu-close
+    left -800px
+    top 0
+
+  .menu-open
+    top 0
+    left 0px
+
+  .items
+    padding 10px 15px 0 15px
+    height 100%
+
+  .item
+    min-height 130px
+    max-width 100%
+    padding 10px 5px 10px 5px
+    border-bottom solid 1px #DDD
+
+  .content-snippet
+    display none
+
+  div.favorite-button
+    margin 10px 0 10px 0
+    font-size 11px
+    cursor pointer
+    transition  all .4s ease
+    display inline-block
+    > i
+      margin 0 10px 0 0
+
+  div.comment-button
+    margin 10px 0 10px 
+    font-size 11px
+    cursor pointer
+    transition  all .4s ease
+    display inline-block
+    > i
+      margin 0 10px 0 0
+
+  .github-ribbon
+    display none
+@media screen and (min-width: 769px)
+  #content
+    overflow-y auto
+    max-height 100%
+    width 100%
+
+
+/* question */
+.arrow_question
+    position relative
+    background #fff
+    padding 5px 10px
+    border-radius 10px
+    width calc(100% - 90px)
+    color #34495E
+    font-size 11px
+    
+.arrow_question
+    float right
+
+.arrow_question:after,
+.arrow_question:before
+    top: 50%
+    border: solid transparent
+    content: " "
+    height: 0
+    width: 0
+    position: absolute
+    pointer-events: none
+
+.arrow_question:after,
+.arrow_question:before
+  right 100% 
+.arrow_question:after 
+    border-color rgba(255, 255, 255, 0)
+    border-width 15px
+    margin-top -15px
+
+.arrow_question:after
+  border-right-color #fff
+.arrow_question:before
+    border-width 16px
+    margin-top -16px
+
+.question_image
+  float left
+  width 60px
+  padding 5px 0 0 0
+
+.question_image
+  height auto
+
+  img
+    border-radius 50%
+    width 32px
+    height 32px
+    margin-left 10px
+    border solid 2px #1ABC9C
+
+.question_Box 
+    margin-bottom: 25px
+    overflow: hidden
+
+
+.question_Box p{ line-height: 1.5}
+
+i.comment
+  font-size 14px
+  margin 2px 0 0 0
+
+span.comment-user
+  color #34495E
+  padding 5px 5px 0 5px
+  font-size 11px
+  display inline-block
+  width 40px
+
+span.comment-notfound
+  font-size 12px

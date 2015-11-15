@@ -1,0 +1,50 @@
+{
+  "name": "pasta",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch:js": "watchify --extension=js -o dist/bundle.js src/index.js",
+    "watch:stylus": "stylus stylus/ --watch  --out stylesheets/",
+    "build:stylus": "stylus stylus/ --out stylesheets/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bokuweb/pasta_web.git"
+  },
+  "author": "bokuweb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bokuweb/pasta_web/issues"
+  },
+  "homepage": "https://github.com/bokuweb/pasta_web",
+  "dependencies": {
+    "dexie": "^1.2.0",
+    "jsonp": "~0.2.0",
+    "lodash": "^3.10.1",
+    "material-ui": "^0.13.1",
+    "react": "~0.14.2",
+    "react-addons-create-fragment": "^0.14.1",
+    "react-addons-pure-render-mixin": "^0.14.1",
+    "react-addons-transition-group": "^0.14.1",
+    "react-addons-update": "^0.14.1",
+    "react-dom": "~0.14.2",
+    "react-infinite": "~0.5.8",
+    "react-redux": "~4.0.0",
+    "react-tap-event-plugin": "^0.2.1",
+    "redux": "~3.0.4",
+    "redux-logger": "~2.0.4",
+    "redux-thunk": "~1.0.0"
+  },
+  "devDependencies": {
+    "babelify": "~6.4.0",
+    "watchify": "~3.5.0",
+    "stylus": "~0.52.4"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  }
+}
