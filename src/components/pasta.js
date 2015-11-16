@@ -3,6 +3,7 @@ import Infinite from 'react-infinite';
 import _ from 'lodash';
 import Header from './header';
 import SideMenu from './side-menu';
+import Comments from './comments';
 import {unescapeHTML} from '../lib/utils';
 
 const FAVICON_URI = 'http://cdn-ak.favicon.st-hatena.com/?url=';
@@ -70,7 +71,7 @@ export default class Pasta extends Component {
   }
 
   onChangeHeight(heightOfElements) {
-    this.props.changeElementHeight(heightOfElements, this.props.menu.activeKeyword);        
+    this.props.changeElementHeight(heightOfElements, this.props.menu.activeKeyword);
   }
   getCategories(categories) {
     return categories.map((category) => {
@@ -107,24 +108,7 @@ export default class Pasta extends Component {
         const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
         const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
         const favoriteButtonClass = item.isFavorited? "favorite-button favorited" : "favorite-button";
-        let comments = [];
-        if(item.comments !== undefined) {
-          comments = item.comments.map(comment => {
-            return (
-              <div className="question_Box animated fadeIn" key={comment.user}>
-                <div className="question_image">
-                <a href={`http://b.hatena.ne.jp/${comment.user}`} target="blank">
-                    <img className="comment-avatar" src={`http://n.hatena.com/${comment.user}/profile/image.gif?type=face&size=32`} />  </a>
-                  <span className="comment-user">{comment.user}</span>
-                </div>
-                <div className="arrow_question">
-                  <p>{comment.comment}</p>
-                </div>
-              </div>
-            );
-          });
-          if (comments.length === 0) comments = <span className="comment-notfound">コメントがありませんでした</span>
-        }
+
         return (
           <div id={this.props.menu.activeKeyword + i} className="item animated fadeIn" key={item.link + this.props.menu.activeKeyword + i}>
             <img className="favicon" src={favicon} alt="favicon" />
@@ -138,7 +122,7 @@ export default class Pasta extends Component {
             </div>
             {this.getCommentButton(item)}
             <div className={(item.isCommentOpen) ? "comment-box comment-box-open": "comment-box comment-box-close"}>
-              {comments}
+            <Comments item={item} />
             </div>
           </div>
         );
