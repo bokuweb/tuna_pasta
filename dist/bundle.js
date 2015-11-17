@@ -59223,7 +59223,7 @@ function _getBookmarkCount(items) {
   });
 }
 
-},{"../api/feed":364,"../constants/action-types":369,"../lib/db":372,"lodash":6}],363:[function(require,module,exports){
+},{"../api/feed":364,"../constants/action-types":370,"../lib/db":373,"lodash":6}],363:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59310,7 +59310,7 @@ function removeKeyword(keyword) {
   };
 }
 
-},{"../constants/action-types":369,"../lib/db":372}],364:[function(require,module,exports){
+},{"../constants/action-types":370,"../lib/db":373}],364:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59507,6 +59507,147 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _comments = require('./comments');
+
+var _comments2 = _interopRequireDefault(_comments);
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _libUtils = require('../lib/utils');
+
+var FAVICON_URI = 'http://cdn-ak.favicon.st-hatena.com/?url=';
+var ENTRY_URI = 'http://b.hatena.ne.jp/entry/';
+var BOOKMARK_IMAGE_URI = ENTRY_URI + 'image/';
+
+var item = (function (_Component) {
+  _inherits(item, _Component);
+
+  function item(props) {
+    _classCallCheck(this, item);
+
+    _get(Object.getPrototypeOf(item.prototype), 'constructor', this).call(this, props);
+  }
+
+  _createClass(item, [{
+    key: 'onFavoriteClick',
+    value: function onFavoriteClick(item) {
+      if (item.isFavorited) this.props.removeFavorite(item, this.props.bookmarkFilter);else this.props.addFavorite(item, this.props.bookmarkFilter);
+    }
+  }, {
+    key: 'onCommentClick',
+    value: function onCommentClick(item) {
+      if (item.isCommentOpen) this.props.closeComment(item, this.props.activeKeyword);else this.props.openComment(item, this.props.activeKeyword);
+    }
+  }, {
+    key: 'getCategories',
+    value: function getCategories(categories) {
+      var _this = this;
+
+      return categories.map(function (category) {
+        return _react2['default'].createElement(
+          'span',
+          { className: 'category',
+            key: category + _this.props.activeKeyword,
+            style: { 'backgroundColor': '#1ABC9C' } },
+          category
+        );
+      });
+    }
+  }, {
+    key: 'getCommentButton',
+    value: function getCommentButton(item) {
+      var icon = item.isCommentFetching ? "fa fa-spinner fa-spin" : "fa fa-commenting";
+      var text = item.isCommentOpen ? "コメントを閉じる" : "コメントを見る";
+      return _react2['default'].createElement(
+        'div',
+        { className: 'comment-button', onClick: this.onCommentClick.bind(this, item) },
+        _react2['default'].createElement('i', { className: icon }),
+        text
+      );
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props = this.props;
+      var item = _props.item;
+      var activeKeyword = _props.activeKeyword;
+      var id = _props.id;
+
+      var favicon = FAVICON_URI + encodeURIComponent(item.link);
+      var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
+      var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
+      var favoriteButtonClass = item.isFavorited ? "favorite-button favorited" : "favorite-button";
+      return _react2['default'].createElement(
+        'div',
+        { id: id, className: 'item animated fadeIn' },
+        _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
+        _react2['default'].createElement(
+          'a',
+          { href: item.link, target: 'blank', className: 'item-title' },
+          item.title
+        ),
+        _react2['default'].createElement(
+          'a',
+          { href: hatebuHref, className: 'hatebu' },
+          _react2['default'].createElement('img', { src: hatebuImage, alt: '' })
+        ),
+        _react2['default'].createElement('br', null),
+        _react2['default'].createElement(
+          'span',
+          { className: 'publish-date' },
+          item.publishedDate
+        ),
+        this.getCategories(item.categories),
+        _react2['default'].createElement(
+          'p',
+          { className: 'content-snippet' },
+          (0, _libUtils.unescapeHTML)(item.contentSnippet)
+        ),
+        _react2['default'].createElement(
+          'div',
+          { className: favoriteButtonClass, onClick: this.onFavoriteClick.bind(this, item) },
+          _react2['default'].createElement('i', { className: 'fa fa-heart' }),
+          'お気に入り'
+        ),
+        this.getCommentButton(item),
+        _react2['default'].createElement(
+          'div',
+          { className: item.isCommentOpen ? "comment-box comment-box-open" : "comment-box comment-box-close" },
+          _react2['default'].createElement(_comments2['default'], { item: item })
+        )
+      );
+    }
+  }]);
+
+  return item;
+})(_react.Component);
+
+exports['default'] = item;
+module.exports = exports['default'];
+
+},{"../lib/utils":374,"./comments":365,"lodash":6,"react":349}],368:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
 var _reactInfinite = require('react-infinite');
 
 var _reactInfinite2 = _interopRequireDefault(_reactInfinite);
@@ -59526,6 +59667,10 @@ var _sideMenu2 = _interopRequireDefault(_sideMenu);
 var _comments = require('./comments');
 
 var _comments2 = _interopRequireDefault(_comments);
+
+var _item = require('./item');
+
+var _item2 = _interopRequireDefault(_item);
 
 var _libUtils = require('../lib/utils');
 
@@ -59557,14 +59702,12 @@ var Pasta = (function (_Component) {
       if (isLoadingNeeded && _this.props.menu.activeKeyword !== 'all') {
         _this.props.fetchFeed(_this.props.feed, _this.props.menu);
       }
-      // FIXME
       var heightOfElements = feed.items.map(function (item, i) {
         var el = document.getElementById(_this.props.menu.activeKeyword + i);
-        if (el) return el.clientHeight;else if (_this.props.feed[_this.props.menu.activeKeyword].heightOfElements[i]) return _this.props.feed[_this.props.menu.activeKeyword].heightOfElements[i];else return 200;
+        if (el) return el.clientHeight;else if (feed.heightOfElements[i]) return feed.heightOfElements[i];else return 200;
       });
-
       if (feed.items.length === 0) heightOfElements = 200;
-      if (!_lodash2['default'].isEqual(_this.props.feed[_this.props.menu.activeKeyword].heightOfElements, heightOfElements)) {
+      if (!_lodash2['default'].isEqual(feed.heightOfElements, heightOfElements)) {
         _this.onChangeHeight(heightOfElements);
       }
     }, 1000);
@@ -59585,113 +59728,36 @@ var Pasta = (function (_Component) {
       return _react2['default'].createElement('div', { className: 'rect-spinner' });
     }
   }, {
-    key: 'onFavoriteClick',
-    value: function onFavoriteClick(item) {
-      if (item.isFavorited) this.props.removeFavorite(item, this.props.menu.bookmarkFilter);else this.props.addFavorite(item, this.props.menu.bookmarkFilter);
-    }
-  }, {
-    key: 'onCommentClick',
-    value: function onCommentClick(item) {
-      if (item.isCommentOpen) this.props.closeComment(item, this.props.menu.activeKeyword);else this.props.openComment(item, this.props.menu.activeKeyword);
-    }
-  }, {
     key: 'onChangeHeight',
     value: function onChangeHeight(heightOfElements) {
       this.props.changeElementHeight(heightOfElements, this.props.menu.activeKeyword);
     }
   }, {
-    key: 'getCategories',
-    value: function getCategories(categories) {
+    key: 'getItems',
+    value: function getItems() {
       var _this2 = this;
 
-      return categories.map(function (category) {
-        return _react2['default'].createElement(
-          'span',
-          { className: 'category',
-            key: category + _this2.props.menu.activeKeyword,
-            style: { 'backgroundColor': '#1ABC9C' } },
-          category
-        );
+      var feed = this.props.feed[this.props.menu.activeKeyword];
+      return feed.items.map(function (item, i) {
+        return _react2['default'].createElement(_item2['default'], {
+          activeKeyword: _this2.props.menu.activeKeyword,
+          item: item,
+          key: i,
+          id: _this2.props.menu.activeKeyword + i,
+          closeComment: _this2.props.closeComment,
+          openComment: _this2.props.openComment,
+          changeElementHeight: _this2.props.changeElementHeight,
+          removeFavorite: _this2.props.removeFavorite,
+          addFavorite: _this2.props.addFavorite,
+          bookmarkFilter: _this2.props.bookmarkFilter,
+          isInitialized: _this2.props.feed.isInitialized });
       });
-    }
-  }, {
-    key: 'getCommentButton',
-    value: function getCommentButton(item) {
-      var icon = item.isCommentFetching ? "fa fa-spinner fa-spin" : "fa fa-commenting";
-      var text = item.isCommentOpen ? "コメントを閉じる" : "コメントを見る";
-      return _react2['default'].createElement(
-        'div',
-        { className: 'comment-button', onClick: this.onCommentClick.bind(this, item) },
-        _react2['default'].createElement('i', { className: icon }),
-        text
-      );
     }
   }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
-
       if (!this.props.feed.isInitialized) return _react2['default'].createElement('div', { className: 'rect-spinner' });
       var feed = this.props.feed[this.props.menu.activeKeyword];
-      var items = null;
-      if (this.props.menu.keywords.length === 0) items = _react2['default'].createElement(
-        'div',
-        null,
-        'まだ記事はありません。キーワードを追加してください。'
-      );else if (feed.items.length === 0 && feed.isPageEnd) {
-        items = _react2['default'].createElement(
-          'div',
-          null,
-          '記事が見つかりませんでした。'
-        );
-      } else {
-        items = feed.items.map(function (item, i) {
-          var favicon = FAVICON_URI + encodeURIComponent(item.link);
-          var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
-          var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
-          var favoriteButtonClass = item.isFavorited ? "favorite-button favorited" : "favorite-button";
-
-          return _react2['default'].createElement(
-            'div',
-            { id: _this3.props.menu.activeKeyword + i, className: 'item animated fadeIn', key: item.link + _this3.props.menu.activeKeyword + i },
-            _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
-            _react2['default'].createElement(
-              'a',
-              { href: item.link, target: 'blank', className: 'item-title' },
-              item.title
-            ),
-            _react2['default'].createElement(
-              'a',
-              { href: hatebuHref, className: 'hatebu' },
-              _react2['default'].createElement('img', { src: hatebuImage, alt: '' })
-            ),
-            _react2['default'].createElement('br', null),
-            _react2['default'].createElement(
-              'span',
-              { className: 'publish-date' },
-              item.publishedDate
-            ),
-            _this3.getCategories(item.categories),
-            _react2['default'].createElement(
-              'p',
-              { className: 'content-snippet' },
-              (0, _libUtils.unescapeHTML)(item.contentSnippet)
-            ),
-            _react2['default'].createElement(
-              'div',
-              { className: favoriteButtonClass, onClick: _this3.onFavoriteClick.bind(_this3, item) },
-              _react2['default'].createElement('i', { className: 'fa fa-heart' }),
-              'お気に入り'
-            ),
-            _this3.getCommentButton(item),
-            _react2['default'].createElement(
-              'div',
-              { className: item.isCommentOpen ? "comment-box comment-box-open" : "comment-box comment-box-close" },
-              _react2['default'].createElement(_comments2['default'], { item: item })
-            )
-          );
-        });
-      }
       return _react2['default'].createElement(
         'div',
         { id: 'container' },
@@ -59708,22 +59774,21 @@ var Pasta = (function (_Component) {
           removeKeyword: this.props.removeKeyword,
           toggleMenu: this.props.toggleMenu,
           feed: this.props.feed,
-          menu: this.props.menu
-        }),
+          menu: this.props.menu }),
         _react2['default'].createElement(
           'div',
           { id: 'content' },
           _react2['default'].createElement(
             _reactInfinite2['default'],
             {
-              elementHeight: this.props.feed[this.props.menu.activeKeyword].heightOfElements,
+              elementHeight: feed.heightOfElements,
               containerHeight: this.innerHeight - 40,
               infiniteLoadBeginBottomOffset: 100,
               onInfiniteLoad: this.onInfiniteLoad.bind(this),
               loadingSpinnerDelegate: this.elementInfiniteLoad(),
               isInfiniteLoading: feed.isInfiniteLoading,
               className: 'items' },
-            items
+            this.getItems()
           )
         )
       );
@@ -59736,7 +59801,7 @@ var Pasta = (function (_Component) {
 exports['default'] = Pasta;
 module.exports = exports['default'];
 
-},{"../lib/utils":373,"./comments":365,"./header":366,"./side-menu":368,"lodash":6,"react":349,"react-infinite":169}],368:[function(require,module,exports){
+},{"../lib/utils":374,"./comments":365,"./header":366,"./item":367,"./side-menu":369,"lodash":6,"react":349,"react-infinite":169}],369:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59918,7 +59983,7 @@ var SideMenu = (function (_Component) {
 exports['default'] = SideMenu;
 module.exports = exports['default'];
 
-},{"material-ui":44,"react":349}],369:[function(require,module,exports){
+},{"material-ui":44,"react":349}],370:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59965,7 +60030,7 @@ exports.CLOSE_COMMENT = CLOSE_COMMENT;
 var CHANGE_ELEMENT_HEIGHT = 'CHANGE_ELEMENT_HEIGHT';
 exports.CHANGE_ELEMENT_HEIGHT = CHANGE_ELEMENT_HEIGHT;
 
-},{}],370:[function(require,module,exports){
+},{}],371:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60009,7 +60074,7 @@ function mapDispatchToProps(dispatch) {
 exports['default'] = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_componentsPasta2['default']);
 module.exports = exports['default'];
 
-},{"../actions/feed":362,"../actions/menu":363,"../components/pasta":367,"lodash":6,"react-redux":181,"redux":353}],371:[function(require,module,exports){
+},{"../actions/feed":362,"../actions/menu":363,"../components/pasta":368,"lodash":6,"react-redux":181,"redux":353}],372:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -60042,7 +60107,7 @@ var store = (0, _storesConfigureStore2['default'])();
   _react2['default'].createElement(_containersApp2['default'], null)
 ), document.getElementById('pasta'));
 
-},{"./components/pasta":367,"./containers/app":370,"./stores/configure-store":377,"react":349,"react-dom":165,"react-redux":181}],372:[function(require,module,exports){
+},{"./components/pasta":368,"./containers/app":371,"./stores/configure-store":378,"react":349,"react-dom":165,"react-redux":181}],373:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60108,7 +60173,7 @@ var DbManager = (function () {
 exports['default'] = DbManager;
 module.exports = exports['default'];
 
-},{"dexie":1}],373:[function(require,module,exports){
+},{"dexie":1}],374:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -60122,7 +60187,7 @@ function unescapeHTML(str) {
     return div.textContent || div.innerText;
 }
 
-},{}],374:[function(require,module,exports){
+},{}],375:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60337,7 +60402,7 @@ function feed(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":369,"lodash":6}],375:[function(require,module,exports){
+},{"../constants/action-types":370,"lodash":6}],376:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60364,7 +60429,7 @@ var rootReducer = (0, _redux.combineReducers)({
 exports['default'] = rootReducer;
 module.exports = exports['default'];
 
-},{"./feed":374,"./menu":376,"redux":353}],376:[function(require,module,exports){
+},{"./feed":375,"./menu":377,"redux":353}],377:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60429,7 +60494,7 @@ function menu(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":369}],377:[function(require,module,exports){
+},{"../constants/action-types":370}],378:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60461,4 +60526,4 @@ function configureStore() {
 
 module.exports = exports['default'];
 
-},{"../reducers":375,"redux":353,"redux-logger":350,"redux-thunk":351}]},{},[371]);
+},{"../reducers":376,"redux":353,"redux-logger":350,"redux-thunk":351}]},{},[372]);
