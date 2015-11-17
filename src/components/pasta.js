@@ -93,6 +93,7 @@ export default class Pasta extends Component {
           fetchFeed={this.props.fetchFeed}
           changeKeywordInput={this.props.changeKeywordInput}
           addKeyword={this.props.addKeyword}
+          keywordInput={this.props.menu.keywordInput}
           selectKeyword={this.props.selectKeyword}
           removeKeyword={this.props.removeKeyword}
           toggleMenu={this.props.toggleMenu}
