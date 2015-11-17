@@ -59223,7 +59223,7 @@ function _getBookmarkCount(items) {
   });
 }
 
-},{"../api/feed":364,"../constants/action-types":368,"../lib/db":371,"lodash":6}],363:[function(require,module,exports){
+},{"../api/feed":364,"../constants/action-types":369,"../lib/db":372,"lodash":6}],363:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59310,7 +59310,7 @@ function removeKeyword(keyword) {
   };
 }
 
-},{"../constants/action-types":368,"../lib/db":371}],364:[function(require,module,exports){
+},{"../constants/action-types":369,"../lib/db":372}],364:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59366,6 +59366,92 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var Comments = (function (_Component) {
+  _inherits(Comments, _Component);
+
+  function Comments(props) {
+    _classCallCheck(this, Comments);
+
+    _get(Object.getPrototypeOf(Comments.prototype), "constructor", this).call(this, props);
+  }
+
+  _createClass(Comments, [{
+    key: "getComments",
+    value: function getComments(item) {
+      var notFoundMessage = _react2["default"].createElement(
+        "span",
+        { className: "comment-notfound" },
+        "コメントがありませんでした"
+      );
+      if (item.comments === undefined || item.comments.length === 0) return notFoundMessage;
+      return item.comments.map(function (comment) {
+        return _react2["default"].createElement(
+          "div",
+          { className: "question_Box animated fadeIn", key: comment.user },
+          _react2["default"].createElement(
+            "div",
+            { className: "question_image" },
+            _react2["default"].createElement(
+              "a",
+              { href: "http://b.hatena.ne.jp/" + comment.user, target: "blank" },
+              _react2["default"].createElement("img", { className: "comment-avatar", src: "http://n.hatena.com/" + comment.user + "/profile/image.gif?type=face&size=32" })
+            ),
+            _react2["default"].createElement(
+              "span",
+              { className: "comment-user" },
+              comment.user
+            )
+          ),
+          _react2["default"].createElement(
+            "div",
+            { className: "arrow_question" },
+            _react2["default"].createElement(
+              "p",
+              null,
+              comment.comment
+            )
+          )
+        );
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react2["default"].createElement(
+        "div",
+        null,
+        this.getComments(this.props.item)
+      );
+    }
+  }]);
+
+  return Comments;
+})(_react.Component);
+
+exports["default"] = Comments;
+module.exports = exports["default"];
+
+},{"react":349}],366:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
 var Header = (function (_Component) {
   _inherits(Header, _Component);
 
@@ -59400,7 +59486,7 @@ var Header = (function (_Component) {
 exports["default"] = Header;
 module.exports = exports["default"];
 
-},{"react":349}],366:[function(require,module,exports){
+},{"react":349}],367:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59436,6 +59522,10 @@ var _header2 = _interopRequireDefault(_header);
 var _sideMenu = require('./side-menu');
 
 var _sideMenu2 = _interopRequireDefault(_sideMenu);
+
+var _comments = require('./comments');
+
+var _comments2 = _interopRequireDefault(_comments);
 
 var _libUtils = require('../lib/utils');
 
@@ -59560,44 +59650,7 @@ var Pasta = (function (_Component) {
           var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
           var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
           var favoriteButtonClass = item.isFavorited ? "favorite-button favorited" : "favorite-button";
-          var comments = [];
-          if (item.comments !== undefined) {
-            comments = item.comments.map(function (comment) {
-              return _react2['default'].createElement(
-                'div',
-                { className: 'question_Box animated fadeIn', key: comment.user },
-                _react2['default'].createElement(
-                  'div',
-                  { className: 'question_image' },
-                  _react2['default'].createElement(
-                    'a',
-                    { href: 'http://b.hatena.ne.jp/' + comment.user, target: 'blank' },
-                    _react2['default'].createElement('img', { className: 'comment-avatar', src: 'http://n.hatena.com/' + comment.user + '/profile/image.gif?type=face&size=32' }),
-                    '  '
-                  ),
-                  _react2['default'].createElement(
-                    'span',
-                    { className: 'comment-user' },
-                    comment.user
-                  )
-                ),
-                _react2['default'].createElement(
-                  'div',
-                  { className: 'arrow_question' },
-                  _react2['default'].createElement(
-                    'p',
-                    null,
-                    comment.comment
-                  )
-                )
-              );
-            });
-            if (comments.length === 0) comments = _react2['default'].createElement(
-              'span',
-              { className: 'comment-notfound' },
-              'コメントがありませんでした'
-            );
-          }
+
           return _react2['default'].createElement(
             'div',
             { id: _this3.props.menu.activeKeyword + i, className: 'item animated fadeIn', key: item.link + _this3.props.menu.activeKeyword + i },
@@ -59634,7 +59687,7 @@ var Pasta = (function (_Component) {
             _react2['default'].createElement(
               'div',
               { className: item.isCommentOpen ? "comment-box comment-box-open" : "comment-box comment-box-close" },
-              comments
+              _react2['default'].createElement(_comments2['default'], { item: item })
             )
           );
         });
@@ -59683,7 +59736,7 @@ var Pasta = (function (_Component) {
 exports['default'] = Pasta;
 module.exports = exports['default'];
 
-},{"../lib/utils":372,"./header":365,"./side-menu":367,"lodash":6,"react":349,"react-infinite":169}],367:[function(require,module,exports){
+},{"../lib/utils":373,"./comments":365,"./header":366,"./side-menu":368,"lodash":6,"react":349,"react-infinite":169}],368:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59865,7 +59918,7 @@ var SideMenu = (function (_Component) {
 exports['default'] = SideMenu;
 module.exports = exports['default'];
 
-},{"material-ui":44,"react":349}],368:[function(require,module,exports){
+},{"material-ui":44,"react":349}],369:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59912,7 +59965,7 @@ exports.CLOSE_COMMENT = CLOSE_COMMENT;
 var CHANGE_ELEMENT_HEIGHT = 'CHANGE_ELEMENT_HEIGHT';
 exports.CHANGE_ELEMENT_HEIGHT = CHANGE_ELEMENT_HEIGHT;
 
-},{}],369:[function(require,module,exports){
+},{}],370:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59956,7 +60009,7 @@ function mapDispatchToProps(dispatch) {
 exports['default'] = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_componentsPasta2['default']);
 module.exports = exports['default'];
 
-},{"../actions/feed":362,"../actions/menu":363,"../components/pasta":366,"lodash":6,"react-redux":181,"redux":353}],370:[function(require,module,exports){
+},{"../actions/feed":362,"../actions/menu":363,"../components/pasta":367,"lodash":6,"react-redux":181,"redux":353}],371:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -59989,7 +60042,7 @@ var store = (0, _storesConfigureStore2['default'])();
   _react2['default'].createElement(_containersApp2['default'], null)
 ), document.getElementById('pasta'));
 
-},{"./components/pasta":366,"./containers/app":369,"./stores/configure-store":376,"react":349,"react-dom":165,"react-redux":181}],371:[function(require,module,exports){
+},{"./components/pasta":367,"./containers/app":370,"./stores/configure-store":377,"react":349,"react-dom":165,"react-redux":181}],372:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60055,7 +60108,7 @@ var DbManager = (function () {
 exports['default'] = DbManager;
 module.exports = exports['default'];
 
-},{"dexie":1}],372:[function(require,module,exports){
+},{"dexie":1}],373:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -60069,7 +60122,7 @@ function unescapeHTML(str) {
     return div.textContent || div.innerText;
 }
 
-},{}],373:[function(require,module,exports){
+},{}],374:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60284,7 +60337,7 @@ function feed(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":368,"lodash":6}],374:[function(require,module,exports){
+},{"../constants/action-types":369,"lodash":6}],375:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60311,7 +60364,7 @@ var rootReducer = (0, _redux.combineReducers)({
 exports['default'] = rootReducer;
 module.exports = exports['default'];
 
-},{"./feed":373,"./menu":375,"redux":353}],375:[function(require,module,exports){
+},{"./feed":374,"./menu":376,"redux":353}],376:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60376,7 +60429,7 @@ function menu(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":368}],376:[function(require,module,exports){
+},{"../constants/action-types":369}],377:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60408,4 +60461,4 @@ function configureStore() {
 
 module.exports = exports['default'];
 
-},{"../reducers":374,"redux":353,"redux-logger":350,"redux-thunk":351}]},{},[370]);
+},{"../reducers":375,"redux":353,"redux-logger":350,"redux-thunk":351}]},{},[371]);
