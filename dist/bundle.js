@@ -59221,7 +59221,7 @@ function _getBookmarkCount(items) {
   });
 }
 
-},{"../api/feed":364,"../constants/action-types":370,"../lib/db":373,"lodash":6}],363:[function(require,module,exports){
+},{"../api/feed":364,"../constants/action-types":371,"../lib/db":374,"lodash":6}],363:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59308,7 +59308,7 @@ function removeKeyword(keyword) {
   };
 }
 
-},{"../constants/action-types":370,"../lib/db":373}],364:[function(require,module,exports){
+},{"../constants/action-types":371,"../lib/db":374}],364:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59344,6 +59344,76 @@ function fetch(url) {
 }
 
 },{"jsonp":2}],365:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _materialUiLibSlider = require('material-ui/lib/slider');
+
+var _materialUiLibSlider2 = _interopRequireDefault(_materialUiLibSlider);
+
+var BookmarkSlider = (function (_Component) {
+  _inherits(BookmarkSlider, _Component);
+
+  function BookmarkSlider(props) {
+    _classCallCheck(this, BookmarkSlider);
+
+    _get(Object.getPrototypeOf(BookmarkSlider.prototype), 'constructor', this).call(this, props);
+  }
+
+  _createClass(BookmarkSlider, [{
+    key: 'onSliderChange',
+    value: function onSliderChange(e, value) {
+      this.props.changeBookmarkThreshold(~ ~value, e.clientX);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var x = this.props.bookmarkFilterX - 24;
+      x = x > 210 ? 210 : x;
+      x = x < 10 ? 10 : x;
+      return _react2['default'].createElement(
+        'div',
+        { className: 'slider' },
+        _react2['default'].createElement(
+          'div',
+          { className: 'bookmark-filter', style: { left: x } },
+          _react2['default'].createElement('i', { className: 'icon-hatena' }),
+          this.props.bookmarkFilter
+        ),
+        _react2['default'].createElement(_materialUiLibSlider2['default'], { name: 'slider',
+          defaultValue: this.props.defaultValue,
+          onChange: this.onSliderChange.bind(this),
+          onDragStop: this.props.onSliderChanged,
+          max: this.props.max,
+          min: this.props.min })
+      );
+    }
+  }]);
+
+  return BookmarkSlider;
+})(_react.Component);
+
+exports['default'] = BookmarkSlider;
+module.exports = exports['default'];
+
+},{"material-ui/lib/slider":76,"react":349}],366:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -59429,7 +59499,7 @@ var Comments = (function (_Component) {
 exports["default"] = Comments;
 module.exports = exports["default"];
 
-},{"react":349}],366:[function(require,module,exports){
+},{"react":349}],367:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -59484,7 +59554,7 @@ var Header = (function (_Component) {
 exports["default"] = Header;
 module.exports = exports["default"];
 
-},{"react":349}],367:[function(require,module,exports){
+},{"react":349}],368:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59625,7 +59695,7 @@ var item = (function (_Component) {
 exports['default'] = item;
 module.exports = exports['default'];
 
-},{"../lib/utils":374,"./comments":365,"lodash":6,"react":349}],368:[function(require,module,exports){
+},{"../lib/utils":375,"./comments":366,"lodash":6,"react":349}],369:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59738,9 +59808,9 @@ var Pasta = (function (_Component) {
       var feed = this.props.feed[this.props.menu.activeKeyword];
       return feed.items.map(function (item, i) {
         return _react2['default'].createElement(_item2['default'], {
+          key: i,
           activeKeyword: _this2.props.menu.activeKeyword,
           item: item,
-          key: i,
           id: _this2.props.menu.activeKeyword + i,
           closeComment: _this2.props.closeComment,
           openComment: _this2.props.openComment,
@@ -59799,7 +59869,7 @@ var Pasta = (function (_Component) {
 exports['default'] = Pasta;
 module.exports = exports['default'];
 
-},{"../lib/utils":374,"./comments":365,"./header":366,"./item":367,"./side-menu":369,"lodash":6,"react":349,"react-infinite":169}],369:[function(require,module,exports){
+},{"../lib/utils":375,"./comments":366,"./header":367,"./item":368,"./side-menu":370,"lodash":6,"react":349,"react-infinite":169}],370:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -59824,8 +59894,11 @@ var _materialUi = require('material-ui');
 
 var _materialUi2 = _interopRequireDefault(_materialUi);
 
+var _bookmarkSlider = require('./bookmark-slider');
+
+var _bookmarkSlider2 = _interopRequireDefault(_bookmarkSlider);
+
 var TextField = _materialUi2['default'].TextField;
-var Slider = _materialUi2['default'].Slider;
 var RaisedButton = _materialUi2['default'].RaisedButton;
 
 var SideMenu = (function (_Component) {
@@ -59838,13 +59911,8 @@ var SideMenu = (function (_Component) {
   }
 
   _createClass(SideMenu, [{
-    key: 'onSliderChange',
-    value: function onSliderChange(e, value) {
-      this.props.changeBookmarkThreshold(~ ~value, e.clientX);
-    }
-  }, {
-    key: 'onSlideStop',
-    value: function onSlideStop() {
+    key: 'onSliderChanged',
+    value: function onSliderChanged() {
       this.props.clearFeeds(this.props.menu);
       this.props.fetchFeed(this.props.feed, this.props.menu);
     }
@@ -59911,22 +59979,14 @@ var SideMenu = (function (_Component) {
         { id: 'side-menu',
           className: this.props.menu.isMenuOpen ? "animated slideInLeft menu-open" : "animated slideInLeft menu-close" },
         _react2['default'].createElement('img', { id: 'logo', src: 'img/logo.png', alt: '' }),
-        _react2['default'].createElement(
-          'div',
-          { className: 'slider' },
-          _react2['default'].createElement(
-            'div',
-            { className: 'bookmark-filter', style: { left: x } },
-            _react2['default'].createElement('i', { className: 'icon-hatena' }),
-            this.props.menu.bookmarkFilter
-          ),
-          _react2['default'].createElement(Slider, { name: 'slider',
-            defaultValue: 1,
-            onChange: this.onSliderChange.bind(this),
-            onDragStop: this.onSlideStop.bind(this),
-            max: 250,
-            min: 1 })
-        ),
+        _react2['default'].createElement(_bookmarkSlider2['default'], {
+          max: 250,
+          min: 1,
+          defaultValue: 1,
+          bookmarkFilterX: this.props.menu.bookmarkFilterX,
+          bookmarkFilter: this.props.menu.bookmarkFilter,
+          changeBookmarkThreshold: this.props.changeBookmarkThreshold,
+          onSliderChanged: this.onSliderChanged.bind(this) }),
         _react2['default'].createElement(
           'div',
           { className: 'add-keyword' },
@@ -59981,7 +60041,7 @@ var SideMenu = (function (_Component) {
 exports['default'] = SideMenu;
 module.exports = exports['default'];
 
-},{"material-ui":44,"react":349}],370:[function(require,module,exports){
+},{"./bookmark-slider":365,"material-ui":44,"react":349}],371:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60028,7 +60088,7 @@ exports.CLOSE_COMMENT = CLOSE_COMMENT;
 var CHANGE_ELEMENT_HEIGHT = 'CHANGE_ELEMENT_HEIGHT';
 exports.CHANGE_ELEMENT_HEIGHT = CHANGE_ELEMENT_HEIGHT;
 
-},{}],371:[function(require,module,exports){
+},{}],372:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60072,7 +60132,7 @@ function mapDispatchToProps(dispatch) {
 exports['default'] = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_componentsPasta2['default']);
 module.exports = exports['default'];
 
-},{"../actions/feed":362,"../actions/menu":363,"../components/pasta":368,"lodash":6,"react-redux":181,"redux":353}],372:[function(require,module,exports){
+},{"../actions/feed":362,"../actions/menu":363,"../components/pasta":369,"lodash":6,"react-redux":181,"redux":353}],373:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -60105,7 +60165,7 @@ var store = (0, _storesConfigureStore2['default'])();
   _react2['default'].createElement(_containersApp2['default'], null)
 ), document.getElementById('pasta'));
 
-},{"./components/pasta":368,"./containers/app":371,"./stores/configure-store":378,"react":349,"react-dom":165,"react-redux":181}],373:[function(require,module,exports){
+},{"./components/pasta":369,"./containers/app":372,"./stores/configure-store":379,"react":349,"react-dom":165,"react-redux":181}],374:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60171,7 +60231,7 @@ var DbManager = (function () {
 exports['default'] = DbManager;
 module.exports = exports['default'];
 
-},{"dexie":1}],374:[function(require,module,exports){
+},{"dexie":1}],375:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -60185,7 +60245,7 @@ function unescapeHTML(str) {
     return div.textContent || div.innerText;
 }
 
-},{}],375:[function(require,module,exports){
+},{}],376:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60400,7 +60460,7 @@ function feed(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":370,"lodash":6}],376:[function(require,module,exports){
+},{"../constants/action-types":371,"lodash":6}],377:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60427,7 +60487,7 @@ var rootReducer = (0, _redux.combineReducers)({
 exports['default'] = rootReducer;
 module.exports = exports['default'];
 
-},{"./feed":375,"./menu":377,"redux":353}],377:[function(require,module,exports){
+},{"./feed":376,"./menu":378,"redux":353}],378:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60492,7 +60552,7 @@ function menu(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":370}],378:[function(require,module,exports){
+},{"../constants/action-types":371}],379:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -60524,4 +60584,4 @@ function configureStore() {
 
 module.exports = exports['default'];
 
-},{"../reducers":376,"redux":353,"redux-logger":350,"redux-thunk":351}]},{},[372]);
+},{"../reducers":377,"redux":353,"redux-logger":350,"redux-thunk":351}]},{},[373]);

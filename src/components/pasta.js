@@ -63,9 +63,9 @@ export default class Pasta extends Component {
     return feed.items.map((item, i) => {
       return (
         <Item
+          key={i}
           activeKeyword={this.props.menu.activeKeyword}
           item={item}
-          key={i}
           id={this.props.menu.activeKeyword + i}
           closeComment={this.props.closeComment}
           openComment={this.props.openComment}
