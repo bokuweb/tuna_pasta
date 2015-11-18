@@ -39,9 +39,8 @@
     "redux-thunk": "~1.0.0"
   },
   "devDependencies": {
+    "babel-plugin-espower": "~1.0.0",
     "babelify": "~6.4.0",
-    "watchify": "~3.5.0",
-    "stylus": "~0.52.4",
     "espower-babel": "~3.3.0",
     "espower-loader": "~1.0.0",
     "espowerify": "~1.0.0",
@@ -51,11 +50,14 @@
     "karma-chrome-launcher": "~0.2.1",
     "karma-cli": "~0.1.1",
     "karma-mocha": "~0.2.0",
-    "mithril-node-render": "~0.4.1",
-    "mithril-query": "~0.7.6",
+    "karma-phantomjs-launcher": "^0.2.1",
     "mocha": "~2.3.3",
+    "phantomjs": "^1.9.18",
+    "phantomjs-polyfill": "0.0.1",
     "power-assert": "~1.1.0",
-    "babel-plugin-espower": "~1.0.0"
+    "react-addons-test-utils": "^0.14.2",
+    "stylus": "~0.52.4",
+    "watchify": "~3.5.0"
   },
   "browserify": {
     "transform": [
