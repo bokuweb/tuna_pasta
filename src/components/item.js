@@ -13,6 +13,7 @@ export default class item extends Component {
   }
 
   onFavoriteClick(item) {
+    console.dir(item);
     if (item.isFavorited)
       this.props.removeFavorite(item, this.props.bookmarkFilter);
     else
@@ -49,27 +50,27 @@ export default class item extends Component {
 
   render() {
     const {item, activeKeyword, id} = this.props;
-      const favicon = FAVICON_URI + encodeURIComponent(item.link);
-      const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
-      const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
-      const favoriteButtonClass = item.isFavorited? "favorite-button favorited" : "favorite-button";
-       return (
-        <div id={id} className="item animated fadeIn">
-          <img className="favicon" src={favicon} alt="favicon" />
-          <a href={item.link} target="blank" className="item-title">{item.title}</a>
-          <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
-          <span className="publish-date">{item.publishedDate}</span>
-          {this.getCategories(item.categories)}
-          <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
-          <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>
-            <i className="fa fa-heart" />お気に入り
-          </div>
-          {this.getCommentButton(item)}
-          <div className={(item.isCommentOpen) ? "comment-box comment-box-open": "comment-box comment-box-close"}>
-          <Comments item={item} />
-          </div>
+    const favicon = FAVICON_URI + encodeURIComponent(item.link);
+    const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
+    const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
+    const favoriteButtonClass = item.isFavorited? "favorite-button favorited" : "favorite-button";
+    return (
+      <div id={id} className="item animated fadeIn">
+        <img className="favicon" src={favicon} alt="favicon" />
+        <a href={item.link} target="blank" className="item-title">{item.title}</a>
+        <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
+        <span className="publish-date">{item.publishedDate}</span>
+        {this.getCategories(item.categories)}
+        <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
+        <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>
+          <i className="fa fa-heart" />お気に入り
         </div>
-      );
+        {this.getCommentButton(item)}
+        <div className={(item.isCommentOpen) ? "comment-box comment-box-open": "comment-box comment-box-close"}>
+        <Comments item={item} />
+        </div>
+      </div>
+    );
   }
 }
 
