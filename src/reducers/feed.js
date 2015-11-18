@@ -7,7 +7,7 @@ function _createProps() {
     items : [],
     isPageEnd : false,
     isInfiniteLoading : false,
-    heightOfElements : 200
+    elementHeight : 200
   };
 }
 
@@ -48,21 +48,24 @@ export default function feed(state={}, action) {
       state.favorite.items = action.favorites;
       return Object.assign({}, state);
 
-    case types.ADD_FAVORITE :
-    if (action.item !== null) state.favorite.items.push(action.item);
-    if (state.favorite.heightOfElements.length > 0)
-      state.favorite.heightOfElements.push(200);
+  case types.ADD_FAVORITE :
+    if (action.item !== null) {
+      action.item.isFavorite = true;
+      state.favorite.items.push(action.item);
+    }
+    if (state.favorite.elementHeight.length > 0)
+      state.favorite.elementHeight.push(200);
     else
-      state.favorite.heightOfElements = 200;
+      state.favorite.elementHeight = 200;
       _updateAllByFavorite(state, state.favorite.items);
       return Object.assign({}, state);
 
-  case types.REMOVE_FAVORITE :
+    case types.REMOVE_FAVORITE :
       state.favorite.items.map((item, i) => {
         if (action.item.link === item.link) {
           state.favorite.items.splice( i , 1);
-          if (state.favorite.heightOfElements.length > 0)
-            state.favorite.heightOfElements.splice( i , 1);
+          if (state.favorite.elementHeight.length > 0)
+            state.favorite.elementHeight.splice( i , 1);
         }
       });
       _updateAllByFavorite(state, state.favorite.items);
@@ -75,16 +78,16 @@ export default function feed(state={}, action) {
     case types.RECIEVE_ITEMS :
       const items = _getItemsUpdatedByFavorite(action.items, state.favorite.items);
       const keyword = action.keyword;
-      const heightOfElements = items.map(item => 200);
-      if (heightOfElements.length > 0) {
-        if (state.all.heightOfElements.length > 0)
-          state.all.heightOfElements = state.all.heightOfElements.concat(heightOfElements);
+      const elementHeight = items.map(item => 200);
+      if (elementHeight.length > 0) {
+        if (state.all.elementHeight.length > 0)
+          state.all.elementHeight = state.all.elementHeight.concat(elementHeight);
         else
-          state.all.heightOfElements = heightOfElements;
-        if (state[keyword].heightOfElements.length > 0)
-          state[keyword].heightOfElements = state[keyword].heightOfElements.concat(heightOfElements);
+          state.all.elementHeight = elementHeight;
+        if (state[keyword].elementHeight.length > 0)
+          state[keyword].elementHeight = state[keyword].elementHeight.concat(elementHeight);
         else
-          state[keyword].heightOfElements = heightOfElements;
+          state[keyword].elementHeight = elementHeight;
       }
       state[keyword].isInfiniteLoading = false;
       if (items === null) {
@@ -147,7 +150,7 @@ export default function feed(state={}, action) {
       return Object.assign({}, state);
 
     case types.CHANGE_ELEMENT_HEIGHT :
-      state[action.keyword].heightOfElements = action.heightOfElements;
+      state[action.keyword].elementHeight = action.elementHeight;
       return Object.assign({}, state);
 
     default:

@@ -29,16 +29,15 @@ export default class Pasta extends Component {
       if (isLoadingNeeded && this.props.menu.activeKeyword !== 'all') {
         this.props.fetchFeed(this.props.feed, this.props.menu);
       }
-      let heightOfElements = feed.items.map((item, i) => {
+      let elementHeight = feed.items.map((item, i) => {
         const el = document.getElementById(this.props.menu.activeKeyword + i);
         if (el) return el.clientHeight;
-        else if (feed.heightOfElements[i])
-          return feed.heightOfElements[i];
+        else if (feed.elementHeight[i]) return feed.elementHeight[i];
         else return 200;
       });
-      if (feed.items.length === 0) heightOfElements = 200;
-      if (!_.isEqual(feed.heightOfElements, heightOfElements)) {
-        this.onChangeHeight(heightOfElements);
+      if (feed.items.length === 0) elementHeight = 200;
+      if (!_.isEqual(feed.elementHeight, elementHeight)) {
+        this.onChangeHeight(elementHeight);
       }
     }, 1000);
   }
@@ -55,25 +54,26 @@ export default class Pasta extends Component {
     return  <div className="rect-spinner"></div>;
   }
 
-  onChangeHeight(heightOfElements) {
-    this.props.changeElementHeight(heightOfElements, this.props.menu.activeKeyword);
+  onChangeHeight(elementHeight) {
+    this.props.changeElementHeight(elementHeight, this.props.menu.activeKeyword);
   }
 
   getItems() {
-    const feed = this.props.feed[this.props.menu.activeKeyword];
+    const keyword = this.props.menu.activeKeyword;
+    const feed = this.props.feed[keyword];
     return feed.items.map((item, i) => {
       return (
         <Item
-          activeKeyword={this.props.menu.activeKeyword}
+          activeKeyword={keyword}
           item={item}
-          key={i}
-          id={this.props.menu.activeKeyword + i}
+          key={keyword + i}
+          id={keyword + i}
           closeComment={this.props.closeComment}
           openComment={this.props.openComment}
           changeElementHeight={this.props.changeElementHeight}
           removeFavorite={this.props.removeFavorite}
           addFavorite={this.props.addFavorite}
-          bookmarkFilter={this.props.bookmarkFilter}
+          bookmarkFilter={this.props.menu.bookmarkFilter}
           isInitialized={this.props.feed.isInitialized}/>
       );
     });
@@ -100,16 +100,16 @@ export default class Pasta extends Component {
           feed={this.props.feed}
           menu={this.props.menu} />
         <div id="content">
-            <Infinite
-              elementHeight={feed.heightOfElements}
-              containerHeight={this.innerHeight-40}
-              infiniteLoadBeginBottomOffset={100}
-              onInfiniteLoad={this.onInfiniteLoad.bind(this)}
-              loadingSpinnerDelegate={this.elementInfiniteLoad()}
-              isInfiniteLoading={feed.isInfiniteLoading}
-              className={'items'}>
-              {this.getItems()}
-            </Infinite>
+          <Infinite
+            elementHeight={feed.elementHeight}
+            containerHeight={this.innerHeight-40}
+            infiniteLoadBeginBottomOffset={100}
+            onInfiniteLoad={this.onInfiniteLoad.bind(this)}
+            loadingSpinnerDelegate={this.elementInfiniteLoad()}
+            isInfiniteLoading={feed.isInfiniteLoading}
+            className={'items'}>
+            {this.getItems()}
+          </Infinite>
         </div>
       </div>
     );
