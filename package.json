@@ -8,7 +8,7 @@
     "watch:js": "watchify --extension=js -o dist/bundle.js src/index.js",
     "watch:stylus": "stylus stylus/ --watch  --out stylesheets/",
     "build:stylus": "stylus stylus/ --out stylesheets/",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "karma start"
   },
   "repository": {
     "type": "git",
@@ -41,7 +41,21 @@
   "devDependencies": {
     "babelify": "~6.4.0",
     "watchify": "~3.5.0",
-    "stylus": "~0.52.4"
+    "stylus": "~0.52.4",
+    "espower-babel": "~3.3.0",
+    "espower-loader": "~1.0.0",
+    "espowerify": "~1.0.0",
+    "intelli-espower-loader": "~1.0.0",
+    "karma": "~0.13.11",
+    "karma-browserify": "~4.4.0",
+    "karma-chrome-launcher": "~0.2.1",
+    "karma-cli": "~0.1.1",
+    "karma-mocha": "~0.2.0",
+    "mithril-node-render": "~0.4.1",
+    "mithril-query": "~0.7.6",
+    "mocha": "~2.3.3",
+    "power-assert": "~1.1.0",
+    "babel-plugin-espower": "~1.0.0"
   },
   "browserify": {
     "transform": [
