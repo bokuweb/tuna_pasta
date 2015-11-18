@@ -61,6 +61,8 @@ export default class Pasta extends Component {
   getItems() {
     const keyword = this.props.menu.activeKeyword;
     const feed = this.props.feed[keyword];
+    if (this.props.menu.keywords.length === 0) return <div>まだ記事はありません。キーワードを追加してください。</div>;
+    else if (feed.items.length === 0 && feed.isPageEnd) return <div>記事が見つかりませんでした。</div>; 
     return feed.items.map((item, i) => {
       return (
         <Item

@@ -42892,6 +42892,15 @@ var Pasta = (function (_Component) {
 
       var keyword = this.props.menu.activeKeyword;
       var feed = this.props.feed[keyword];
+      if (this.props.menu.keywords.length === 0) return _react2['default'].createElement(
+        'div',
+        null,
+        'まだ記事はありません。キーワードを追加してください。'
+      );else if (feed.items.length === 0 && feed.isPageEnd) return _react2['default'].createElement(
+        'div',
+        null,
+        '記事が見つかりませんでした。'
+      );
       return feed.items.map(function (item, i) {
         return _react2['default'].createElement(_item2['default'], {
           activeKeyword: keyword,
