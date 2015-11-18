@@ -59,20 +59,21 @@ export default class Pasta extends Component {
   }
 
   getItems() {
-    const feed = this.props.feed[this.props.menu.activeKeyword];
+    const keyword = this.props.menu.activeKeyword;
+    const feed = this.props.feed[keyword];
     return feed.items.map((item, i) => {
       return (
         <Item
-          key={i}
-          activeKeyword={this.props.menu.activeKeyword}
+          activeKeyword={keyword}
           item={item}
-          id={this.props.menu.activeKeyword + i}
+          key={keyword + i}
+          id={keyword + i}
           closeComment={this.props.closeComment}
           openComment={this.props.openComment}
           changeElementHeight={this.props.changeElementHeight}
           removeFavorite={this.props.removeFavorite}
           addFavorite={this.props.addFavorite}
-          bookmarkFilter={this.props.bookmarkFilter}
+          bookmarkFilter={this.props.menu.bookmarkFilter}
           isInitialized={this.props.feed.isInitialized}/>
       );
     });

@@ -48,8 +48,11 @@ export default function feed(state={}, action) {
       state.favorite.items = action.favorites;
       return Object.assign({}, state);
 
-    case types.ADD_FAVORITE :
-    if (action.item !== null) state.favorite.items.push(action.item);
+  case types.ADD_FAVORITE :
+    if (action.item !== null) {
+      action.item.isFavorite = true;
+      state.favorite.items.push(action.item);
+    }
     if (state.favorite.elementHeight.length > 0)
       state.favorite.elementHeight.push(200);
     else
@@ -57,7 +60,7 @@ export default function feed(state={}, action) {
       _updateAllByFavorite(state, state.favorite.items);
       return Object.assign({}, state);
 
-  case types.REMOVE_FAVORITE :
+    case types.REMOVE_FAVORITE :
       state.favorite.items.map((item, i) => {
         if (action.item.link === item.link) {
           state.favorite.items.splice( i , 1);
