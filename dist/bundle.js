@@ -59136,12 +59136,10 @@ function closeComment(item, keyword) {
   };
 }
 
-function changeElementHeight(heightOfElements, keyword) {
-  console.dir(heightOfElements);
-  console.log("change action");
+function changeElementHeight(elementHeight, keyword) {
   return {
     type: types.CHANGE_ELEMENT_HEIGHT,
-    heightOfElements: heightOfElements,
+    elementHeight: elementHeight,
     keyword: keyword
   };
 }
@@ -59702,13 +59700,13 @@ var Pasta = (function (_Component) {
       if (isLoadingNeeded && _this.props.menu.activeKeyword !== 'all') {
         _this.props.fetchFeed(_this.props.feed, _this.props.menu);
       }
-      var heightOfElements = feed.items.map(function (item, i) {
+      var elementHeight = feed.items.map(function (item, i) {
         var el = document.getElementById(_this.props.menu.activeKeyword + i);
-        if (el) return el.clientHeight;else if (feed.heightOfElements[i]) return feed.heightOfElements[i];else return 200;
+        if (el) return el.clientHeight;else if (feed.elementHeight[i]) return feed.elementHeight[i];else return 200;
       });
-      if (feed.items.length === 0) heightOfElements = 200;
-      if (!_lodash2['default'].isEqual(feed.heightOfElements, heightOfElements)) {
-        _this.onChangeHeight(heightOfElements);
+      if (feed.items.length === 0) elementHeight = 200;
+      if (!_lodash2['default'].isEqual(feed.elementHeight, elementHeight)) {
+        _this.onChangeHeight(elementHeight);
       }
     }, 1000);
   }
@@ -59729,8 +59727,8 @@ var Pasta = (function (_Component) {
     }
   }, {
     key: 'onChangeHeight',
-    value: function onChangeHeight(heightOfElements) {
-      this.props.changeElementHeight(heightOfElements, this.props.menu.activeKeyword);
+    value: function onChangeHeight(elementHeight) {
+      this.props.changeElementHeight(elementHeight, this.props.menu.activeKeyword);
     }
   }, {
     key: 'getItems',
@@ -59781,7 +59779,7 @@ var Pasta = (function (_Component) {
           _react2['default'].createElement(
             _reactInfinite2['default'],
             {
-              elementHeight: feed.heightOfElements,
+              elementHeight: feed.elementHeight,
               containerHeight: this.innerHeight - 40,
               infiniteLoadBeginBottomOffset: 100,
               onInfiniteLoad: this.onInfiniteLoad.bind(this),
@@ -60213,7 +60211,7 @@ function _createProps() {
     items: [],
     isPageEnd: false,
     isInfiniteLoading: false,
-    heightOfElements: 200
+    elementHeight: 200
   };
 }
 
@@ -60280,7 +60278,7 @@ function feed(state, action) {
 
     case types.ADD_FAVORITE:
       if (action.item !== null) state.favorite.items.push(action.item);
-      if (state.favorite.heightOfElements.length > 0) state.favorite.heightOfElements.push(200);else state.favorite.heightOfElements = 200;
+      if (state.favorite.elementHeight.length > 0) state.favorite.elementHeight.push(200);else state.favorite.elementHeight = 200;
       _updateAllByFavorite(state, state.favorite.items);
       return Object.assign({}, state);
 
@@ -60288,7 +60286,7 @@ function feed(state, action) {
       state.favorite.items.map(function (item, i) {
         if (action.item.link === item.link) {
           state.favorite.items.splice(i, 1);
-          if (state.favorite.heightOfElements.length > 0) state.favorite.heightOfElements.splice(i, 1);
+          if (state.favorite.elementHeight.length > 0) state.favorite.elementHeight.splice(i, 1);
         }
       });
       _updateAllByFavorite(state, state.favorite.items);
@@ -60301,12 +60299,12 @@ function feed(state, action) {
     case types.RECIEVE_ITEMS:
       var items = _getItemsUpdatedByFavorite(action.items, state.favorite.items);
       var keyword = action.keyword;
-      var heightOfElements = items.map(function (item) {
+      var elementHeight = items.map(function (item) {
         return 200;
       });
-      if (heightOfElements.length > 0) {
-        if (state.all.heightOfElements.length > 0) state.all.heightOfElements = state.all.heightOfElements.concat(heightOfElements);else state.all.heightOfElements = heightOfElements;
-        if (state[keyword].heightOfElements.length > 0) state[keyword].heightOfElements = state[keyword].heightOfElements.concat(heightOfElements);else state[keyword].heightOfElements = heightOfElements;
+      if (elementHeight.length > 0) {
+        if (state.all.elementHeight.length > 0) state.all.elementHeight = state.all.elementHeight.concat(elementHeight);else state.all.elementHeight = elementHeight;
+        if (state[keyword].elementHeight.length > 0) state[keyword].elementHeight = state[keyword].elementHeight.concat(elementHeight);else state[keyword].elementHeight = elementHeight;
       }
       state[keyword].isInfiniteLoading = false;
       if (items === null) {
@@ -60392,7 +60390,7 @@ function feed(state, action) {
       return Object.assign({}, state);
 
     case types.CHANGE_ELEMENT_HEIGHT:
-      state[action.keyword].heightOfElements = action.heightOfElements;
+      state[action.keyword].elementHeight = action.elementHeight;
       return Object.assign({}, state);
 
     default:
