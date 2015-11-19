@@ -1,3 +1,49 @@
+@import 'base/normalize.css';
+html,
+body,
+#pasta {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  background: #f5f5f5;
+  font-family: helvetica, "メイリオ", arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif;
+}
+div,
+input,
+textarea {
+  font-family: helvetica, "メイリオ", arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif;
+}
+input,
+textarea,
+select {
+  outline: none;
+}
+html,
+a,
+input,
+textarea {
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+  color: #ccc;
+}
+ul {
+  padding: 0;
+}
+li {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+#container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  box-orient: horizontal;
+}
 @font-face {
   font-family: 'icomoon';
   src: url("../fonts/icomoon.eot?-qz7pb2");
@@ -6445,47 +6491,105 @@ Copyright (c) 2015 Daniel Eden
     transform: translate3d(0, -100%, 0);
   }
 }
-html,
-body,
-#pasta {
-  height: 100%;
-  padding: 0;
-  margin: 0;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  background: #f5f5f5;
-  font-family: helvetica, "メイリオ", arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif;
-}
-div,
-input,
-textarea {
-  font-family: helvetica, "メイリオ", arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif;
-}
-input,
-textarea,
-select {
-  outline: none;
-}
-html,
-a,
-input,
-textarea {
-  -webkit-font-smoothing: antialiased;
-  text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
-  color: #ccc;
-}
-li {
-  list-style: none;
-}
-a {
-  text-decoration: none;
-}
-#container {
-  height: 100%;
+.bookmarkslider {
   width: 100%;
-  display: flex;
-  flex-direction: row;
-  box-orient: horizontal;
+  margin: 0 auto;
+  position: relative;
+  padding: 15px 0 0 0;
+}
+.bookmarkslider > div[name="bookmarkslider"] {
+  width: 70%;
+  margin: 0 0 0 15%;
+}
+.bookmarkslider .bookmarkslider__count {
+  background: #34495e;
+  color: #f5f5f5;
+  padding: 8px;
+  width: 40px;
+  position: absolute;
+  top: 0;
+  left: 10px;
+  border-radius: 4px;
+  text-align: center;
+  vertical-align: middle;
+}
+.bookmarkslider .bookmarkslider__count i.bookmarkslider__icon {
+  color: #f5f5f5;
+  margin: 0 2px -2px 0;
+  display: inline-block;
+}
+.bookmarkslider .bookmarkslider__count:after {
+  content: '';
+  position: absolute;
+  border-top: 10px solid #34495e;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  bottom: -9px;
+  left: 20px;
+}
+.rect-spinner {
+  width: 40px;
+  height: 40px;
+  background-color: #3498db;
+  margin: 100px auto;
+  -webkit-animation: rect-sk-rotateplane 1.2s infinite ease-in-out;
+  animation: rect-sk-rotateplane 1.2s infinite ease-in-out;
+}
+@-moz-keyframes rect-sk-rotateplane {
+  0% {
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+  }
+}
+@-webkit-keyframes rect-sk-rotateplane {
+  0% {
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+  }
+}
+@-o-keyframes rect-sk-rotateplane {
+  0% {
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+  }
+}
+@keyframes rect-sk-rotateplane {
+  0% {
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+  }
 }
 #side-menu {
   background: #2980b9;
@@ -6507,9 +6611,6 @@ a {
 #side-menu #menu {
   color: #ecf0f1;
   margin: 20px 0 0 0;
-}
-#side-menu #menu ul {
-  padding: 0;
 }
 #side-menu #menu li {
   font-size: 16px;
@@ -6597,42 +6698,6 @@ div.add-keyword input {
   font-size: 14px;
   width: 140px;
 }
-div.slider {
-  width: 100%;
-  margin: 0 auto;
-  position: relative;
-  padding: 15px 0 0 0;
-}
-div.slider div[name="slider"] {
-  width: 70%;
-  margin: 0 0 0 15%;
-}
-div.slider .bookmark-filter {
-  background: #34495e;
-  color: #f5f5f5;
-  padding: 8px;
-  width: 40px;
-  position: absolute;
-  top: 0;
-  left: 10px;
-  border-radius: 4px;
-  text-align: center;
-  vertical-align: middle;
-}
-div.slider .bookmark-filter i {
-  color: #f5f5f5;
-  margin: 0 2px -2px 0;
-  display: inline-block;
-}
-div.slider .bookmark-filter:after {
-  content: '';
-  position: absolute;
-  border-top: 10px solid #34495e;
-  border-right: 5px solid transparent;
-  border-left: 5px solid transparent;
-  bottom: -9px;
-  left: 20px;
-}
 #content {
   flex: 1;
   box-flex: 1;
@@ -6707,14 +6772,6 @@ div.comment-box-open {
 .items {
   padding: 20px 30px 0 50px;
   height: 100%;
-}
-.rect-spinner {
-  width: 40px;
-  height: 40px;
-  background-color: #3498db;
-  margin: 100px auto;
-  -webkit-animation: rect-sk-rotateplane 1.2s infinite ease-in-out;
-  animation: rect-sk-rotateplane 1.2s infinite ease-in-out;
 }
 div.favorite-button {
   margin: 0 0 20px 0;
@@ -6922,60 +6979,4 @@ span.comment-user {
 }
 span.comment-notfound {
   font-size: 12px;
-}
-@-moz-keyframes rect-sk-rotateplane {
-  0% {
-    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-  }
-  50% {
-    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-  }
-  100% {
-    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-  }
-}
-@-webkit-keyframes rect-sk-rotateplane {
-  0% {
-    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-  }
-  50% {
-    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-  }
-  100% {
-    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-  }
-}
-@-o-keyframes rect-sk-rotateplane {
-  0% {
-    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-  }
-  50% {
-    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-  }
-  100% {
-    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-  }
-}
-@keyframes rect-sk-rotateplane {
-  0% {
-    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-  }
-  50% {
-    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-  }
-  100% {
-    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-  }
 }
