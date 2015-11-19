@@ -15,12 +15,12 @@ export default class BookmarkSlider extends Component {
     x = (x > 210)? 210 : x;
     x = (x < 10)? 10 : x;
     return (
-      <div className="slider">
-       <div className="bookmark-filter" style={{left:x}}>
-         <i className="icon-hatena" />
+      <div className="bookmarkslider">
+       <div className="bookmarkslider__count" style={{left:x}}>
+        <i className="bookmarkslider__icon icon-hatena" />
          {this.props.bookmarkFilter}
        </div>
-       <Slider name="slider"
+       <Slider name="bookmarkslider"
          defaultValue={this.props.defaultValue}
          onChange={this.onSliderChange.bind(this)}
          onDragStop={this.props.onSliderChanged}
