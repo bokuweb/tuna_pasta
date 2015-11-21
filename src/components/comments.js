@@ -26,9 +26,7 @@ export default class Comments extends Component {
   }
   render() {
     return (
-      <div>
-        {this.getComments(this.props.item)}
-      </div>
+      <div>{this.getComments(this.props.item)}</div>
     );
   }
 }
