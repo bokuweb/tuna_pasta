@@ -10,11 +10,11 @@ export default class Header extends Component {
   }
   render() {
     return (
-      <div id="header">
-        <img src="img/logo-blue.png" id="sp-logo" />
-        <i className={this.props.isMenuOpen? "fa fa-close" : "fa fa-bars"}
-           id="menu-button"
-           onClick={this.onMenuButtonClick.bind(this)} />
+      <div className="header">
+        <img src="img/logo-blue.png" className="header__logo" />
+          <i className={this.props.isMenuOpen ? "header__button--menu fa fa-close"
+                                              : "header__button--menu fa fa-bars"}
+             onClick={this.onMenuButtonClick.bind(this)} />
       </div>
     );
   }

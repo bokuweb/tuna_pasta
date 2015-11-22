@@ -22,3 +22,21 @@
 .side-menu::-webkit-scrollbar-thumb
   background rgba(0, 0, 0, 0.4)
   border-radius 2px
+
+@media screen and (max-width: 768px)
+  .side-menu
+    position fixed
+    transition  all .4s ease
+    z-index 1000
+    padding 40px 0 0 0
+
+    .side-menu__logo
+      display none
+
+  .side-menu__close
+    left -800px
+    top 0
+
+  .side-menu__open
+    top 0
+    left 0px

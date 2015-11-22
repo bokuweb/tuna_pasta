@@ -2,34 +2,13 @@
 @import 'base/base'
 @import 'lib/social-font'
 @import 'lib/animate'
+@import 'block/header'
+@import 'block/keyword-input'
 @import 'block/bookmark-slider'
 @import 'block/keywords'
 @import 'block/rect-spinner'
 @import 'block/side-menu'
 
-div.add-keyword
-  margin 0 0 46px 20px
-  display -webkit-flex
-  display flex
-  -webkit-flex-direction row
-  flex-direction         row
-
-  input
-    border 0
-    border solid 1px #2C3E50
-    background #34495E
-    opacity 0.9
-    padding 0 10px
-    color #f5f5f5
-    border-radius 3px
-    margin 0 5px 0 0
-    -moz-box-shadow inset 0 0 4px rgba(0,0,0,0.1)
-    -webkit-box-shadow inset 0 0 4px rgba(0, 0, 0, 0.1)
-    box-shadow inner 0 0 4px rgba(0, 0, 0, 0.1)
-    height 26px
-    line-height 26px
-    font-size 14px
-    width 140px
 
 #content
   flex 1
@@ -74,7 +53,6 @@ div.comment-box-open
 
 .item
   min-height 160px
-  //height 185px
   max-width 800px
   padding 20px 0 0 0
   border-bottom solid 1px #DDD
@@ -152,47 +130,8 @@ div.comment-button:hover
     width 100%
     padding 0px 0 0 0
 
-  #header
-    display block
-    position fixed
-    height 48px
-    width 100%
-    border-bottom solid 1px #ddd
-    background #f5f5f5
-    top 0
-    left 0
-    z-index 999
-
-    #sp-logo
-      height 52px
-      width auto
-      display block
-      margin 0 auto
-
-    #menu-button
-      position absolute
-      top 16px
-      left calc(100% - 30px)
-
   #content
     padding 40px 0 0 0
-
-  .side-menu
-    position fixed
-    transition  all .4s ease
-    z-index 1000
-    padding 40px 0 0 0
-
-    #logo
-      display none
-
-  .menu-close
-    left -800px
-    top 0
-
-  .menu-open
-    top 0
-    left 0px
 
   .items
     padding 10px 15px 0 15px
@@ -288,11 +227,11 @@ div.comment-button:hover
     border solid 2px #1ABC9C
 
 .question_Box 
-    margin-bottom: 25px
-    overflow: hidden
+  margin-bottom: 25px
+  overflow: hidden
 
-
-.question_Box p{ line-height: 1.5}
+.question_Box p
+  line-height 1.5
 
 i.comment
   font-size 14px
