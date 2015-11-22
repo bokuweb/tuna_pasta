@@ -5,10 +5,10 @@ import TestUtils from 'react-addons-test-utils';
 import KeywordList from '../../src/components/keyword-list';
 
 
-const keywords={[
+const keywords = [
   {name: 'react', tag: 'tag'},
   {name: 'redux', tag: 'tag'}
-]};
+];
 
 describe('KeywordList Component test', () => {
   it ('Should display correct keyword list', (done) => {
