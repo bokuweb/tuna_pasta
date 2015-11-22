@@ -1,0 +1,46 @@
+.keywords
+  color #ECF0F1
+  margin 20px 0 0 0
+
+  .keywords__list
+    font-size 16px
+    margin 5px 0 8px 0
+    padding 0px 0 0px 60px
+    line-height 32px
+    border-radius 0 4px 4px 0
+    width 200px
+    transition  all .5s ease
+    position relative
+    height 32px
+
+    .keywords__keyword
+      display inline
+      width 160px
+      overflow hidden
+      white-space nowrap
+      text-overflow ellipsis
+
+  .keywords__icon
+    font-size 12px
+    margin -1px 30px 0 0
+
+  .keywords__name
+    cursor pointer
+
+  .keywords__remove
+    display none
+    cursor pointer
+
+  .keywords__list--selected
+    font-size 16px
+    margin 5px 0 8px 0
+    background #34495E
+    padding 0 0 0 60px
+
+  .keywords__list:not(.keywords__list--selected):hover
+    background #D35400
+
+  .keywords__list:hover > .keywords__remove
+    display inline-block
+    position absolute
+    left 230px

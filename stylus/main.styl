@@ -3,6 +3,7 @@
 @import 'lib/social-font'
 @import 'lib/animate'
 @import 'block/bookmark-slider'
+@import 'block/keywords'
 @import 'block/rect-spinner'
 
 #side-menu
@@ -21,57 +22,6 @@
     width 160px
     height auto
     margin 15px auto 0 60px
-
-  #menu
-    color #ECF0F1
-    margin 20px 0 0 0
-
-    li
-      font-size 16px
-      margin 5px 0 8px 0
-      padding 0px 0 0px 60px
-      line-height 32px
-      border-radius 0 4px 4px 0
-      width 200px
-      transition  all .5s ease
-      position relative
-      height 32px
-
-      > div
-        display inline
-        width 160px
-        overflow hidden
-        white-space nowrap
-        text-overflow ellipsis
-
-      a
-        color #ffffff
-        width 100%
-
-      i
-        font-size 12px
-        margin -1px 30px 0 0
-
-      span
-        cursor pointer
-
-      div.remove
-        display none
-        cursor pointer
-
-    li.selected
-      font-size 16px
-      margin 5px 0 8px 0
-      background #34495E
-      padding 0 0 0 60px
-
-    li:not(.selected):hover
-      background #D35400
-
-    li:hover > div.remove
-      display inline-block
-      position absolute
-      left 230px
 
     span.favorite-number
       padding 3px 10px
@@ -308,6 +258,7 @@ div.comment-button:hover
 
   .github-ribbon
     display none
+
 @media screen and (min-width: 769px)
   #content
     overflow-y auto
