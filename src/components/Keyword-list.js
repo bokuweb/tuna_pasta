@@ -16,7 +16,7 @@ export default class KeywordList extends Component {
   getKeywordList() {
     const {activeKeyword, keywords} = this.props;
     return keywords.map((keyword) => {
-      const listClassName = keyword.name === activeKeyword ? 'selected' : null;
+      const listClassName = keyword.name === activeKeyword ? 'selected' : '';
       return (
         <li className={listClassName} key={keyword.name}>
           <div onClick={this.onSelect.bind(this, keyword.name)}>

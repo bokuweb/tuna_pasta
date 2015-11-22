@@ -60,7 +60,7 @@ export default class item extends Component {
         <a href={item.link} target="blank" className="item-title">{item.title}</a>
         <a href={hatebuHref} className="hatebu"><img src={hatebuImage} alt="" /></a><br />
         <span className="publish-date">{item.publishedDate}</span>
-        {this.getCategories(item.categories)}
+        {this.getCategories(item.categories)}<br />
         <p className="content-snippet">{unescapeHTML(item.contentSnippet)}</p>
         <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>
           <i className="fa fa-heart" />お気に入り
