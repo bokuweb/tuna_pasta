@@ -5,38 +5,7 @@
 @import 'block/bookmark-slider'
 @import 'block/keywords'
 @import 'block/rect-spinner'
-
-#side-menu
-  background #2980B9
-  width 280px
-  height 100%
-  flex 0 280px
-  box-flex 0
-  padding 0
-  font-size 14px
-  overflow-y auto
-  scrollbar-face-color accent-color
-  scrollbar-track-color rgba(0, 0, 0, .1)
-
-  #logo
-    width 160px
-    height auto
-    margin 15px auto 0 60px
-
-    span.favorite-number
-      padding 3px 10px
-      font-size 11px
-      background #2C3E50
-      border-radius 40%
-      margin 0 0 0 25px
-
-#side-menu::-webkit-scrollbar
-  width 6px
-  height 6px
-
-#side-menu::-webkit-scrollbar-thumb
-  background rgba(0, 0, 0, 0.4)
-  border-radius 2px
+@import 'block/side-menu'
 
 div.add-keyword
   margin 0 0 46px 20px
@@ -208,7 +177,7 @@ div.comment-button:hover
   #content
     padding 40px 0 0 0
 
-  #side-menu
+  .side-menu
     position fixed
     transition  all .4s ease
     z-index 1000

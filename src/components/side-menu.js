@@ -38,10 +38,10 @@ export default class SideMenu extends Component {
 
   render() {
     return (
-      <div id="side-menu"
-        className={(this.props.menu.isMenuOpen) ? "animated slideInLeft menu-open"
-                                                : "animated slideInLeft menu-close"}>
-        <img id="logo" src="img/logo.png" alt="Pasta" />
+      <div
+        className={(this.props.menu.isMenuOpen) ? "side-menu animated slideInLeft menu-open"
+                                                : "side-menu animated slideInLeft menu-close"}>
+        <img className="side-menu__logo" src="img/logo.png" alt="Pasta" />
         <BookmarkSlider
           max={250}
           min={1}
