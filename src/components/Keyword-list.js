@@ -25,7 +25,7 @@ export default class KeywordList extends Component {
           </div>
           <div className="remove" onClick={this.onRemove.bind(this, keyword.name)} >
             <i className={"fa fa-close"} />
-          </div>m
+          </div>
         </li>
       );
     });
