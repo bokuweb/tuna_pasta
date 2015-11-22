@@ -13,24 +13,21 @@
     position relative
     height 32px
 
-  > div
+    .keywords__keyword
       display inline
       width 160px
       overflow hidden
       white-space nowrap
       text-overflow ellipsis
-  a
-    color #ffffff
-    width 100%
 
-  i
+  .keywords__icon
     font-size 12px
     margin -1px 30px 0 0
 
-  span
+  .keywords__name
     cursor pointer
 
-  div.remove
+  .keywords__remove
     display none
     cursor pointer
 
@@ -43,7 +40,7 @@
   .keywords__list:not(.keywords__list--selected):hover
     background #D35400
 
-  .keywords__list:hover > div.remove
+  .keywords__list:hover > .keywords__remove
     display inline-block
     position absolute
     left 230px
