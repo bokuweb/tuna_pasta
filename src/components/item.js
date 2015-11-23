@@ -69,9 +69,7 @@ export default class item extends Component {
           <i className="item__button--favorite fa fa-heart" />お気に入り
         </div>
         {this.getCommentButton(item)}
-        <div className={(item.isCommentOpen) ? "comment-box comment-box-open": "comment-box comment-box-close"}>
         <Comments item={item} />
-        </div>
       </div>
     );
   }

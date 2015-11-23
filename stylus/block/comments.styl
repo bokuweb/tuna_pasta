@@ -1,0 +1,64 @@
+.comments
+  padding 20px 0 20px 0
+  transition  all .4s ease
+
+.comments--close
+  transition  all .4s ease
+  display none
+
+.comments--open
+  height auto
+
+.comments__user-name
+  color #34495E
+  padding 5px 5px 0 5px
+  font-size 11px
+  display inline-block
+  width 40px
+
+.comments__text--notfound
+  font-size 12px
+
+.comments__comment-balloon
+    position relative
+    background #fff
+    padding 5px 10px
+    border-radius 10px
+    width calc(100% - 90px)
+    color #34495E
+    font-size 11px
+    float right
+
+.comments__comment-balloon:after,
+.comments__comment-balloon:before
+    top: 50%
+    border: solid transparent
+    content: " "
+    height: 0
+    width: 0
+    position: absolute
+    pointer-events: none
+    right 100%
+    border-width 15px
+    margin-top -16px
+    border-right-color #fff
+
+.comments__comment
+  float left
+  width 60px
+  padding 5px 0 0 0
+  height auto
+
+.comments__avatar
+    border-radius 50%
+    width 32px
+    height 32px
+    margin-left 10px
+    border solid 2px #1ABC9C
+
+.comments__comment-box 
+  margin-bottom: 25px
+  overflow: hidden
+
+.comments__comment-box > p
+  line-height 1.5
