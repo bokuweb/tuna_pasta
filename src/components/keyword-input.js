@@ -8,11 +8,12 @@ export default class KeywordInput extends Component {
 
   render() {
     return (
-      <div className="add-keyword">
+      <div className="keyword-input">
         <input type="text"
           placeholder="キーワードを追加"
           onChange={this.props.onInputChange}
-          value={this.props.value}/>
+          value={this.props.value}
+          className='keyword-input__input'/>
         <RaisedButton label="追加"
           onClick={this.props.onSubmit}
           secondary={true}

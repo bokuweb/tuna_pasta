@@ -21,6 +21,7 @@ export default class Pasta extends Component {
       this.forceUpdate();
     }
 
+    // HACK: Adjust element height by interbal timer
     setInterval(() => {
       if (!this.props.feed.isInitialized) return;
       // If the number of items is not enough to scroll, polling itmes by the following timer
@@ -39,7 +40,7 @@ export default class Pasta extends Component {
       if (!_.isEqual(feed.elementHeight, elementHeight)) {
         this.onChangeHeight(elementHeight);
       }
-    }, 1000);
+    }, 200);
   }
 
   onInfiniteLoad() {
