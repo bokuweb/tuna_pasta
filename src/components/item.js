@@ -43,7 +43,7 @@ export default class item extends Component {
                                         : "item__icon--comment fa fa-commenting";
     const text = item.isCommentOpen? "コメントを閉じる" : "コメントを見る";
     return (
-      <div className="comment-button" onClick={this.onCommentClick.bind(this, item)}>
+      <div className="item__button--comment" onClick={this.onCommentClick.bind(this, item)}>
         <i className={icon} />{text}
       </div>
     );
@@ -54,19 +54,20 @@ export default class item extends Component {
     const favicon = FAVICON_URI + encodeURIComponent(item.link);
     const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
     const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
-    const favoriteButtonClass = item.isFavorited? "favorite-button favorited" : "favorite-button";
+    const favoriteButtonClass = item.isFavorited ? "item__button--favorite item__button--favorited"
+                                                 : "item__button--favorite";
     return (
       <div id={id} className="item animated fadeIn">
         <img className="item__favicon" src={favicon} alt="favicon" />
         <a href={item.link} target="blank" className="item__title">{item.title}</a>
-        <a href={hatebuHref} className="item__hatebu--link">
-          <img src={hatebuImage} alt="" className="item__hatebu--image" />
+        <a href={hatebuHref} className="item__link--hatebu">
+          <img src={hatebuImage} alt="" className="item__image--hatebu" />
         </a><br />
         <span className="item__publish-date">{item.publishedDate}</span>
         {this.getCategories(item.categories)}<br />
         <p className="item__content-snippet">{unescapeHTML(item.contentSnippet)}</p>
         <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>
-          <i className="item__button--favorite fa fa-heart" />お気に入り
+          <i className="item__icon--favorite fa fa-heart" />お気に入り
         </div>
         {this.getCommentButton(item)}
         <Comments item={item} />

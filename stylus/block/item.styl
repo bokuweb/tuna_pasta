@@ -7,7 +7,7 @@
   .item__favicon
     margin 0 8px -2px 0
 
-  .item__hatebu--image
+  .item__image--hatebu
     margin 0px 0 -2px 5px
 
   .item__title
@@ -40,6 +40,41 @@
     line-height 20px
     word-break break-all
 
+  .item__button--comment
+    margin 0 0 10px 10px
+    font-size 11px
+    cursor pointer
+    transition  all .4s ease
+    display inline-block
+    border-radius 3px
+    background #ECF0F1
+    text-shadow none
+    padding 3px 10px
+    > i
+      margin 0 12px 0 0
+  
+  .item__button--comment:hover
+    color #E74C3C
+
+  .item__button--favorite
+    margin 0 0 10px 0
+    font-size 11px
+    cursor pointer
+    transition  all .4s ease
+    display inline-block
+    border-radius 3px
+    background #ECF0F1
+    text-shadow none
+    padding 3px 10px
+    > i
+      margin 0 12px 0 0
+  
+  .item__button--favorite:hover
+    color #E74C3C
+  
+  .item__button--favorited
+    color #E74C3C
+
 @media screen and (max-width: 768px)
   .item
     min-height 130px
@@ -48,4 +83,28 @@
     border-bottom solid 1px #DDD
 
   .item__content-snippet
-    display none
+    //display none
+    overflow hidden
+    white-space nowrap
+    text-overflow ellipsis
+
+  .item__button--favorite
+    margin 10px 10px 10px 0
+    font-size 11px
+    cursor pointer
+    transition  all .4s ease
+    display inline-block
+    > i
+      margin 0 10px 0 0
+
+  .item__button--comment
+    margin 10px 0 10px 
+    font-size 11px
+    cursor pointer
+    transition  all .4s ease
+    display inline-block
+    > i
+      margin 0 10px 0 0
+
+  .item__publish-date
+    margin 0 0 20px 0
