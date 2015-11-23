@@ -102,7 +102,7 @@ export default class Pasta extends Component {
           toggleMenu={this.props.toggleMenu}
           feed={this.props.feed}
           menu={this.props.menu} />
-        <div id="content">
+        <div className="content">
           <Infinite
             elementHeight={feed.elementHeight}
             containerHeight={this.innerHeight-40}
@@ -110,7 +110,7 @@ export default class Pasta extends Component {
             onInfiniteLoad={this.onInfiniteLoad.bind(this)}
             loadingSpinnerDelegate={this.elementInfiniteLoad()}
             isInfiniteLoading={feed.isInfiniteLoading}
-            className={'items'}>
+            className={'content__items'}>
             {this.getItems()}
           </Infinite>
         </div>

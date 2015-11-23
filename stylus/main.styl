@@ -8,54 +8,6 @@
 @import 'block/keywords'
 @import 'block/item'
 @import 'block/comments'
+@import 'block/content'
 @import 'block/rect-spinner'
 @import 'block/side-menu'
-
-#content
-  flex 1
-  box-flex 1
-  text-shadow -1px 1px 0 rgba(255, 255, 255, 1)
-  color #7F8C8D
-  width 100%
-  min-height 100%
-
-  a
-    color #34495E
-
-#content > div::-webkit-scrollbar
-  width 10px
-  height 10px
-
-#content > div::-webkit-scrollbar-thumb
-  background #34495E
-  border-radius 2px
-
-.items
-  padding 20px 30px 0 50px
-  height 100%
-
-@media screen and (max-width: 768px)
-  #container
-    height 100%
-    width 100%
-    padding 0px 0 0 0
-
-  #content
-    padding 40px 0 0 0
-
-  .items
-    padding 10px 15px 0 15px
-    height 100%
-
-  .github-ribbon
-    display none
-
-@media screen and (min-width: 769px)
-  #content
-    overflow-y auto
-    max-height 100%
-    width 100%
-
-
-
-
