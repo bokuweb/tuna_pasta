@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Comments from './comments';
+import ButtonFavorite from './button-favorite';
+import ButtonComment from './button-comment';
 import _ from 'lodash';
 import {unescapeHTML} from '../lib/utils';
 
@@ -10,21 +12,6 @@ const BOOKMARK_IMAGE_URI = ENTRY_URI + 'image/';
 export default class item extends Component {
   constructor(props) {
     super(props);
-  }
-
-  onFavoriteClick(item) {
-    console.dir(item);
-    if (item.isFavorited)
-      this.props.removeFavorite(item, this.props.bookmarkFilter);
-    else
-      this.props.addFavorite(item, this.props.bookmarkFilter);
-  }
-
-  onCommentClick(item) {
-    if (item.isCommentOpen)
-      this.props.closeComment(item, this.props.activeKeyword);
-    else
-      this.props.openComment(item, this.props.activeKeyword);
   }
 
   getCategories(categories) {
@@ -38,24 +25,11 @@ export default class item extends Component {
     });
   }
 
-  getCommentButton(item) {
-    const icon = item.isCommentFetching ? "item__icon--comment fa fa-spinner fa-spin"
-                                        : "item__icon--comment fa fa-commenting";
-    const text = item.isCommentOpen? "コメントを閉じる" : "コメントを見る";
-    return (
-      <div className="item__button--comment" onClick={this.onCommentClick.bind(this, item)}>
-        <i className={icon} />{text}
-      </div>
-    );
-  }
-
   render() {
-    const {item, activeKeyword, id} = this.props;
+    const {item, activeKeyword, id, bookmarkFilter} = this.props;
     const favicon = FAVICON_URI + encodeURIComponent(item.link);
     const hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
     const hatebuImage = BOOKMARK_IMAGE_URI + item.link;
-    const favoriteButtonClass = item.isFavorited ? "item__button--favorite item__button--favorited"
-                                                 : "item__button--favorite";
     return (
       <div id={id} className="item animated fadeIn">
         <img className="item__favicon" src={favicon} alt="favicon" />
@@ -66,10 +40,16 @@ export default class item extends Component {
         <span className="item__publish-date">{item.publishedDate}</span>
         {this.getCategories(item.categories)}<br />
         <p className="item__content-snippet">{unescapeHTML(item.contentSnippet)}</p>
-        <div className={favoriteButtonClass} onClick={this.onFavoriteClick.bind(this, item)}>
-          <i className="item__icon--favorite fa fa-heart" />お気に入り
-        </div>
-        {this.getCommentButton(item)}
+        <ButtonFavorite
+          item={item}
+          bookmarkFilter={bookmarkFilter}
+          removeFavorite={this.props.removeFavorite}
+          addFavorite={this.props.addFavorite} />
+        <ButtonComment
+          item={item}
+          activeKeyword={activeKeyword}
+          closeComment={this.props.closeComment}
+          openComment={this.props.openComment} />
         <Comments item={item} />
       </div>
     );
