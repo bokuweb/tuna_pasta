@@ -1,4 +1,4 @@
-# ![TunaPasta](https://raw.githubusercontent.com/bokuweb/tuna_pasta/add_test/docs/logo.png)
+# ![TunaPasta](https://github.com/bokuweb/tuna_pasta/blob/master/docs/logo.png?raw=true)
 
 [![Build Status](https://travis-ci.org/bokuweb/tuna_pasta.svg?branch=master)](https://travis-ci.org/bokuweb/tuna_pasta)
 [![Code Climate](https://codeclimate.com/github/bokuweb/tuna_pasta/badges/gpa.svg)](https://codeclimate.com/github/bokuweb/tuna_pasta)
@@ -8,5 +8,5 @@
 Pasta is Hatena Bookmark Viwer, build with React/Redux, focused on keyword.
 
 
-![screenshot](https://raw.githubusercontent.com/bokuweb/tuna_pasta/add_test/docs/screenshot.png)
+![screenshot](https://github.com/bokuweb/tuna_pasta/blob/master/docs/screenshot.png?raw=true)
 
