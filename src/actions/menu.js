@@ -50,7 +50,6 @@ export function addKeyword(keyword) {
 
 export function removeKeyword(keyword) {
   return dispatch => {
-    console.log(keyword);
     db.remove('keywords', keyword).then(() => {
       db.getArray('keywords').then((keywords) => {
         dispatch({
