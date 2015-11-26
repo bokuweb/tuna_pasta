@@ -42129,6 +42129,7 @@ var HATENA_URL = 'http://b.hatena.ne.jp/';
 var HATENA_BOOKMARK_COUNT_URL = 'http://api.b.st-hatena.com/entry.counts?';
 var HATENA_SEARCH_URL = HATENA_URL + 'search/text?mode=rss&safe=off&q=';
 var HATENA_ENTRY_URL = HATENA_URL + 'entry/json/?';
+var GOOGLEAPI_URI = 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=';
 
 var db = new _libDb2['default']('pastaDB');
 
@@ -42284,7 +42285,6 @@ function openComment(item, keyword) {
       var commentedBookmarks = _lodash2['default'].filter(res.bookmarks, function (bookmark) {
         return bookmark.comment !== '';
       });
-      console.log(commentedBookmarks);
       dispatch({ type: types.OPEN_COMMENT, keyword: keyword, link: item.link, comments: commentedBookmarks });
     }, function (error) {
       return console.log(error);
@@ -42324,7 +42324,7 @@ function _fetchSearchFeed(dispatch, keyword, page, threshold) {
   if (page === undefined) page = 0;
 
   var url = HATENA_SEARCH_URL + keyword + '&of=' + page * 40 + '&users=' + threshold;
-  (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
+  (0, _apiFeed.fetch)(GOOGLEAPI_URI + encodeURIComponent(url)).then(function (feed) {
     var items = getItems(feed);
     dispatch(recieveItems(items, keyword, items.length));
   }, function (error) {
@@ -42337,7 +42337,7 @@ function _fetchUserFeed(dispatch, keyword, user, page, threshold) {
   if (page === undefined) page = 0;
 
   var url = HATENA_URL + user + '/rss?of=' + page * 20;
-  (0, _apiFeed.fetchWithGoogleFeedApi)(url).then(function (feed) {
+  (0, _apiFeed.fetch)(GOOGLEAPI_URI + encodeURIComponent(url)).then(function (feed) {
     var items = getItems(feed);
     _getBookmarkCount(items).then(function (bookmarks) {
       var filteredItems = _lodash2['default'].filter(items, function (item) {
@@ -42386,7 +42386,7 @@ function _getBookmarkCount(items) {
   });
 }
 
-},{"../api/feed":248,"../constants/action-types":257,"../lib/db":260,"lodash":6}],247:[function(require,module,exports){
+},{"../api/feed":248,"../constants/action-types":259,"../lib/db":262,"lodash":6}],247:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42448,6 +42448,7 @@ function addKeyword(keyword) {
     var icon = id === null ? 'tag' : 'user';
     db.put('keywords', { name: keyword, icon: icon }).then(function () {
       db.getArray('keywords').then(function (keywords) {
+        console.log(keywords);
         dispatch({
           type: types.ADD_KEYWORD_COMPLETE,
           keywords: keywords
@@ -42460,7 +42461,6 @@ function addKeyword(keyword) {
 
 function removeKeyword(keyword) {
   return function (dispatch) {
-    console.log(keyword);
     db.remove('keywords', keyword).then(function () {
       db.getArray('keywords').then(function (keywords) {
         dispatch({
@@ -42473,13 +42473,12 @@ function removeKeyword(keyword) {
   };
 }
 
-},{"../constants/action-types":257,"../lib/db":260}],248:[function(require,module,exports){
+},{"../constants/action-types":259,"../lib/db":262}],248:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-exports.fetchWithGoogleFeedApi = fetchWithGoogleFeedApi;
 exports.fetch = fetch;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -42487,17 +42486,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 var _jsonp = require('jsonp');
 
 var _jsonp2 = _interopRequireDefault(_jsonp);
-
-var GOOGLEAPI_URI = 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=';
-
-function fetchWithGoogleFeedApi(url) {
-  return new Promise(function (resolve, reject) {
-    (0, _jsonp2['default'])(GOOGLEAPI_URI + encodeURIComponent(url), {}, function (err, data) {
-      if (err) reject(err);
-      resolve(data);
-    });
-  });
-}
 
 function fetch(url) {
   return new Promise(function (resolve, reject) {
@@ -42555,14 +42543,14 @@ var BookmarkSlider = (function (_Component) {
       x = x < 10 ? 10 : x;
       return _react2['default'].createElement(
         'div',
-        { className: 'slider' },
+        { className: 'bookmarkslider' },
         _react2['default'].createElement(
           'div',
-          { className: 'bookmark-filter', style: { left: x } },
-          _react2['default'].createElement('i', { className: 'icon-hatena' }),
+          { className: 'bookmarkslider__count', style: { left: x } },
+          _react2['default'].createElement('i', { className: 'bookmarkslider__icon icon-hatena' }),
           this.props.bookmarkFilter
         ),
-        _react2['default'].createElement(_materialUiLibSlider2['default'], { name: 'slider',
+        _react2['default'].createElement(_materialUiLibSlider2['default'], { name: 'bookmarkslider',
           defaultValue: this.props.defaultValue,
           onChange: this.onSliderChange.bind(this),
           onDragStop: this.props.onSliderChanged,
@@ -42599,6 +42587,119 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var ButtonComment = (function (_Component) {
+  _inherits(ButtonComment, _Component);
+
+  function ButtonComment(props) {
+    _classCallCheck(this, ButtonComment);
+
+    _get(Object.getPrototypeOf(ButtonComment.prototype), "constructor", this).call(this, props);
+  }
+
+  _createClass(ButtonComment, [{
+    key: "onCommentClick",
+    value: function onCommentClick(item) {
+      if (item.isCommentOpen) this.props.closeComment(item, this.props.activeKeyword);else this.props.openComment(item, this.props.activeKeyword);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var item = this.props.item;
+
+      var icon = item.isCommentFetching ? "item__icon--comment fa fa-spinner fa-spin" : "item__icon--comment fa fa-commenting";
+      var text = item.isCommentOpen ? "コメントを閉じる" : "コメントを見る";
+      return _react2["default"].createElement(
+        "div",
+        { className: "item__button--comment", onClick: this.onCommentClick.bind(this, item) },
+        _react2["default"].createElement("i", { className: icon }),
+        text
+      );
+    }
+  }]);
+
+  return ButtonComment;
+})(_react.Component);
+
+exports["default"] = ButtonComment;
+module.exports = exports["default"];
+
+},{"react":233}],251:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var ButtonFavorite = (function (_Component) {
+  _inherits(ButtonFavorite, _Component);
+
+  function ButtonFavorite(props) {
+    _classCallCheck(this, ButtonFavorite);
+
+    _get(Object.getPrototypeOf(ButtonFavorite.prototype), "constructor", this).call(this, props);
+  }
+
+  _createClass(ButtonFavorite, [{
+    key: "onFavoriteClick",
+    value: function onFavoriteClick(item) {
+      if (item.isFavorited) this.props.removeFavorite(item, this.props.bookmarkFilter);else this.props.addFavorite(item, this.props.bookmarkFilter);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var item = this.props.item;
+
+      var favoriteButtonClass = item.isFavorited ? "item__button--favorite item__button--favorited" : "item__button--favorite";
+      return _react2["default"].createElement(
+        "div",
+        { className: favoriteButtonClass, onClick: this.onFavoriteClick.bind(this, item) },
+        _react2["default"].createElement("i", { className: "item__icon--favorite fa fa-heart" }),
+        "お気に入り"
+      );
+    }
+  }]);
+
+  return ButtonFavorite;
+})(_react.Component);
+
+exports["default"] = ButtonFavorite;
+module.exports = exports["default"];
+
+},{"react":233}],252:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
 var Comments = (function (_Component) {
   _inherits(Comments, _Component);
 
@@ -42613,31 +42714,31 @@ var Comments = (function (_Component) {
     value: function getComments(item) {
       var notFoundMessage = _react2["default"].createElement(
         "span",
-        { className: "comment-notfound" },
+        { className: "comments__text--notfound" },
         "コメントがありませんでした"
       );
       if (item.comments === undefined || item.comments.length === 0) return notFoundMessage;
       return item.comments.map(function (comment) {
         return _react2["default"].createElement(
           "div",
-          { className: "question_Box animated fadeIn", key: comment.user },
+          { className: "comments__comment-box animated fadeIn", key: comment.user },
           _react2["default"].createElement(
             "div",
-            { className: "question_image" },
+            { className: "comments__comment" },
             _react2["default"].createElement(
               "a",
               { href: "http://b.hatena.ne.jp/" + comment.user, target: "blank" },
-              _react2["default"].createElement("img", { className: "comment-avatar", src: "http://n.hatena.com/" + comment.user + "/profile/image.gif?type=face&size=32" })
+              _react2["default"].createElement("img", { className: "comments__avatar", src: "http://n.hatena.com/" + comment.user + "/profile/image.gif?type=face&size=32" })
             ),
             _react2["default"].createElement(
               "span",
-              { className: "comment-user" },
+              { className: "comments__user-name" },
               comment.user
             )
           ),
           _react2["default"].createElement(
             "div",
-            { className: "arrow_question" },
+            { className: "comments__comment-balloon" },
             _react2["default"].createElement(
               "p",
               null,
@@ -42652,7 +42753,7 @@ var Comments = (function (_Component) {
     value: function render() {
       return _react2["default"].createElement(
         "div",
-        null,
+        { className: this.props.item.isCommentOpen ? "comments comments--open" : "comments comments--close" },
         this.getComments(this.props.item)
       );
     }
@@ -42664,7 +42765,7 @@ var Comments = (function (_Component) {
 exports["default"] = Comments;
 module.exports = exports["default"];
 
-},{"react":233}],251:[function(require,module,exports){
+},{"react":233}],253:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -42704,10 +42805,9 @@ var Header = (function (_Component) {
     value: function render() {
       return _react2["default"].createElement(
         "div",
-        { id: "header" },
-        _react2["default"].createElement("img", { src: "img/logo-blue.png", id: "sp-logo" }),
-        _react2["default"].createElement("i", { className: this.props.isMenuOpen ? "fa fa-close" : "fa fa-bars",
-          id: "menu-button",
+        { className: "header" },
+        _react2["default"].createElement("img", { src: "img/logo-blue.png", className: "header__logo" }),
+        _react2["default"].createElement("i", { className: this.props.isMenuOpen ? "header__button--menu fa fa-close" : "header__button--menu fa fa-bars",
           onClick: this.onMenuButtonClick.bind(this) })
       );
     }
@@ -42719,7 +42819,7 @@ var Header = (function (_Component) {
 exports["default"] = Header;
 module.exports = exports["default"];
 
-},{"react":233}],252:[function(require,module,exports){
+},{"react":233}],254:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42744,6 +42844,14 @@ var _comments = require('./comments');
 
 var _comments2 = _interopRequireDefault(_comments);
 
+var _buttonFavorite = require('./button-favorite');
+
+var _buttonFavorite2 = _interopRequireDefault(_buttonFavorite);
+
+var _buttonComment = require('./button-comment');
+
+var _buttonComment2 = _interopRequireDefault(_buttonComment);
+
 var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
@@ -42764,17 +42872,6 @@ var item = (function (_Component) {
   }
 
   _createClass(item, [{
-    key: 'onFavoriteClick',
-    value: function onFavoriteClick(item) {
-      console.dir(item);
-      if (item.isFavorited) this.props.removeFavorite(item, this.props.bookmarkFilter);else this.props.addFavorite(item, this.props.bookmarkFilter);
-    }
-  }, {
-    key: 'onCommentClick',
-    value: function onCommentClick(item) {
-      if (item.isCommentOpen) this.props.closeComment(item, this.props.activeKeyword);else this.props.openComment(item, this.props.activeKeyword);
-    }
-  }, {
     key: 'getCategories',
     value: function getCategories(categories) {
       var _this = this;
@@ -42782,24 +42879,12 @@ var item = (function (_Component) {
       return categories.map(function (category) {
         return _react2['default'].createElement(
           'span',
-          { className: 'category',
+          { className: 'item__category',
             key: category + _this.props.activeKeyword,
             style: { 'backgroundColor': '#1ABC9C' } },
           category
         );
       });
-    }
-  }, {
-    key: 'getCommentButton',
-    value: function getCommentButton(item) {
-      var icon = item.isCommentFetching ? "fa fa-spinner fa-spin" : "fa fa-commenting";
-      var text = item.isCommentOpen ? "コメントを閉じる" : "コメントを見る";
-      return _react2['default'].createElement(
-        'div',
-        { className: 'comment-button', onClick: this.onCommentClick.bind(this, item) },
-        _react2['default'].createElement('i', { className: icon }),
-        text
-      );
     }
   }, {
     key: 'render',
@@ -42808,49 +42893,49 @@ var item = (function (_Component) {
       var item = _props.item;
       var activeKeyword = _props.activeKeyword;
       var id = _props.id;
+      var bookmarkFilter = _props.bookmarkFilter;
 
       var favicon = FAVICON_URI + encodeURIComponent(item.link);
       var hatebuHref = ENTRY_URI + encodeURIComponent(item.link);
       var hatebuImage = BOOKMARK_IMAGE_URI + item.link;
-      var favoriteButtonClass = item.isFavorited ? "favorite-button favorited" : "favorite-button";
       return _react2['default'].createElement(
         'div',
         { id: id, className: 'item animated fadeIn' },
-        _react2['default'].createElement('img', { className: 'favicon', src: favicon, alt: 'favicon' }),
+        _react2['default'].createElement('img', { className: 'item__favicon', src: favicon, alt: 'favicon' }),
         _react2['default'].createElement(
           'a',
-          { href: item.link, target: 'blank', className: 'item-title' },
+          { href: item.link, target: 'blank', className: 'item__title' },
           item.title
         ),
         _react2['default'].createElement(
           'a',
-          { href: hatebuHref, className: 'hatebu' },
-          _react2['default'].createElement('img', { src: hatebuImage, alt: '' })
+          { href: hatebuHref, className: 'item__link--hatebu' },
+          _react2['default'].createElement('img', { src: hatebuImage, alt: '', className: 'item__image--hatebu' })
         ),
         _react2['default'].createElement('br', null),
         _react2['default'].createElement(
           'span',
-          { className: 'publish-date' },
+          { className: 'item__publish-date' },
           item.publishedDate
         ),
         this.getCategories(item.categories),
+        _react2['default'].createElement('br', null),
         _react2['default'].createElement(
           'p',
-          { className: 'content-snippet' },
+          { className: 'item__content-snippet' },
           (0, _libUtils.unescapeHTML)(item.contentSnippet)
         ),
-        _react2['default'].createElement(
-          'div',
-          { className: favoriteButtonClass, onClick: this.onFavoriteClick.bind(this, item) },
-          _react2['default'].createElement('i', { className: 'fa fa-heart' }),
-          'お気に入り'
-        ),
-        this.getCommentButton(item),
-        _react2['default'].createElement(
-          'div',
-          { className: item.isCommentOpen ? "comment-box comment-box-open" : "comment-box comment-box-close" },
-          _react2['default'].createElement(_comments2['default'], { item: item })
-        )
+        _react2['default'].createElement(_buttonFavorite2['default'], {
+          item: item,
+          bookmarkFilter: bookmarkFilter,
+          removeFavorite: this.props.removeFavorite,
+          addFavorite: this.props.addFavorite }),
+        _react2['default'].createElement(_buttonComment2['default'], {
+          item: item,
+          activeKeyword: activeKeyword,
+          closeComment: this.props.closeComment,
+          openComment: this.props.openComment }),
+        _react2['default'].createElement(_comments2['default'], { item: item })
       );
     }
   }]);
@@ -42861,7 +42946,7 @@ var item = (function (_Component) {
 exports['default'] = item;
 module.exports = exports['default'];
 
-},{"../lib/utils":261,"./comments":250,"lodash":6,"react":233}],253:[function(require,module,exports){
+},{"../lib/utils":263,"./button-comment":250,"./button-favorite":251,"./comments":252,"lodash":6,"react":233}],255:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42900,11 +42985,12 @@ var KeywordInput = (function (_Component) {
     value: function render() {
       return _react2['default'].createElement(
         'div',
-        { className: 'add-keyword' },
+        { className: 'keyword-input' },
         _react2['default'].createElement('input', { type: 'text',
           placeholder: 'キーワードを追加',
           onChange: this.props.onInputChange,
-          value: this.props.value }),
+          value: this.props.value,
+          className: 'keyword-input__input' }),
         _react2['default'].createElement(_materialUiLibRaisedButton2['default'], { label: '追加',
           onClick: this.props.onSubmit,
           secondary: true,
@@ -42920,7 +43006,7 @@ var KeywordInput = (function (_Component) {
 exports['default'] = KeywordInput;
 module.exports = exports['default'];
 
-},{"material-ui/lib/raised-button":10,"react":233}],254:[function(require,module,exports){
+},{"material-ui/lib/raised-button":10,"react":233}],256:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42970,20 +43056,24 @@ var KeywordList = (function (_Component) {
       var keywords = _props.keywords;
 
       return keywords.map(function (keyword) {
-        var listClassName = keyword.name === activeKeyword ? 'selected' : null;
+        var listClassName = keyword.name === activeKeyword ? 'keywords__list keywords__list--selected' : 'keywords__list';
         return _react2['default'].createElement(
           'li',
           { className: listClassName, key: keyword.name },
           _react2['default'].createElement(
             'div',
-            { onClick: _this.onSelect.bind(_this, keyword.name) },
-            _react2['default'].createElement('i', { className: "fa fa-" + keyword.icon }),
-            keyword.name
+            { className: 'keywords__keyword', onClick: _this.onSelect.bind(_this, keyword.name) },
+            _react2['default'].createElement('i', { className: "keywords__icon fa fa-" + keyword.icon }),
+            _react2['default'].createElement(
+              'span',
+              { className: 'keywords__name' },
+              keyword.name
+            )
           ),
           _react2['default'].createElement(
             'div',
-            { className: 'remove', onClick: _this.onRemove.bind(_this, keyword.name) },
-            _react2['default'].createElement('i', { className: "fa fa-close" })
+            { className: 'keywords__remove', onClick: _this.onRemove.bind(_this, keyword.name) },
+            _react2['default'].createElement('i', { className: "keywords__icon fa fa-close" })
           )
         );
       });
@@ -42995,30 +43085,36 @@ var KeywordList = (function (_Component) {
 
       return _react2['default'].createElement(
         'div',
-        { id: 'menu' },
+        { className: 'keywords', id: 'menu' },
         _react2['default'].createElement(
           'ul',
-          null,
+          { className: 'keywords__ul' },
           _react2['default'].createElement(
             'li',
-            { className: activeKeyword === 'all' ? 'selected' : '',
-              onClick: this.onSelect.bind(this, 'all') },
+            { className: activeKeyword === 'all' ? 'keywords__list keywords__list--selected' : 'keywords__list' },
             _react2['default'].createElement(
               'div',
-              null,
-              _react2['default'].createElement('i', { className: "fa fa-home" }),
-              '総合'
+              { className: 'keywords__keyword', onClick: this.onSelect.bind(this, 'all') },
+              _react2['default'].createElement('i', { className: "keywords__icon fa fa-home" }),
+              _react2['default'].createElement(
+                'span',
+                { className: 'keywords__name' },
+                '総合'
+              )
             )
           ),
           _react2['default'].createElement(
             'li',
-            { className: activeKeyword === 'favorite' ? 'selected' : '',
-              onClick: this.onSelect.bind(this, 'favorite') },
+            { className: activeKeyword === 'favorite' ? 'keywords__list keywords__list--selected' : 'keywords__list' },
             _react2['default'].createElement(
               'div',
-              null,
-              _react2['default'].createElement('i', { className: "fa fa-heart" }),
-              'お気に入り'
+              { className: 'keywords__keyword', onClick: this.onSelect.bind(this, 'favorite') },
+              _react2['default'].createElement('i', { className: "keywords__icon fa fa-heart" }),
+              _react2['default'].createElement(
+                'span',
+                { className: 'keywords__name' },
+                'お気に入り'
+              )
             )
           ),
           this.getKeywordList()
@@ -43033,7 +43129,7 @@ var KeywordList = (function (_Component) {
 exports['default'] = KeywordList;
 module.exports = exports['default'];
 
-},{"react":233}],255:[function(require,module,exports){
+},{"react":233}],257:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43219,7 +43315,7 @@ var Pasta = (function (_Component) {
 exports['default'] = Pasta;
 module.exports = exports['default'];
 
-},{"../lib/utils":261,"./comments":250,"./header":251,"./item":252,"./side-menu":256,"lodash":6,"react":233,"react-infinite":53}],256:[function(require,module,exports){
+},{"../lib/utils":263,"./comments":252,"./header":253,"./item":254,"./side-menu":258,"lodash":6,"react":233,"react-infinite":53}],258:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43330,7 +43426,7 @@ var SideMenu = (function (_Component) {
 exports['default'] = SideMenu;
 module.exports = exports['default'];
 
-},{"./bookmark-slider":249,"./keyword-input":253,"./keyword-list":254,"react":233}],257:[function(require,module,exports){
+},{"./bookmark-slider":249,"./keyword-input":255,"./keyword-list":256,"react":233}],259:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43377,7 +43473,7 @@ exports.CLOSE_COMMENT = CLOSE_COMMENT;
 var CHANGE_ELEMENT_HEIGHT = 'CHANGE_ELEMENT_HEIGHT';
 exports.CHANGE_ELEMENT_HEIGHT = CHANGE_ELEMENT_HEIGHT;
 
-},{}],258:[function(require,module,exports){
+},{}],260:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43421,7 +43517,7 @@ function mapDispatchToProps(dispatch) {
 exports['default'] = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_componentsPasta2['default']);
 module.exports = exports['default'];
 
-},{"../actions/feed":246,"../actions/menu":247,"../components/pasta":255,"lodash":6,"react-redux":65,"redux":237}],259:[function(require,module,exports){
+},{"../actions/feed":246,"../actions/menu":247,"../components/pasta":257,"lodash":6,"react-redux":65,"redux":237}],261:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -43454,7 +43550,7 @@ var store = (0, _storesConfigureStore2['default'])();
   _react2['default'].createElement(_containersApp2['default'], null)
 ), document.getElementById('pasta'));
 
-},{"./components/pasta":255,"./containers/app":258,"./stores/configure-store":265,"react":233,"react-dom":49,"react-redux":65}],260:[function(require,module,exports){
+},{"./components/pasta":257,"./containers/app":260,"./stores/configure-store":267,"react":233,"react-dom":49,"react-redux":65}],262:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43520,7 +43616,7 @@ var DbManager = (function () {
 exports['default'] = DbManager;
 module.exports = exports['default'];
 
-},{"dexie":1}],261:[function(require,module,exports){
+},{"dexie":1}],263:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -43534,7 +43630,7 @@ function unescapeHTML(str) {
     return div.textContent || div.innerText;
 }
 
-},{}],262:[function(require,module,exports){
+},{}],264:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43752,7 +43848,7 @@ function feed(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":257,"lodash":6}],263:[function(require,module,exports){
+},{"../constants/action-types":259,"lodash":6}],265:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43779,7 +43875,7 @@ var rootReducer = (0, _redux.combineReducers)({
 exports['default'] = rootReducer;
 module.exports = exports['default'];
 
-},{"./feed":262,"./menu":264,"redux":237}],264:[function(require,module,exports){
+},{"./feed":264,"./menu":266,"redux":237}],266:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43844,7 +43940,7 @@ function menu(state, action) {
 
 module.exports = exports['default'];
 
-},{"../constants/action-types":257}],265:[function(require,module,exports){
+},{"../constants/action-types":259}],267:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43876,4 +43972,4 @@ function configureStore() {
 
 module.exports = exports['default'];
 
-},{"../reducers":263,"redux":237,"redux-logger":234,"redux-thunk":235}]},{},[259]);
+},{"../reducers":265,"redux":237,"redux-logger":234,"redux-thunk":235}]},{},[261]);
