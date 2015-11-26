@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build" : "npm run build:js & npm run build:stylus",
+    "build:js": "browserify --extension=js -o dist/bundle.js src/index.js",
     "watch": "npm run watch:js & npm run watch:stylus",
     "watch:js": "watchify --extension=js -o dist/bundle.js src/index.js",
     "watch:stylus": "stylus stylus/ --watch  --out stylesheets/",
@@ -42,6 +44,7 @@
     "babel-plugin-espower": "1.0.0",
     "babel-polyfill": "^6.2.0",
     "babelify": "6.4.0",
+    "browserify": "^12.0.1",
     "espower-babel": "3.3.0",
     "espower-loader": "1.0.0",
     "espowerify": "1.0.0",

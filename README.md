@@ -10,3 +10,7 @@ Pasta is Hatena Bookmark Viwer, build with React/Redux, focused on keyword.
 
 ![screenshot](https://github.com/bokuweb/tuna_pasta/blob/master/docs/screenshot.png?raw=true)
 
+## Build
+
+``` sh
+
