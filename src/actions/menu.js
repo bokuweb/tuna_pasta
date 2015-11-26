@@ -38,6 +38,7 @@ export function addKeyword(keyword) {
     let icon = (id === null)? 'tag' : 'user';
     db.put('keywords', {name: keyword, icon}).then(() => {
       db.getArray('keywords').then((keywords) => {
+        console.log(keywords);
         dispatch({
           type: types.ADD_KEYWORD_COMPLETE,
           keywords
