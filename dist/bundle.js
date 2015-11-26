@@ -42970,24 +42970,20 @@ var KeywordList = (function (_Component) {
       var keywords = _props.keywords;
 
       return keywords.map(function (keyword) {
-        var listClassName = keyword.name === activeKeyword ? 'keywords__list keywords__list--selected' : 'keywords__list';
+        var listClassName = keyword.name === activeKeyword ? 'selected' : null;
         return _react2['default'].createElement(
           'li',
           { className: listClassName, key: keyword.name },
           _react2['default'].createElement(
             'div',
-            { className: 'keywords__keyword', onClick: _this.onSelect.bind(_this, keyword.name) },
-            _react2['default'].createElement('i', { className: "keywords__icon fa fa-" + keyword.icon }),
-            _react2['default'].createElement(
-              'span',
-              { className: 'keywords__name' },
-              keyword.name
-            )
+            { onClick: _this.onSelect.bind(_this, keyword.name) },
+            _react2['default'].createElement('i', { className: "fa fa-" + keyword.icon }),
+            keyword.name
           ),
           _react2['default'].createElement(
             'div',
-            { className: 'keywords__remove', onClick: _this.onRemove.bind(_this, keyword.name) },
-            _react2['default'].createElement('i', { className: "keywords__icon fa fa-close" })
+            { className: 'remove', onClick: _this.onRemove.bind(_this, keyword.name) },
+            _react2['default'].createElement('i', { className: "fa fa-close" })
           )
         );
       });
@@ -42999,36 +42995,30 @@ var KeywordList = (function (_Component) {
 
       return _react2['default'].createElement(
         'div',
-        { className: 'keywords', id: 'menu' },
+        { id: 'menu' },
         _react2['default'].createElement(
           'ul',
-          { className: 'keywords__ul' },
+          null,
           _react2['default'].createElement(
             'li',
-            { className: activeKeyword === 'all' ? 'keywords__list keywords__list--selected' : 'keywords__list' },
+            { className: activeKeyword === 'all' ? 'selected' : '',
+              onClick: this.onSelect.bind(this, 'all') },
             _react2['default'].createElement(
               'div',
-              { className: 'keywords__keyword', onClick: this.onSelect.bind(this, 'all') },
-              _react2['default'].createElement('i', { className: "keywords__icon fa fa-home" }),
-              _react2['default'].createElement(
-                'span',
-                { className: 'keywords__name' },
-                '総合'
-              )
+              null,
+              _react2['default'].createElement('i', { className: "fa fa-home" }),
+              '総合'
             )
           ),
           _react2['default'].createElement(
             'li',
-            { className: activeKeyword === 'favorite' ? 'keywords__list keywords__list--selected' : 'keywords__list' },
+            { className: activeKeyword === 'favorite' ? 'selected' : '',
+              onClick: this.onSelect.bind(this, 'favorite') },
             _react2['default'].createElement(
               'div',
-              { className: 'keywords__keyword', onClick: this.onSelect.bind(this, 'favorite') },
-              _react2['default'].createElement('i', { className: "keywords__icon fa fa-heart" }),
-              _react2['default'].createElement(
-                'span',
-                { className: 'keywords__name' },
-                'お気に入り'
-              )
+              null,
+              _react2['default'].createElement('i', { className: "fa fa-heart" }),
+              'お気に入り'
             )
           ),
           this.getKeywordList()
