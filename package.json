@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "babel-plugin-espower": "1.0.0",
+    "babel-polyfill": "^6.2.0",
     "babelify": "6.4.0",
     "espower-babel": "3.3.0",
     "espower-loader": "1.0.0",
@@ -52,9 +53,11 @@
     "karma-mocha": "0.2.0",
     "karma-phantomjs-launcher": "0.2.1",
     "mocha": "2.3.3",
+    "nock": "^3.3.2",
     "phantomjs": "1.9.18",
     "phantomjs-polyfill": "0.0.1",
     "power-assert": "1.1.0",
+    "querystring": "^0.2.0",
     "react-addons-test-utils": "0.14.2",
     "stylus": "0.52.4",
     "watchify": "3.5.0"
