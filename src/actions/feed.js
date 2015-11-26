@@ -114,7 +114,6 @@ export function openComment(item, keyword) {
   return dispatch => {
     fetch(url).then((res) => {
       const commentedBookmarks = _.filter(res.bookmarks, bookmark => bookmark.comment !== '');
-      console.log(commentedBookmarks);
       dispatch({type: types.OPEN_COMMENT, keyword, link: item.link, comments: commentedBookmarks});
     }, (error) => console.log(error));
     dispatch({type: types.FETCHING_COMMENT, keyword, link: item.link});
