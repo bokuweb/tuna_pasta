@@ -43100,6 +43100,7 @@ var Pasta = (function (_Component) {
       _this.forceUpdate();
     };
 
+    // HACK: Adjust element height by interbal timer
     setInterval(function () {
       if (!_this.props.feed.isInitialized) return;
       // If the number of items is not enough to scroll, polling itmes by the following timer
@@ -43116,7 +43117,7 @@ var Pasta = (function (_Component) {
       if (!_lodash2['default'].isEqual(feed.elementHeight, elementHeight)) {
         _this.onChangeHeight(elementHeight);
       }
-    }, 1000);
+    }, 200);
   }
 
   _createClass(Pasta, [{
@@ -43194,7 +43195,7 @@ var Pasta = (function (_Component) {
           menu: this.props.menu }),
         _react2['default'].createElement(
           'div',
-          { id: 'content' },
+          { className: 'content' },
           _react2['default'].createElement(
             _reactInfinite2['default'],
             {
@@ -43204,7 +43205,7 @@ var Pasta = (function (_Component) {
               onInfiniteLoad: this.onInfiniteLoad.bind(this),
               loadingSpinnerDelegate: this.elementInfiniteLoad(),
               isInfiniteLoading: feed.isInfiniteLoading,
-              className: 'items' },
+              className: 'content__items' },
             this.getItems()
           )
         )
@@ -43299,9 +43300,9 @@ var SideMenu = (function (_Component) {
     value: function render() {
       return _react2['default'].createElement(
         'div',
-        { id: 'side-menu',
-          className: this.props.menu.isMenuOpen ? "animated slideInLeft menu-open" : "animated slideInLeft menu-close" },
-        _react2['default'].createElement('img', { id: 'logo', src: 'img/logo.png', alt: 'Pasta' }),
+        {
+          className: this.props.menu.isMenuOpen ? "side-menu animated slideInLeft side-menu__open" : "side-menu animated slideInLeft side-menu__close" },
+        _react2['default'].createElement('img', { className: 'side-menu__logo', src: 'img/logo.png', alt: 'Pasta' }),
         _react2['default'].createElement(_bookmarkSlider2['default'], {
           max: 250,
           min: 1,
