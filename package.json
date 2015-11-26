@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "babel-plugin-espower": "1.0.0",
+    "babel-polyfill": "^6.2.0",
     "babelify": "6.4.0",
     "espower-babel": "3.3.0",
     "espower-loader": "1.0.0",
