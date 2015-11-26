@@ -18,13 +18,13 @@ describe('Item Component test', () => {
     }
     const item = TestUtils.renderIntoDocument(<Item item={itemData} />);
     const favicon = TestUtils.findRenderedDOMComponentWithClass(item, 'item__favicon');
-    assert.equal(favicon.src, 'http://b.hatena.ne.jp/entry/image/' + encodeURIComponent("http://shop.oreilly.com/product/9781680501452.do"));
+    assert.equal(favicon.src, 'http://cdn-ak.favicon.st-hatena.com/?url=http%3A%2F%2Fshop.oreilly.com%2Fproduct%2F9781680501452.do');
     const link = TestUtils.findRenderedDOMComponentWithClass(item, 'item__link--hatebu');
-    assert.equal(link.href, 'http://cdn-ak.favicon.st-hatena.com/?url=' + encodeURIComponent("http://shop.oreilly.com/product/9781680501452.do"));
-    const publishAt = TestUtils.findRenderedDOMComponentWithClass(item, 'tem__publish-date');
+    assert.equal(link.href, 'http://b.hatena.ne.jp/entry/http%3A%2F%2Fshop.oreilly.com%2Fproduct%2F9781680501452.do');
+    const publishAt = TestUtils.findRenderedDOMComponentWithClass(item, 'item__publish-date');
     assert.equal(publishAt.textContent, "Tue, 24 Nov 2015 06:38:16 -0800");
     const content = TestUtils.findRenderedDOMComponentWithClass(item, 'item__content-snippet');
-    assert.equal(content.textContent, "Don't accept the compromise between fast and beautiful: you can have it all. Phoenix creator Chris McCord, Elixir creator Jose ...");
+    assert.equal(content.textContent, "Don't accept the compromise between fast and beautiful: you can have it all. Phoenix creator Chris McCord, Elixir creator Jose ...");
     done();
   });
 

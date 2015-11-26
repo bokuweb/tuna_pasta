@@ -2,7 +2,8 @@ import assert from 'power-assert';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import * as actions from '../../src/actions/menu';
-import * as types from '../.../src/constants/action-types';
+import * as types from '../../src/constants/action-types';
+import _ from 'lodash'
 
 describe('Menu Action test', () => {
   it ('should create an action to select keyword', (done) => {
@@ -11,7 +12,7 @@ describe('Menu Action test', () => {
       type: types.SELECT_KEYWORD,
       keyword
     }
-    assert.equal(actions.selectKeyword(keyword), expectedAction);
+    assert(_.isEqual(actions.selectKeyword(keyword), expectedAction));
     done();
   });
 
@@ -21,7 +22,7 @@ describe('Menu Action test', () => {
       type: types.CHANGE_KEYWORD_INPUT,
       value
     }
-    assert.equal(actions.changeKeywordInput(value), expectedAction);
+    assert(_.isEqual(actions.changeKeywordInput(value), expectedAction));
     done();
   });
 

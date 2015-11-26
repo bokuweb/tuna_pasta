@@ -6,14 +6,14 @@ import Button from '../../src/components/button-favorite';
 
 describe('Favorite Button Component test', () => {
   it ('Should button classname is item__button--favoritewhen not favorited', (done) => {
-    const button = TestUtils.renderIntoDocument(<button item={isFavorited:false} />);
+    const button = TestUtils.renderIntoDocument(<Button item={{isFavorited:false}} />);
     const div = TestUtils.scryRenderedDOMComponentsWithTag(button, 'div');
     assert.equal(div[0].className, 'item__button--favorite')
     done();
   });
 
   it ('Should button classname is item__button--favorite item__button--favorited when favorited', (done) => {
-    const button = TestUtils.renderIntoDocument(<button item={isFavorited:true} />);
+    const button = TestUtils.renderIntoDocument(<Button item={{isFavorited:true}} />);
     const div = TestUtils.scryRenderedDOMComponentsWithTag(button, 'div');
     assert.equal(div[0].className, 'item__button--favorite item__button--favorited')
     done();
@@ -25,7 +25,7 @@ describe('Favorite Button Component test', () => {
       assert.equal(item.isFavorited, false);
       done();
     }
-    const button = TestUtils.renderIntoDocument(<button item={isFavorited:false} addFavorite={addFavorite}/>);
+    const button = TestUtils.renderIntoDocument(<Button item={{isFavorited:false}} addFavorite={addFavorite}/>);
     const div = TestUtils.scryRenderedDOMComponentsWithTag(button, 'div');
     TestUtils.Simulate.click(ReactDOM.findDOMNode(div[0]));
   });
@@ -35,7 +35,7 @@ describe('Favorite Button Component test', () => {
       assert.equal(item.isFavorited, true);
       done();
     }
-    const button = TestUtils.renderIntoDocument(<button item={isFavorited:true} removeFavorite={removeFavorite}/>);
+    const button = TestUtils.renderIntoDocument(<Button item={{isFavorited:true}} removeFavorite={removeFavorite}/>);
     const div = TestUtils.scryRenderedDOMComponentsWithTag(button, 'div');
     TestUtils.Simulate.click(ReactDOM.findDOMNode(div[0]));
   });

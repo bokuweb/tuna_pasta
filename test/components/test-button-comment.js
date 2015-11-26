@@ -6,14 +6,14 @@ import Button from '../../src/components/button-comment';
 
 describe('Comment Button Component test', () => {
   it ('Should button text is show comment, when not oepned', (done) => {
-    const button = TestUtils.renderIntoDocument(<button item={isCommentOpen:false} />);
+    const button = TestUtils.renderIntoDocument(<Button item={{isCommentOpen:false}} />);
     const div = TestUtils.scryRenderedDOMComponentsWithTag(button, 'div');
     assert.equal(div[0].textContent, 'コメントを見る')
     done();
   });
 
   it ('Should button text is close comment, when oepned', (done) => {
-    const button = TestUtils.renderIntoDocument(<button item={isCommentOpen:true} />);
+    const button = TestUtils.renderIntoDocument(<Button item={{isCommentOpen:true}} />);
     const div = TestUtils.scryRenderedDOMComponentsWithTag(button, 'div');
     assert.equal(div[0].textContent, 'コメントを閉じる')
     done();
@@ -25,7 +25,7 @@ describe('Comment Button Component test', () => {
       assert.equal(activeKeyword, "react");
       done();
     }
-    const button = TestUtils.renderIntoDocument(<button item={isCommentOpen:false} openComment={openComment} activeKeyword={"react"}/>);
+    const button = TestUtils.renderIntoDocument(<Button item={{isCommentOpen:false}} openComment={openComment} activeKeyword={"react"}/>);
     const div = TestUtils.scryRenderedDOMComponentsWithTag(button, 'div');
     TestUtils.Simulate.click(ReactDOM.findDOMNode(div[0]));
   });
@@ -36,7 +36,7 @@ describe('Comment Button Component test', () => {
       assert.equal(activeKeyword, "react");
       done();
     }
-    const button = TestUtils.renderIntoDocument(<button item={isCommentOpen:false} openComment={openComment} activeKeyword={"react"}/>);
+    const button = TestUtils.renderIntoDocument(<Button item={{isCommentOpen:true}} closeComment={closeComment} activeKeyword={"react"}/>);
     const div = TestUtils.scryRenderedDOMComponentsWithTag(button, 'div');
     TestUtils.Simulate.click(ReactDOM.findDOMNode(div[0]));
   });
