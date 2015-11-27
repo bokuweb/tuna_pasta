@@ -6776,7 +6776,7 @@ Copyright (c) 2015 Daniel Eden
   height: 32px;
 }
 .keywords .keywords__list .keywords__keyword {
-  display: inline;
+  display: inline-block;
   width: 160px;
   overflow: hidden;
   white-space: nowrap;
