@@ -2,7 +2,7 @@
   "name": "pasta",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "dist/bundle.js",
   "scripts": {
     "build" : "npm run build:js & npm run build:stylus",
     "build:js": "browserify --extension=js -o dist/bundle.js src/index.js",
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bokuweb/pasta_web.git"
+    "url": "https://github.com/bokuweb/tuna_pasta.git"
   },
   "author": "bokuweb",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bokuweb/pasta_web/issues"
+    "url": "https://github.com/bokuweb/tuna_pasta/issues"
   },
-  "homepage": "https://github.com/bokuweb/pasta_web",
+  "homepage": "https://github.com/bokuweb/tuna_pasta",
   "dependencies": {
     "dexie": "^1.2.0",
     "jsonp": "~0.2.0",
